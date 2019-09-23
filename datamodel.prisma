@@ -1,0 +1,48 @@
+type Group @db(name: "groups") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "groups_id_seq", initialValue: 1, allocationSize: 1)
+  groupName: String @db(name: "group_name")
+}
+
+type Person @db(name: "people") {
+  labs_id: Int! @id(strategy: SEQUENCE) @sequence(name: "people_labs_id_seq", initialValue: 1, allocationSize: 1)
+  email: String
+  firstname: String
+  githubId: String @db(name: "github_id")
+  lastname: String
+  slackId: String @db(name: "slack_id")
+}
+
+type Product @db(name: "products") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "products_id_seq", initialValue: 1, allocationSize: 1)
+  productName: String @db(name: "product_name")
+}
+
+type Project @db(name: "projects") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "projects_id_seq", initialValue: 1, allocationSize: 1)
+  name: String
+}
+
+type Role @db(name: "roles") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "roles_id_seq", initialValue: 1, allocationSize: 1)
+  roleName: String @db(name: "role_name")
+}
+
+type ProductRole @db(name: "productRoles") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "productRoles_id_seq", initialValue: 1, allocationSize: 1)
+  person: Person! @db(name: "person_id")
+  product: Product! @db(name: "product_id")
+  role: Role! @db(name: "role_id")
+}
+
+type ProjectRole @db(name: "projectRoles") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "projectRoles_id_seq", initialValue: 1, allocationSize: 1)
+  person: Person! @db(name: "person_id")
+  product: Product! @db(name: "product_id")
+  role: Role! @db(name: "role_id")
+}
+
+type LambdaRole @db(name: "lambdaRoles") {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "lambdaRoles_id_seq", initialValue: 1, allocationSize: 1)
+  person: Person! @db(name: "person_id")
+  role: Role! @db(name: "role_id")
+}
