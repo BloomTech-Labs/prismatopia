@@ -1,48 +1,84 @@
-type Group @db(name: "groups") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "groups_id_seq", initialValue: 1, allocationSize: 1)
-  groupName: String @db(name: "group_name")
+type LambdaRole {
+  id: ID! @id
+  person: Person
+  role: Role
 }
 
-type Person @db(name: "people") {
-  labs_id: Int! @id(strategy: SEQUENCE) @sequence(name: "people_labs_id_seq", initialValue: 1, allocationSize: 1)
+type PeopleGroup {
+  id: ID! @id
+  name: String
+  peopleGroupMember: [PeopleGroupMember]
+}
+
+type PeopleGroupMember {
+  id: Int! @id(strategy: SEQUENCE) @sequence(name: "PeopleGroupMember_id_seq", initialValue: 1, allocationSize: 1)
+  peopleGroup: PeopleGroup
+  person: Person
+}
+
+type Person {
+  id: ID! @id
   email: String
   firstname: String
-  githubId: String @db(name: "github_id")
+  githubId: String
+  lambdaRole: [LambdaRole]
   lastname: String
-  slackId: String @db(name: "slack_id")
+  peopleGroupMember: [PeopleGroupMember]
+  productRole: [ProductRole]
+  program: String
+  projectRole: [ProjectRole]
+  slackId: String
+  timezone: String
 }
 
-type Product @db(name: "products") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "products_id_seq", initialValue: 1, allocationSize: 1)
-  productName: String @db(name: "product_name")
+type Product {
+  id: ID! @id
+  productName: String
+  productRole: [ProductRole]
+  project: [Project]
 }
 
-type Project @db(name: "projects") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "projects_id_seq", initialValue: 1, allocationSize: 1)
+type ProductRole {
+  id: ID! @id
+  person: Person
+  product: Product
+  role: Role
+}
+
+type Project {
+  id: ID! @id
+  end: DateTime
   name: String
+  product: Product
+  projectGroupMember: [ProjectGroupMember]
+  projectRole: [ProjectRole]
+  start: DateTime
 }
 
-type Role @db(name: "roles") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "roles_id_seq", initialValue: 1, allocationSize: 1)
-  roleName: String @db(name: "role_name")
+type ProjectGroup {
+  id: ID! @id
+  name: String
+  projectGroupMember: [ProjectGroupMember]
 }
 
-type ProductRole @db(name: "productRoles") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "productRoles_id_seq", initialValue: 1, allocationSize: 1)
-  person: Person! @db(name: "person_id")
-  product: Product! @db(name: "product_id")
-  role: Role! @db(name: "role_id")
+type ProjectGroupMember {
+  id: ID! @id
+  project: Project
+  projectGroup: ProjectGroup
 }
 
-type ProjectRole @db(name: "projectRoles") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "projectRoles_id_seq", initialValue: 1, allocationSize: 1)
-  person: Person! @db(name: "person_id")
-  product: Product! @db(name: "product_id")
-  role: Role! @db(name: "role_id")
+type ProjectRole {
+  id: ID! @id
+  person: Person
+  project: Project
+  role: Role
 }
 
-type LambdaRole @db(name: "lambdaRoles") {
-  id: Int! @id(strategy: SEQUENCE) @sequence(name: "lambdaRoles_id_seq", initialValue: 1, allocationSize: 1)
-  person: Person! @db(name: "person_id")
-  role: Role! @db(name: "role_id")
+type Role {
+  id: ID! @id
+  lambdaRole: [LambdaRole]
+  productRole: [ProductRole]
+  projectRole: [ProjectRole]
+  roleName: String
+  type: String
 }
