@@ -1,4 +1,3 @@
-const { forwardTo } = require("prisma-binding");
 module.exports = {
   async projects(parent, args, ctx, info) {
     console.log(ctx.prisma.user, args.id);
