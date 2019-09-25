@@ -99,3 +99,6 @@ public
 
 #packages
 package-lock.json
+
+#serverless 
+serverless.yml
