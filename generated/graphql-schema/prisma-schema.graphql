@@ -62,28 +62,8 @@ type LambdaRoleConnection {
 
 input LambdaRoleCreateInput {
   id: ID
-  person: PersonCreateOneWithoutLambdaRoleInput
-  role: RoleCreateOneWithoutLambdaRoleInput
-}
-
-input LambdaRoleCreateManyWithoutPersonInput {
-  create: [LambdaRoleCreateWithoutPersonInput!]
-  connect: [LambdaRoleWhereUniqueInput!]
-}
-
-input LambdaRoleCreateManyWithoutRoleInput {
-  create: [LambdaRoleCreateWithoutRoleInput!]
-  connect: [LambdaRoleWhereUniqueInput!]
-}
-
-input LambdaRoleCreateWithoutPersonInput {
-  id: ID
-  role: RoleCreateOneWithoutLambdaRoleInput
-}
-
-input LambdaRoleCreateWithoutRoleInput {
-  id: ID
-  person: PersonCreateOneWithoutLambdaRoleInput
+  person: PersonCreateOneInput
+  role: RoleCreateOneInput
 }
 
 type LambdaRoleEdge {
@@ -98,26 +78,6 @@ enum LambdaRoleOrderByInput {
 
 type LambdaRolePreviousValues {
   id: ID!
-}
-
-input LambdaRoleScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [LambdaRoleScalarWhereInput!]
-  OR: [LambdaRoleScalarWhereInput!]
-  NOT: [LambdaRoleScalarWhereInput!]
 }
 
 type LambdaRoleSubscriptionPayload {
@@ -139,60 +99,8 @@ input LambdaRoleSubscriptionWhereInput {
 }
 
 input LambdaRoleUpdateInput {
-  person: PersonUpdateOneWithoutLambdaRoleInput
-  role: RoleUpdateOneWithoutLambdaRoleInput
-}
-
-input LambdaRoleUpdateManyWithoutPersonInput {
-  create: [LambdaRoleCreateWithoutPersonInput!]
-  delete: [LambdaRoleWhereUniqueInput!]
-  connect: [LambdaRoleWhereUniqueInput!]
-  set: [LambdaRoleWhereUniqueInput!]
-  disconnect: [LambdaRoleWhereUniqueInput!]
-  update: [LambdaRoleUpdateWithWhereUniqueWithoutPersonInput!]
-  upsert: [LambdaRoleUpsertWithWhereUniqueWithoutPersonInput!]
-  deleteMany: [LambdaRoleScalarWhereInput!]
-}
-
-input LambdaRoleUpdateManyWithoutRoleInput {
-  create: [LambdaRoleCreateWithoutRoleInput!]
-  delete: [LambdaRoleWhereUniqueInput!]
-  connect: [LambdaRoleWhereUniqueInput!]
-  set: [LambdaRoleWhereUniqueInput!]
-  disconnect: [LambdaRoleWhereUniqueInput!]
-  update: [LambdaRoleUpdateWithWhereUniqueWithoutRoleInput!]
-  upsert: [LambdaRoleUpsertWithWhereUniqueWithoutRoleInput!]
-  deleteMany: [LambdaRoleScalarWhereInput!]
-}
-
-input LambdaRoleUpdateWithoutPersonDataInput {
-  role: RoleUpdateOneWithoutLambdaRoleInput
-}
-
-input LambdaRoleUpdateWithoutRoleDataInput {
-  person: PersonUpdateOneWithoutLambdaRoleInput
-}
-
-input LambdaRoleUpdateWithWhereUniqueWithoutPersonInput {
-  where: LambdaRoleWhereUniqueInput!
-  data: LambdaRoleUpdateWithoutPersonDataInput!
-}
-
-input LambdaRoleUpdateWithWhereUniqueWithoutRoleInput {
-  where: LambdaRoleWhereUniqueInput!
-  data: LambdaRoleUpdateWithoutRoleDataInput!
-}
-
-input LambdaRoleUpsertWithWhereUniqueWithoutPersonInput {
-  where: LambdaRoleWhereUniqueInput!
-  update: LambdaRoleUpdateWithoutPersonDataInput!
-  create: LambdaRoleCreateWithoutPersonInput!
-}
-
-input LambdaRoleUpsertWithWhereUniqueWithoutRoleInput {
-  where: LambdaRoleWhereUniqueInput!
-  update: LambdaRoleUpdateWithoutRoleDataInput!
-  create: LambdaRoleCreateWithoutRoleInput!
+  person: PersonUpdateOneInput
+  role: RoleUpdateOneInput
 }
 
 input LambdaRoleWhereInput {
@@ -307,7 +215,6 @@ type PageInfo {
 type PeopleGroup {
   id: ID!
   name: String
-  peopleGroupMember(where: PeopleGroupMemberWhereInput, orderBy: PeopleGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PeopleGroupMember!]
 }
 
 type PeopleGroupConnection {
@@ -319,17 +226,11 @@ type PeopleGroupConnection {
 input PeopleGroupCreateInput {
   id: ID
   name: String
-  peopleGroupMember: PeopleGroupMemberCreateManyWithoutPeopleGroupInput
 }
 
-input PeopleGroupCreateOneWithoutPeopleGroupMemberInput {
-  create: PeopleGroupCreateWithoutPeopleGroupMemberInput
+input PeopleGroupCreateOneInput {
+  create: PeopleGroupCreateInput
   connect: PeopleGroupWhereUniqueInput
-}
-
-input PeopleGroupCreateWithoutPeopleGroupMemberInput {
-  id: ID
-  name: String
 }
 
 type PeopleGroupEdge {
@@ -350,26 +251,8 @@ type PeopleGroupMemberConnection {
 }
 
 input PeopleGroupMemberCreateInput {
-  peopleGroup: PeopleGroupCreateOneWithoutPeopleGroupMemberInput
-  person: PersonCreateOneWithoutPeopleGroupMemberInput
-}
-
-input PeopleGroupMemberCreateManyWithoutPeopleGroupInput {
-  create: [PeopleGroupMemberCreateWithoutPeopleGroupInput!]
-  connect: [PeopleGroupMemberWhereUniqueInput!]
-}
-
-input PeopleGroupMemberCreateManyWithoutPersonInput {
-  create: [PeopleGroupMemberCreateWithoutPersonInput!]
-  connect: [PeopleGroupMemberWhereUniqueInput!]
-}
-
-input PeopleGroupMemberCreateWithoutPeopleGroupInput {
-  person: PersonCreateOneWithoutPeopleGroupMemberInput
-}
-
-input PeopleGroupMemberCreateWithoutPersonInput {
-  peopleGroup: PeopleGroupCreateOneWithoutPeopleGroupMemberInput
+  peopleGroup: PeopleGroupCreateOneInput
+  person: PersonCreateOneInput
 }
 
 type PeopleGroupMemberEdge {
@@ -384,20 +267,6 @@ enum PeopleGroupMemberOrderByInput {
 
 type PeopleGroupMemberPreviousValues {
   id: Int!
-}
-
-input PeopleGroupMemberScalarWhereInput {
-  id: Int
-  id_not: Int
-  id_in: [Int!]
-  id_not_in: [Int!]
-  id_lt: Int
-  id_lte: Int
-  id_gt: Int
-  id_gte: Int
-  AND: [PeopleGroupMemberScalarWhereInput!]
-  OR: [PeopleGroupMemberScalarWhereInput!]
-  NOT: [PeopleGroupMemberScalarWhereInput!]
 }
 
 type PeopleGroupMemberSubscriptionPayload {
@@ -419,60 +288,8 @@ input PeopleGroupMemberSubscriptionWhereInput {
 }
 
 input PeopleGroupMemberUpdateInput {
-  peopleGroup: PeopleGroupUpdateOneWithoutPeopleGroupMemberInput
-  person: PersonUpdateOneWithoutPeopleGroupMemberInput
-}
-
-input PeopleGroupMemberUpdateManyWithoutPeopleGroupInput {
-  create: [PeopleGroupMemberCreateWithoutPeopleGroupInput!]
-  delete: [PeopleGroupMemberWhereUniqueInput!]
-  connect: [PeopleGroupMemberWhereUniqueInput!]
-  set: [PeopleGroupMemberWhereUniqueInput!]
-  disconnect: [PeopleGroupMemberWhereUniqueInput!]
-  update: [PeopleGroupMemberUpdateWithWhereUniqueWithoutPeopleGroupInput!]
-  upsert: [PeopleGroupMemberUpsertWithWhereUniqueWithoutPeopleGroupInput!]
-  deleteMany: [PeopleGroupMemberScalarWhereInput!]
-}
-
-input PeopleGroupMemberUpdateManyWithoutPersonInput {
-  create: [PeopleGroupMemberCreateWithoutPersonInput!]
-  delete: [PeopleGroupMemberWhereUniqueInput!]
-  connect: [PeopleGroupMemberWhereUniqueInput!]
-  set: [PeopleGroupMemberWhereUniqueInput!]
-  disconnect: [PeopleGroupMemberWhereUniqueInput!]
-  update: [PeopleGroupMemberUpdateWithWhereUniqueWithoutPersonInput!]
-  upsert: [PeopleGroupMemberUpsertWithWhereUniqueWithoutPersonInput!]
-  deleteMany: [PeopleGroupMemberScalarWhereInput!]
-}
-
-input PeopleGroupMemberUpdateWithoutPeopleGroupDataInput {
-  person: PersonUpdateOneWithoutPeopleGroupMemberInput
-}
-
-input PeopleGroupMemberUpdateWithoutPersonDataInput {
-  peopleGroup: PeopleGroupUpdateOneWithoutPeopleGroupMemberInput
-}
-
-input PeopleGroupMemberUpdateWithWhereUniqueWithoutPeopleGroupInput {
-  where: PeopleGroupMemberWhereUniqueInput!
-  data: PeopleGroupMemberUpdateWithoutPeopleGroupDataInput!
-}
-
-input PeopleGroupMemberUpdateWithWhereUniqueWithoutPersonInput {
-  where: PeopleGroupMemberWhereUniqueInput!
-  data: PeopleGroupMemberUpdateWithoutPersonDataInput!
-}
-
-input PeopleGroupMemberUpsertWithWhereUniqueWithoutPeopleGroupInput {
-  where: PeopleGroupMemberWhereUniqueInput!
-  update: PeopleGroupMemberUpdateWithoutPeopleGroupDataInput!
-  create: PeopleGroupMemberCreateWithoutPeopleGroupInput!
-}
-
-input PeopleGroupMemberUpsertWithWhereUniqueWithoutPersonInput {
-  where: PeopleGroupMemberWhereUniqueInput!
-  update: PeopleGroupMemberUpdateWithoutPersonDataInput!
-  create: PeopleGroupMemberCreateWithoutPersonInput!
+  peopleGroup: PeopleGroupUpdateOneInput
+  person: PersonUpdateOneInput
 }
 
 input PeopleGroupMemberWhereInput {
@@ -525,31 +342,30 @@ input PeopleGroupSubscriptionWhereInput {
   NOT: [PeopleGroupSubscriptionWhereInput!]
 }
 
+input PeopleGroupUpdateDataInput {
+  name: String
+}
+
 input PeopleGroupUpdateInput {
   name: String
-  peopleGroupMember: PeopleGroupMemberUpdateManyWithoutPeopleGroupInput
 }
 
 input PeopleGroupUpdateManyMutationInput {
   name: String
 }
 
-input PeopleGroupUpdateOneWithoutPeopleGroupMemberInput {
-  create: PeopleGroupCreateWithoutPeopleGroupMemberInput
-  update: PeopleGroupUpdateWithoutPeopleGroupMemberDataInput
-  upsert: PeopleGroupUpsertWithoutPeopleGroupMemberInput
+input PeopleGroupUpdateOneInput {
+  create: PeopleGroupCreateInput
+  update: PeopleGroupUpdateDataInput
+  upsert: PeopleGroupUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: PeopleGroupWhereUniqueInput
 }
 
-input PeopleGroupUpdateWithoutPeopleGroupMemberDataInput {
-  name: String
-}
-
-input PeopleGroupUpsertWithoutPeopleGroupMemberInput {
-  update: PeopleGroupUpdateWithoutPeopleGroupMemberDataInput!
-  create: PeopleGroupCreateWithoutPeopleGroupMemberInput!
+input PeopleGroupUpsertNestedInput {
+  update: PeopleGroupUpdateDataInput!
+  create: PeopleGroupCreateInput!
 }
 
 input PeopleGroupWhereInput {
@@ -581,9 +397,6 @@ input PeopleGroupWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  peopleGroupMember_every: PeopleGroupMemberWhereInput
-  peopleGroupMember_some: PeopleGroupMemberWhereInput
-  peopleGroupMember_none: PeopleGroupMemberWhereInput
   AND: [PeopleGroupWhereInput!]
   OR: [PeopleGroupWhereInput!]
   NOT: [PeopleGroupWhereInput!]
@@ -598,12 +411,8 @@ type Person {
   email: String
   firstname: String
   githubId: String
-  lambdaRole(where: LambdaRoleWhereInput, orderBy: LambdaRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LambdaRole!]
   lastname: String
-  peopleGroupMember(where: PeopleGroupMemberWhereInput, orderBy: PeopleGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PeopleGroupMember!]
-  productRole(where: ProductRoleWhereInput, orderBy: ProductRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRole!]
   program: String
-  projectRole(where: ProjectRoleWhereInput, orderBy: ProjectRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectRole!]
   slackId: String
   timezone: String
 }
@@ -619,90 +428,15 @@ input PersonCreateInput {
   email: String
   firstname: String
   githubId: String
-  lambdaRole: LambdaRoleCreateManyWithoutPersonInput
   lastname: String
-  peopleGroupMember: PeopleGroupMemberCreateManyWithoutPersonInput
-  productRole: ProductRoleCreateManyWithoutPersonInput
   program: String
-  projectRole: ProjectRoleCreateManyWithoutPersonInput
   slackId: String
   timezone: String
 }
 
-input PersonCreateOneWithoutLambdaRoleInput {
-  create: PersonCreateWithoutLambdaRoleInput
+input PersonCreateOneInput {
+  create: PersonCreateInput
   connect: PersonWhereUniqueInput
-}
-
-input PersonCreateOneWithoutPeopleGroupMemberInput {
-  create: PersonCreateWithoutPeopleGroupMemberInput
-  connect: PersonWhereUniqueInput
-}
-
-input PersonCreateOneWithoutProductRoleInput {
-  create: PersonCreateWithoutProductRoleInput
-  connect: PersonWhereUniqueInput
-}
-
-input PersonCreateOneWithoutProjectRoleInput {
-  create: PersonCreateWithoutProjectRoleInput
-  connect: PersonWhereUniqueInput
-}
-
-input PersonCreateWithoutLambdaRoleInput {
-  id: ID
-  email: String
-  firstname: String
-  githubId: String
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberCreateManyWithoutPersonInput
-  productRole: ProductRoleCreateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleCreateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonCreateWithoutPeopleGroupMemberInput {
-  id: ID
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleCreateManyWithoutPersonInput
-  lastname: String
-  productRole: ProductRoleCreateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleCreateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonCreateWithoutProductRoleInput {
-  id: ID
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleCreateManyWithoutPersonInput
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberCreateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleCreateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonCreateWithoutProjectRoleInput {
-  id: ID
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleCreateManyWithoutPersonInput
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberCreateManyWithoutPersonInput
-  productRole: ProductRoleCreateManyWithoutPersonInput
-  program: String
-  slackId: String
-  timezone: String
 }
 
 type PersonEdge {
@@ -758,16 +492,22 @@ input PersonSubscriptionWhereInput {
   NOT: [PersonSubscriptionWhereInput!]
 }
 
+input PersonUpdateDataInput {
+  email: String
+  firstname: String
+  githubId: String
+  lastname: String
+  program: String
+  slackId: String
+  timezone: String
+}
+
 input PersonUpdateInput {
   email: String
   firstname: String
   githubId: String
-  lambdaRole: LambdaRoleUpdateManyWithoutPersonInput
   lastname: String
-  peopleGroupMember: PeopleGroupMemberUpdateManyWithoutPersonInput
-  productRole: ProductRoleUpdateManyWithoutPersonInput
   program: String
-  projectRole: ProjectRoleUpdateManyWithoutPersonInput
   slackId: String
   timezone: String
 }
@@ -782,112 +522,18 @@ input PersonUpdateManyMutationInput {
   timezone: String
 }
 
-input PersonUpdateOneWithoutLambdaRoleInput {
-  create: PersonCreateWithoutLambdaRoleInput
-  update: PersonUpdateWithoutLambdaRoleDataInput
-  upsert: PersonUpsertWithoutLambdaRoleInput
+input PersonUpdateOneInput {
+  create: PersonCreateInput
+  update: PersonUpdateDataInput
+  upsert: PersonUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: PersonWhereUniqueInput
 }
 
-input PersonUpdateOneWithoutPeopleGroupMemberInput {
-  create: PersonCreateWithoutPeopleGroupMemberInput
-  update: PersonUpdateWithoutPeopleGroupMemberDataInput
-  upsert: PersonUpsertWithoutPeopleGroupMemberInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: PersonWhereUniqueInput
-}
-
-input PersonUpdateOneWithoutProductRoleInput {
-  create: PersonCreateWithoutProductRoleInput
-  update: PersonUpdateWithoutProductRoleDataInput
-  upsert: PersonUpsertWithoutProductRoleInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: PersonWhereUniqueInput
-}
-
-input PersonUpdateOneWithoutProjectRoleInput {
-  create: PersonCreateWithoutProjectRoleInput
-  update: PersonUpdateWithoutProjectRoleDataInput
-  upsert: PersonUpsertWithoutProjectRoleInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: PersonWhereUniqueInput
-}
-
-input PersonUpdateWithoutLambdaRoleDataInput {
-  email: String
-  firstname: String
-  githubId: String
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberUpdateManyWithoutPersonInput
-  productRole: ProductRoleUpdateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleUpdateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonUpdateWithoutPeopleGroupMemberDataInput {
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleUpdateManyWithoutPersonInput
-  lastname: String
-  productRole: ProductRoleUpdateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleUpdateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonUpdateWithoutProductRoleDataInput {
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleUpdateManyWithoutPersonInput
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberUpdateManyWithoutPersonInput
-  program: String
-  projectRole: ProjectRoleUpdateManyWithoutPersonInput
-  slackId: String
-  timezone: String
-}
-
-input PersonUpdateWithoutProjectRoleDataInput {
-  email: String
-  firstname: String
-  githubId: String
-  lambdaRole: LambdaRoleUpdateManyWithoutPersonInput
-  lastname: String
-  peopleGroupMember: PeopleGroupMemberUpdateManyWithoutPersonInput
-  productRole: ProductRoleUpdateManyWithoutPersonInput
-  program: String
-  slackId: String
-  timezone: String
-}
-
-input PersonUpsertWithoutLambdaRoleInput {
-  update: PersonUpdateWithoutLambdaRoleDataInput!
-  create: PersonCreateWithoutLambdaRoleInput!
-}
-
-input PersonUpsertWithoutPeopleGroupMemberInput {
-  update: PersonUpdateWithoutPeopleGroupMemberDataInput!
-  create: PersonCreateWithoutPeopleGroupMemberInput!
-}
-
-input PersonUpsertWithoutProductRoleInput {
-  update: PersonUpdateWithoutProductRoleDataInput!
-  create: PersonCreateWithoutProductRoleInput!
-}
-
-input PersonUpsertWithoutProjectRoleInput {
-  update: PersonUpdateWithoutProjectRoleDataInput!
-  create: PersonCreateWithoutProjectRoleInput!
+input PersonUpsertNestedInput {
+  update: PersonUpdateDataInput!
+  create: PersonCreateInput!
 }
 
 input PersonWhereInput {
@@ -947,9 +593,6 @@ input PersonWhereInput {
   githubId_not_starts_with: String
   githubId_ends_with: String
   githubId_not_ends_with: String
-  lambdaRole_every: LambdaRoleWhereInput
-  lambdaRole_some: LambdaRoleWhereInput
-  lambdaRole_none: LambdaRoleWhereInput
   lastname: String
   lastname_not: String
   lastname_in: [String!]
@@ -964,12 +607,6 @@ input PersonWhereInput {
   lastname_not_starts_with: String
   lastname_ends_with: String
   lastname_not_ends_with: String
-  peopleGroupMember_every: PeopleGroupMemberWhereInput
-  peopleGroupMember_some: PeopleGroupMemberWhereInput
-  peopleGroupMember_none: PeopleGroupMemberWhereInput
-  productRole_every: ProductRoleWhereInput
-  productRole_some: ProductRoleWhereInput
-  productRole_none: ProductRoleWhereInput
   program: String
   program_not: String
   program_in: [String!]
@@ -984,9 +621,6 @@ input PersonWhereInput {
   program_not_starts_with: String
   program_ends_with: String
   program_not_ends_with: String
-  projectRole_every: ProjectRoleWhereInput
-  projectRole_some: ProjectRoleWhereInput
-  projectRole_none: ProjectRoleWhereInput
   slackId: String
   slackId_not: String
   slackId_in: [String!]
@@ -1027,8 +661,6 @@ input PersonWhereUniqueInput {
 type Product {
   id: ID!
   productName: String
-  productRole(where: ProductRoleWhereInput, orderBy: ProductRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRole!]
-  project(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Project!]
 }
 
 type ProductConnection {
@@ -1040,30 +672,11 @@ type ProductConnection {
 input ProductCreateInput {
   id: ID
   productName: String
-  productRole: ProductRoleCreateManyWithoutProductInput
-  project: ProjectCreateManyWithoutProductInput
 }
 
-input ProductCreateOneWithoutProductRoleInput {
-  create: ProductCreateWithoutProductRoleInput
+input ProductCreateOneInput {
+  create: ProductCreateInput
   connect: ProductWhereUniqueInput
-}
-
-input ProductCreateOneWithoutProjectInput {
-  create: ProductCreateWithoutProjectInput
-  connect: ProductWhereUniqueInput
-}
-
-input ProductCreateWithoutProductRoleInput {
-  id: ID
-  productName: String
-  project: ProjectCreateManyWithoutProductInput
-}
-
-input ProductCreateWithoutProjectInput {
-  id: ID
-  productName: String
-  productRole: ProductRoleCreateManyWithoutProductInput
 }
 
 type ProductEdge {
@@ -1098,42 +711,9 @@ type ProductRoleConnection {
 
 input ProductRoleCreateInput {
   id: ID
-  person: PersonCreateOneWithoutProductRoleInput
-  product: ProductCreateOneWithoutProductRoleInput
-  role: RoleCreateOneWithoutProductRoleInput
-}
-
-input ProductRoleCreateManyWithoutPersonInput {
-  create: [ProductRoleCreateWithoutPersonInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-}
-
-input ProductRoleCreateManyWithoutProductInput {
-  create: [ProductRoleCreateWithoutProductInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-}
-
-input ProductRoleCreateManyWithoutRoleInput {
-  create: [ProductRoleCreateWithoutRoleInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-}
-
-input ProductRoleCreateWithoutPersonInput {
-  id: ID
-  product: ProductCreateOneWithoutProductRoleInput
-  role: RoleCreateOneWithoutProductRoleInput
-}
-
-input ProductRoleCreateWithoutProductInput {
-  id: ID
-  person: PersonCreateOneWithoutProductRoleInput
-  role: RoleCreateOneWithoutProductRoleInput
-}
-
-input ProductRoleCreateWithoutRoleInput {
-  id: ID
-  person: PersonCreateOneWithoutProductRoleInput
-  product: ProductCreateOneWithoutProductRoleInput
+  person: PersonCreateOneInput
+  product: ProductCreateOneInput
+  role: RoleCreateOneInput
 }
 
 type ProductRoleEdge {
@@ -1148,26 +728,6 @@ enum ProductRoleOrderByInput {
 
 type ProductRolePreviousValues {
   id: ID!
-}
-
-input ProductRoleScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [ProductRoleScalarWhereInput!]
-  OR: [ProductRoleScalarWhereInput!]
-  NOT: [ProductRoleScalarWhereInput!]
 }
 
 type ProductRoleSubscriptionPayload {
@@ -1189,90 +749,9 @@ input ProductRoleSubscriptionWhereInput {
 }
 
 input ProductRoleUpdateInput {
-  person: PersonUpdateOneWithoutProductRoleInput
-  product: ProductUpdateOneWithoutProductRoleInput
-  role: RoleUpdateOneWithoutProductRoleInput
-}
-
-input ProductRoleUpdateManyWithoutPersonInput {
-  create: [ProductRoleCreateWithoutPersonInput!]
-  delete: [ProductRoleWhereUniqueInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-  set: [ProductRoleWhereUniqueInput!]
-  disconnect: [ProductRoleWhereUniqueInput!]
-  update: [ProductRoleUpdateWithWhereUniqueWithoutPersonInput!]
-  upsert: [ProductRoleUpsertWithWhereUniqueWithoutPersonInput!]
-  deleteMany: [ProductRoleScalarWhereInput!]
-}
-
-input ProductRoleUpdateManyWithoutProductInput {
-  create: [ProductRoleCreateWithoutProductInput!]
-  delete: [ProductRoleWhereUniqueInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-  set: [ProductRoleWhereUniqueInput!]
-  disconnect: [ProductRoleWhereUniqueInput!]
-  update: [ProductRoleUpdateWithWhereUniqueWithoutProductInput!]
-  upsert: [ProductRoleUpsertWithWhereUniqueWithoutProductInput!]
-  deleteMany: [ProductRoleScalarWhereInput!]
-}
-
-input ProductRoleUpdateManyWithoutRoleInput {
-  create: [ProductRoleCreateWithoutRoleInput!]
-  delete: [ProductRoleWhereUniqueInput!]
-  connect: [ProductRoleWhereUniqueInput!]
-  set: [ProductRoleWhereUniqueInput!]
-  disconnect: [ProductRoleWhereUniqueInput!]
-  update: [ProductRoleUpdateWithWhereUniqueWithoutRoleInput!]
-  upsert: [ProductRoleUpsertWithWhereUniqueWithoutRoleInput!]
-  deleteMany: [ProductRoleScalarWhereInput!]
-}
-
-input ProductRoleUpdateWithoutPersonDataInput {
-  product: ProductUpdateOneWithoutProductRoleInput
-  role: RoleUpdateOneWithoutProductRoleInput
-}
-
-input ProductRoleUpdateWithoutProductDataInput {
-  person: PersonUpdateOneWithoutProductRoleInput
-  role: RoleUpdateOneWithoutProductRoleInput
-}
-
-input ProductRoleUpdateWithoutRoleDataInput {
-  person: PersonUpdateOneWithoutProductRoleInput
-  product: ProductUpdateOneWithoutProductRoleInput
-}
-
-input ProductRoleUpdateWithWhereUniqueWithoutPersonInput {
-  where: ProductRoleWhereUniqueInput!
-  data: ProductRoleUpdateWithoutPersonDataInput!
-}
-
-input ProductRoleUpdateWithWhereUniqueWithoutProductInput {
-  where: ProductRoleWhereUniqueInput!
-  data: ProductRoleUpdateWithoutProductDataInput!
-}
-
-input ProductRoleUpdateWithWhereUniqueWithoutRoleInput {
-  where: ProductRoleWhereUniqueInput!
-  data: ProductRoleUpdateWithoutRoleDataInput!
-}
-
-input ProductRoleUpsertWithWhereUniqueWithoutPersonInput {
-  where: ProductRoleWhereUniqueInput!
-  update: ProductRoleUpdateWithoutPersonDataInput!
-  create: ProductRoleCreateWithoutPersonInput!
-}
-
-input ProductRoleUpsertWithWhereUniqueWithoutProductInput {
-  where: ProductRoleWhereUniqueInput!
-  update: ProductRoleUpdateWithoutProductDataInput!
-  create: ProductRoleCreateWithoutProductInput!
-}
-
-input ProductRoleUpsertWithWhereUniqueWithoutRoleInput {
-  where: ProductRoleWhereUniqueInput!
-  update: ProductRoleUpdateWithoutRoleDataInput!
-  create: ProductRoleCreateWithoutRoleInput!
+  person: PersonUpdateOneInput
+  product: ProductUpdateOneInput
+  role: RoleUpdateOneInput
 }
 
 input ProductRoleWhereInput {
@@ -1320,52 +799,30 @@ input ProductSubscriptionWhereInput {
   NOT: [ProductSubscriptionWhereInput!]
 }
 
+input ProductUpdateDataInput {
+  productName: String
+}
+
 input ProductUpdateInput {
   productName: String
-  productRole: ProductRoleUpdateManyWithoutProductInput
-  project: ProjectUpdateManyWithoutProductInput
 }
 
 input ProductUpdateManyMutationInput {
   productName: String
 }
 
-input ProductUpdateOneWithoutProductRoleInput {
-  create: ProductCreateWithoutProductRoleInput
-  update: ProductUpdateWithoutProductRoleDataInput
-  upsert: ProductUpsertWithoutProductRoleInput
+input ProductUpdateOneInput {
+  create: ProductCreateInput
+  update: ProductUpdateDataInput
+  upsert: ProductUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: ProductWhereUniqueInput
 }
 
-input ProductUpdateOneWithoutProjectInput {
-  create: ProductCreateWithoutProjectInput
-  update: ProductUpdateWithoutProjectDataInput
-  upsert: ProductUpsertWithoutProjectInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ProductWhereUniqueInput
-}
-
-input ProductUpdateWithoutProductRoleDataInput {
-  productName: String
-  project: ProjectUpdateManyWithoutProductInput
-}
-
-input ProductUpdateWithoutProjectDataInput {
-  productName: String
-  productRole: ProductRoleUpdateManyWithoutProductInput
-}
-
-input ProductUpsertWithoutProductRoleInput {
-  update: ProductUpdateWithoutProductRoleDataInput!
-  create: ProductCreateWithoutProductRoleInput!
-}
-
-input ProductUpsertWithoutProjectInput {
-  update: ProductUpdateWithoutProjectDataInput!
-  create: ProductCreateWithoutProjectInput!
+input ProductUpsertNestedInput {
+  update: ProductUpdateDataInput!
+  create: ProductCreateInput!
 }
 
 input ProductWhereInput {
@@ -1397,12 +854,6 @@ input ProductWhereInput {
   productName_not_starts_with: String
   productName_ends_with: String
   productName_not_ends_with: String
-  productRole_every: ProductRoleWhereInput
-  productRole_some: ProductRoleWhereInput
-  productRole_none: ProductRoleWhereInput
-  project_every: ProjectWhereInput
-  project_some: ProjectWhereInput
-  project_none: ProjectWhereInput
   AND: [ProductWhereInput!]
   OR: [ProductWhereInput!]
   NOT: [ProductWhereInput!]
@@ -1417,8 +868,6 @@ type Project {
   end: DateTime
   name: String
   product: Product
-  projectGroupMember(where: ProjectGroupMemberWhereInput, orderBy: ProjectGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectGroupMember!]
-  projectRole(where: ProjectRoleWhereInput, orderBy: ProjectRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectRole!]
   start: DateTime
 }
 
@@ -1432,52 +881,13 @@ input ProjectCreateInput {
   id: ID
   end: DateTime
   name: String
-  product: ProductCreateOneWithoutProjectInput
-  projectGroupMember: ProjectGroupMemberCreateManyWithoutProjectInput
-  projectRole: ProjectRoleCreateManyWithoutProjectInput
+  product: ProductCreateOneInput
   start: DateTime
 }
 
-input ProjectCreateManyWithoutProductInput {
-  create: [ProjectCreateWithoutProductInput!]
-  connect: [ProjectWhereUniqueInput!]
-}
-
-input ProjectCreateOneWithoutProjectGroupMemberInput {
-  create: ProjectCreateWithoutProjectGroupMemberInput
+input ProjectCreateOneInput {
+  create: ProjectCreateInput
   connect: ProjectWhereUniqueInput
-}
-
-input ProjectCreateOneWithoutProjectRoleInput {
-  create: ProjectCreateWithoutProjectRoleInput
-  connect: ProjectWhereUniqueInput
-}
-
-input ProjectCreateWithoutProductInput {
-  id: ID
-  end: DateTime
-  name: String
-  projectGroupMember: ProjectGroupMemberCreateManyWithoutProjectInput
-  projectRole: ProjectRoleCreateManyWithoutProjectInput
-  start: DateTime
-}
-
-input ProjectCreateWithoutProjectGroupMemberInput {
-  id: ID
-  end: DateTime
-  name: String
-  product: ProductCreateOneWithoutProjectInput
-  projectRole: ProjectRoleCreateManyWithoutProjectInput
-  start: DateTime
-}
-
-input ProjectCreateWithoutProjectRoleInput {
-  id: ID
-  end: DateTime
-  name: String
-  product: ProductCreateOneWithoutProjectInput
-  projectGroupMember: ProjectGroupMemberCreateManyWithoutProjectInput
-  start: DateTime
 }
 
 type ProjectEdge {
@@ -1488,7 +898,6 @@ type ProjectEdge {
 type ProjectGroup {
   id: ID!
   name: String
-  projectGroupMember(where: ProjectGroupMemberWhereInput, orderBy: ProjectGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectGroupMember!]
 }
 
 type ProjectGroupConnection {
@@ -1500,17 +909,11 @@ type ProjectGroupConnection {
 input ProjectGroupCreateInput {
   id: ID
   name: String
-  projectGroupMember: ProjectGroupMemberCreateManyWithoutProjectGroupInput
 }
 
-input ProjectGroupCreateOneWithoutProjectGroupMemberInput {
-  create: ProjectGroupCreateWithoutProjectGroupMemberInput
+input ProjectGroupCreateOneInput {
+  create: ProjectGroupCreateInput
   connect: ProjectGroupWhereUniqueInput
-}
-
-input ProjectGroupCreateWithoutProjectGroupMemberInput {
-  id: ID
-  name: String
 }
 
 type ProjectGroupEdge {
@@ -1532,28 +935,8 @@ type ProjectGroupMemberConnection {
 
 input ProjectGroupMemberCreateInput {
   id: ID
-  project: ProjectCreateOneWithoutProjectGroupMemberInput
-  projectGroup: ProjectGroupCreateOneWithoutProjectGroupMemberInput
-}
-
-input ProjectGroupMemberCreateManyWithoutProjectGroupInput {
-  create: [ProjectGroupMemberCreateWithoutProjectGroupInput!]
-  connect: [ProjectGroupMemberWhereUniqueInput!]
-}
-
-input ProjectGroupMemberCreateManyWithoutProjectInput {
-  create: [ProjectGroupMemberCreateWithoutProjectInput!]
-  connect: [ProjectGroupMemberWhereUniqueInput!]
-}
-
-input ProjectGroupMemberCreateWithoutProjectGroupInput {
-  id: ID
-  project: ProjectCreateOneWithoutProjectGroupMemberInput
-}
-
-input ProjectGroupMemberCreateWithoutProjectInput {
-  id: ID
-  projectGroup: ProjectGroupCreateOneWithoutProjectGroupMemberInput
+  project: ProjectCreateOneInput
+  projectGroup: ProjectGroupCreateOneInput
 }
 
 type ProjectGroupMemberEdge {
@@ -1568,26 +951,6 @@ enum ProjectGroupMemberOrderByInput {
 
 type ProjectGroupMemberPreviousValues {
   id: ID!
-}
-
-input ProjectGroupMemberScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [ProjectGroupMemberScalarWhereInput!]
-  OR: [ProjectGroupMemberScalarWhereInput!]
-  NOT: [ProjectGroupMemberScalarWhereInput!]
 }
 
 type ProjectGroupMemberSubscriptionPayload {
@@ -1609,60 +972,8 @@ input ProjectGroupMemberSubscriptionWhereInput {
 }
 
 input ProjectGroupMemberUpdateInput {
-  project: ProjectUpdateOneWithoutProjectGroupMemberInput
-  projectGroup: ProjectGroupUpdateOneWithoutProjectGroupMemberInput
-}
-
-input ProjectGroupMemberUpdateManyWithoutProjectGroupInput {
-  create: [ProjectGroupMemberCreateWithoutProjectGroupInput!]
-  delete: [ProjectGroupMemberWhereUniqueInput!]
-  connect: [ProjectGroupMemberWhereUniqueInput!]
-  set: [ProjectGroupMemberWhereUniqueInput!]
-  disconnect: [ProjectGroupMemberWhereUniqueInput!]
-  update: [ProjectGroupMemberUpdateWithWhereUniqueWithoutProjectGroupInput!]
-  upsert: [ProjectGroupMemberUpsertWithWhereUniqueWithoutProjectGroupInput!]
-  deleteMany: [ProjectGroupMemberScalarWhereInput!]
-}
-
-input ProjectGroupMemberUpdateManyWithoutProjectInput {
-  create: [ProjectGroupMemberCreateWithoutProjectInput!]
-  delete: [ProjectGroupMemberWhereUniqueInput!]
-  connect: [ProjectGroupMemberWhereUniqueInput!]
-  set: [ProjectGroupMemberWhereUniqueInput!]
-  disconnect: [ProjectGroupMemberWhereUniqueInput!]
-  update: [ProjectGroupMemberUpdateWithWhereUniqueWithoutProjectInput!]
-  upsert: [ProjectGroupMemberUpsertWithWhereUniqueWithoutProjectInput!]
-  deleteMany: [ProjectGroupMemberScalarWhereInput!]
-}
-
-input ProjectGroupMemberUpdateWithoutProjectDataInput {
-  projectGroup: ProjectGroupUpdateOneWithoutProjectGroupMemberInput
-}
-
-input ProjectGroupMemberUpdateWithoutProjectGroupDataInput {
-  project: ProjectUpdateOneWithoutProjectGroupMemberInput
-}
-
-input ProjectGroupMemberUpdateWithWhereUniqueWithoutProjectGroupInput {
-  where: ProjectGroupMemberWhereUniqueInput!
-  data: ProjectGroupMemberUpdateWithoutProjectGroupDataInput!
-}
-
-input ProjectGroupMemberUpdateWithWhereUniqueWithoutProjectInput {
-  where: ProjectGroupMemberWhereUniqueInput!
-  data: ProjectGroupMemberUpdateWithoutProjectDataInput!
-}
-
-input ProjectGroupMemberUpsertWithWhereUniqueWithoutProjectGroupInput {
-  where: ProjectGroupMemberWhereUniqueInput!
-  update: ProjectGroupMemberUpdateWithoutProjectGroupDataInput!
-  create: ProjectGroupMemberCreateWithoutProjectGroupInput!
-}
-
-input ProjectGroupMemberUpsertWithWhereUniqueWithoutProjectInput {
-  where: ProjectGroupMemberWhereUniqueInput!
-  update: ProjectGroupMemberUpdateWithoutProjectDataInput!
-  create: ProjectGroupMemberCreateWithoutProjectInput!
+  project: ProjectUpdateOneInput
+  projectGroup: ProjectGroupUpdateOneInput
 }
 
 input ProjectGroupMemberWhereInput {
@@ -1721,31 +1032,30 @@ input ProjectGroupSubscriptionWhereInput {
   NOT: [ProjectGroupSubscriptionWhereInput!]
 }
 
+input ProjectGroupUpdateDataInput {
+  name: String
+}
+
 input ProjectGroupUpdateInput {
   name: String
-  projectGroupMember: ProjectGroupMemberUpdateManyWithoutProjectGroupInput
 }
 
 input ProjectGroupUpdateManyMutationInput {
   name: String
 }
 
-input ProjectGroupUpdateOneWithoutProjectGroupMemberInput {
-  create: ProjectGroupCreateWithoutProjectGroupMemberInput
-  update: ProjectGroupUpdateWithoutProjectGroupMemberDataInput
-  upsert: ProjectGroupUpsertWithoutProjectGroupMemberInput
+input ProjectGroupUpdateOneInput {
+  create: ProjectGroupCreateInput
+  update: ProjectGroupUpdateDataInput
+  upsert: ProjectGroupUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: ProjectGroupWhereUniqueInput
 }
 
-input ProjectGroupUpdateWithoutProjectGroupMemberDataInput {
-  name: String
-}
-
-input ProjectGroupUpsertWithoutProjectGroupMemberInput {
-  update: ProjectGroupUpdateWithoutProjectGroupMemberDataInput!
-  create: ProjectGroupCreateWithoutProjectGroupMemberInput!
+input ProjectGroupUpsertNestedInput {
+  update: ProjectGroupUpdateDataInput!
+  create: ProjectGroupCreateInput!
 }
 
 input ProjectGroupWhereInput {
@@ -1777,9 +1087,6 @@ input ProjectGroupWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
-  projectGroupMember_every: ProjectGroupMemberWhereInput
-  projectGroupMember_some: ProjectGroupMemberWhereInput
-  projectGroupMember_none: ProjectGroupMemberWhereInput
   AND: [ProjectGroupWhereInput!]
   OR: [ProjectGroupWhereInput!]
   NOT: [ProjectGroupWhereInput!]
@@ -1822,42 +1129,9 @@ type ProjectRoleConnection {
 
 input ProjectRoleCreateInput {
   id: ID
-  person: PersonCreateOneWithoutProjectRoleInput
-  project: ProjectCreateOneWithoutProjectRoleInput
-  role: RoleCreateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleCreateManyWithoutPersonInput {
-  create: [ProjectRoleCreateWithoutPersonInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-}
-
-input ProjectRoleCreateManyWithoutProjectInput {
-  create: [ProjectRoleCreateWithoutProjectInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-}
-
-input ProjectRoleCreateManyWithoutRoleInput {
-  create: [ProjectRoleCreateWithoutRoleInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-}
-
-input ProjectRoleCreateWithoutPersonInput {
-  id: ID
-  project: ProjectCreateOneWithoutProjectRoleInput
-  role: RoleCreateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleCreateWithoutProjectInput {
-  id: ID
-  person: PersonCreateOneWithoutProjectRoleInput
-  role: RoleCreateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleCreateWithoutRoleInput {
-  id: ID
-  person: PersonCreateOneWithoutProjectRoleInput
-  project: ProjectCreateOneWithoutProjectRoleInput
+  person: PersonCreateOneInput
+  project: ProjectCreateOneInput
+  role: RoleCreateOneInput
 }
 
 type ProjectRoleEdge {
@@ -1872,26 +1146,6 @@ enum ProjectRoleOrderByInput {
 
 type ProjectRolePreviousValues {
   id: ID!
-}
-
-input ProjectRoleScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  AND: [ProjectRoleScalarWhereInput!]
-  OR: [ProjectRoleScalarWhereInput!]
-  NOT: [ProjectRoleScalarWhereInput!]
 }
 
 type ProjectRoleSubscriptionPayload {
@@ -1913,90 +1167,9 @@ input ProjectRoleSubscriptionWhereInput {
 }
 
 input ProjectRoleUpdateInput {
-  person: PersonUpdateOneWithoutProjectRoleInput
-  project: ProjectUpdateOneWithoutProjectRoleInput
-  role: RoleUpdateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleUpdateManyWithoutPersonInput {
-  create: [ProjectRoleCreateWithoutPersonInput!]
-  delete: [ProjectRoleWhereUniqueInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-  set: [ProjectRoleWhereUniqueInput!]
-  disconnect: [ProjectRoleWhereUniqueInput!]
-  update: [ProjectRoleUpdateWithWhereUniqueWithoutPersonInput!]
-  upsert: [ProjectRoleUpsertWithWhereUniqueWithoutPersonInput!]
-  deleteMany: [ProjectRoleScalarWhereInput!]
-}
-
-input ProjectRoleUpdateManyWithoutProjectInput {
-  create: [ProjectRoleCreateWithoutProjectInput!]
-  delete: [ProjectRoleWhereUniqueInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-  set: [ProjectRoleWhereUniqueInput!]
-  disconnect: [ProjectRoleWhereUniqueInput!]
-  update: [ProjectRoleUpdateWithWhereUniqueWithoutProjectInput!]
-  upsert: [ProjectRoleUpsertWithWhereUniqueWithoutProjectInput!]
-  deleteMany: [ProjectRoleScalarWhereInput!]
-}
-
-input ProjectRoleUpdateManyWithoutRoleInput {
-  create: [ProjectRoleCreateWithoutRoleInput!]
-  delete: [ProjectRoleWhereUniqueInput!]
-  connect: [ProjectRoleWhereUniqueInput!]
-  set: [ProjectRoleWhereUniqueInput!]
-  disconnect: [ProjectRoleWhereUniqueInput!]
-  update: [ProjectRoleUpdateWithWhereUniqueWithoutRoleInput!]
-  upsert: [ProjectRoleUpsertWithWhereUniqueWithoutRoleInput!]
-  deleteMany: [ProjectRoleScalarWhereInput!]
-}
-
-input ProjectRoleUpdateWithoutPersonDataInput {
-  project: ProjectUpdateOneWithoutProjectRoleInput
-  role: RoleUpdateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleUpdateWithoutProjectDataInput {
-  person: PersonUpdateOneWithoutProjectRoleInput
-  role: RoleUpdateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleUpdateWithoutRoleDataInput {
-  person: PersonUpdateOneWithoutProjectRoleInput
-  project: ProjectUpdateOneWithoutProjectRoleInput
-}
-
-input ProjectRoleUpdateWithWhereUniqueWithoutPersonInput {
-  where: ProjectRoleWhereUniqueInput!
-  data: ProjectRoleUpdateWithoutPersonDataInput!
-}
-
-input ProjectRoleUpdateWithWhereUniqueWithoutProjectInput {
-  where: ProjectRoleWhereUniqueInput!
-  data: ProjectRoleUpdateWithoutProjectDataInput!
-}
-
-input ProjectRoleUpdateWithWhereUniqueWithoutRoleInput {
-  where: ProjectRoleWhereUniqueInput!
-  data: ProjectRoleUpdateWithoutRoleDataInput!
-}
-
-input ProjectRoleUpsertWithWhereUniqueWithoutPersonInput {
-  where: ProjectRoleWhereUniqueInput!
-  update: ProjectRoleUpdateWithoutPersonDataInput!
-  create: ProjectRoleCreateWithoutPersonInput!
-}
-
-input ProjectRoleUpsertWithWhereUniqueWithoutProjectInput {
-  where: ProjectRoleWhereUniqueInput!
-  update: ProjectRoleUpdateWithoutProjectDataInput!
-  create: ProjectRoleCreateWithoutProjectInput!
-}
-
-input ProjectRoleUpsertWithWhereUniqueWithoutRoleInput {
-  where: ProjectRoleWhereUniqueInput!
-  update: ProjectRoleUpdateWithoutRoleDataInput!
-  create: ProjectRoleCreateWithoutRoleInput!
+  person: PersonUpdateOneInput
+  project: ProjectUpdateOneInput
+  role: RoleUpdateOneInput
 }
 
 input ProjectRoleWhereInput {
@@ -2026,56 +1199,6 @@ input ProjectRoleWhereUniqueInput {
   id: ID
 }
 
-input ProjectScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  end: DateTime
-  end_not: DateTime
-  end_in: [DateTime!]
-  end_not_in: [DateTime!]
-  end_lt: DateTime
-  end_lte: DateTime
-  end_gt: DateTime
-  end_gte: DateTime
-  name: String
-  name_not: String
-  name_in: [String!]
-  name_not_in: [String!]
-  name_lt: String
-  name_lte: String
-  name_gt: String
-  name_gte: String
-  name_contains: String
-  name_not_contains: String
-  name_starts_with: String
-  name_not_starts_with: String
-  name_ends_with: String
-  name_not_ends_with: String
-  start: DateTime
-  start_not: DateTime
-  start_in: [DateTime!]
-  start_not_in: [DateTime!]
-  start_lt: DateTime
-  start_lte: DateTime
-  start_gt: DateTime
-  start_gte: DateTime
-  AND: [ProjectScalarWhereInput!]
-  OR: [ProjectScalarWhereInput!]
-  NOT: [ProjectScalarWhereInput!]
-}
-
 type ProjectSubscriptionPayload {
   mutation: MutationType!
   node: Project
@@ -2094,18 +1217,17 @@ input ProjectSubscriptionWhereInput {
   NOT: [ProjectSubscriptionWhereInput!]
 }
 
-input ProjectUpdateInput {
+input ProjectUpdateDataInput {
   end: DateTime
   name: String
-  product: ProductUpdateOneWithoutProjectInput
-  projectGroupMember: ProjectGroupMemberUpdateManyWithoutProjectInput
-  projectRole: ProjectRoleUpdateManyWithoutProjectInput
+  product: ProductUpdateOneInput
   start: DateTime
 }
 
-input ProjectUpdateManyDataInput {
+input ProjectUpdateInput {
   end: DateTime
   name: String
+  product: ProductUpdateOneInput
   start: DateTime
 }
 
@@ -2115,84 +1237,18 @@ input ProjectUpdateManyMutationInput {
   start: DateTime
 }
 
-input ProjectUpdateManyWithoutProductInput {
-  create: [ProjectCreateWithoutProductInput!]
-  delete: [ProjectWhereUniqueInput!]
-  connect: [ProjectWhereUniqueInput!]
-  set: [ProjectWhereUniqueInput!]
-  disconnect: [ProjectWhereUniqueInput!]
-  update: [ProjectUpdateWithWhereUniqueWithoutProductInput!]
-  upsert: [ProjectUpsertWithWhereUniqueWithoutProductInput!]
-  deleteMany: [ProjectScalarWhereInput!]
-  updateMany: [ProjectUpdateManyWithWhereNestedInput!]
-}
-
-input ProjectUpdateManyWithWhereNestedInput {
-  where: ProjectScalarWhereInput!
-  data: ProjectUpdateManyDataInput!
-}
-
-input ProjectUpdateOneWithoutProjectGroupMemberInput {
-  create: ProjectCreateWithoutProjectGroupMemberInput
-  update: ProjectUpdateWithoutProjectGroupMemberDataInput
-  upsert: ProjectUpsertWithoutProjectGroupMemberInput
+input ProjectUpdateOneInput {
+  create: ProjectCreateInput
+  update: ProjectUpdateDataInput
+  upsert: ProjectUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: ProjectWhereUniqueInput
 }
 
-input ProjectUpdateOneWithoutProjectRoleInput {
-  create: ProjectCreateWithoutProjectRoleInput
-  update: ProjectUpdateWithoutProjectRoleDataInput
-  upsert: ProjectUpsertWithoutProjectRoleInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: ProjectWhereUniqueInput
-}
-
-input ProjectUpdateWithoutProductDataInput {
-  end: DateTime
-  name: String
-  projectGroupMember: ProjectGroupMemberUpdateManyWithoutProjectInput
-  projectRole: ProjectRoleUpdateManyWithoutProjectInput
-  start: DateTime
-}
-
-input ProjectUpdateWithoutProjectGroupMemberDataInput {
-  end: DateTime
-  name: String
-  product: ProductUpdateOneWithoutProjectInput
-  projectRole: ProjectRoleUpdateManyWithoutProjectInput
-  start: DateTime
-}
-
-input ProjectUpdateWithoutProjectRoleDataInput {
-  end: DateTime
-  name: String
-  product: ProductUpdateOneWithoutProjectInput
-  projectGroupMember: ProjectGroupMemberUpdateManyWithoutProjectInput
-  start: DateTime
-}
-
-input ProjectUpdateWithWhereUniqueWithoutProductInput {
-  where: ProjectWhereUniqueInput!
-  data: ProjectUpdateWithoutProductDataInput!
-}
-
-input ProjectUpsertWithoutProjectGroupMemberInput {
-  update: ProjectUpdateWithoutProjectGroupMemberDataInput!
-  create: ProjectCreateWithoutProjectGroupMemberInput!
-}
-
-input ProjectUpsertWithoutProjectRoleInput {
-  update: ProjectUpdateWithoutProjectRoleDataInput!
-  create: ProjectCreateWithoutProjectRoleInput!
-}
-
-input ProjectUpsertWithWhereUniqueWithoutProductInput {
-  where: ProjectWhereUniqueInput!
-  update: ProjectUpdateWithoutProductDataInput!
-  create: ProjectCreateWithoutProductInput!
+input ProjectUpsertNestedInput {
+  update: ProjectUpdateDataInput!
+  create: ProjectCreateInput!
 }
 
 input ProjectWhereInput {
@@ -2233,12 +1289,6 @@ input ProjectWhereInput {
   name_ends_with: String
   name_not_ends_with: String
   product: ProductWhereInput
-  projectGroupMember_every: ProjectGroupMemberWhereInput
-  projectGroupMember_some: ProjectGroupMemberWhereInput
-  projectGroupMember_none: ProjectGroupMemberWhereInput
-  projectRole_every: ProjectRoleWhereInput
-  projectRole_some: ProjectRoleWhereInput
-  projectRole_none: ProjectRoleWhereInput
   start: DateTime
   start_not: DateTime
   start_in: [DateTime!]
@@ -2295,9 +1345,6 @@ type Query {
 
 type Role {
   id: ID!
-  lambdaRole(where: LambdaRoleWhereInput, orderBy: LambdaRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LambdaRole!]
-  productRole(where: ProductRoleWhereInput, orderBy: ProductRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRole!]
-  projectRole(where: ProjectRoleWhereInput, orderBy: ProjectRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectRole!]
   roleName: String
   type: String
 }
@@ -2310,50 +1357,13 @@ type RoleConnection {
 
 input RoleCreateInput {
   id: ID
-  lambdaRole: LambdaRoleCreateManyWithoutRoleInput
-  productRole: ProductRoleCreateManyWithoutRoleInput
-  projectRole: ProjectRoleCreateManyWithoutRoleInput
   roleName: String
   type: String
 }
 
-input RoleCreateOneWithoutLambdaRoleInput {
-  create: RoleCreateWithoutLambdaRoleInput
+input RoleCreateOneInput {
+  create: RoleCreateInput
   connect: RoleWhereUniqueInput
-}
-
-input RoleCreateOneWithoutProductRoleInput {
-  create: RoleCreateWithoutProductRoleInput
-  connect: RoleWhereUniqueInput
-}
-
-input RoleCreateOneWithoutProjectRoleInput {
-  create: RoleCreateWithoutProjectRoleInput
-  connect: RoleWhereUniqueInput
-}
-
-input RoleCreateWithoutLambdaRoleInput {
-  id: ID
-  productRole: ProductRoleCreateManyWithoutRoleInput
-  projectRole: ProjectRoleCreateManyWithoutRoleInput
-  roleName: String
-  type: String
-}
-
-input RoleCreateWithoutProductRoleInput {
-  id: ID
-  lambdaRole: LambdaRoleCreateManyWithoutRoleInput
-  projectRole: ProjectRoleCreateManyWithoutRoleInput
-  roleName: String
-  type: String
-}
-
-input RoleCreateWithoutProjectRoleInput {
-  id: ID
-  lambdaRole: LambdaRoleCreateManyWithoutRoleInput
-  productRole: ProductRoleCreateManyWithoutRoleInput
-  roleName: String
-  type: String
 }
 
 type RoleEdge {
@@ -2394,10 +1404,12 @@ input RoleSubscriptionWhereInput {
   NOT: [RoleSubscriptionWhereInput!]
 }
 
+input RoleUpdateDataInput {
+  roleName: String
+  type: String
+}
+
 input RoleUpdateInput {
-  lambdaRole: LambdaRoleUpdateManyWithoutRoleInput
-  productRole: ProductRoleUpdateManyWithoutRoleInput
-  projectRole: ProjectRoleUpdateManyWithoutRoleInput
   roleName: String
   type: String
 }
@@ -2407,67 +1419,18 @@ input RoleUpdateManyMutationInput {
   type: String
 }
 
-input RoleUpdateOneWithoutLambdaRoleInput {
-  create: RoleCreateWithoutLambdaRoleInput
-  update: RoleUpdateWithoutLambdaRoleDataInput
-  upsert: RoleUpsertWithoutLambdaRoleInput
+input RoleUpdateOneInput {
+  create: RoleCreateInput
+  update: RoleUpdateDataInput
+  upsert: RoleUpsertNestedInput
   delete: Boolean
   disconnect: Boolean
   connect: RoleWhereUniqueInput
 }
 
-input RoleUpdateOneWithoutProductRoleInput {
-  create: RoleCreateWithoutProductRoleInput
-  update: RoleUpdateWithoutProductRoleDataInput
-  upsert: RoleUpsertWithoutProductRoleInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: RoleWhereUniqueInput
-}
-
-input RoleUpdateOneWithoutProjectRoleInput {
-  create: RoleCreateWithoutProjectRoleInput
-  update: RoleUpdateWithoutProjectRoleDataInput
-  upsert: RoleUpsertWithoutProjectRoleInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: RoleWhereUniqueInput
-}
-
-input RoleUpdateWithoutLambdaRoleDataInput {
-  productRole: ProductRoleUpdateManyWithoutRoleInput
-  projectRole: ProjectRoleUpdateManyWithoutRoleInput
-  roleName: String
-  type: String
-}
-
-input RoleUpdateWithoutProductRoleDataInput {
-  lambdaRole: LambdaRoleUpdateManyWithoutRoleInput
-  projectRole: ProjectRoleUpdateManyWithoutRoleInput
-  roleName: String
-  type: String
-}
-
-input RoleUpdateWithoutProjectRoleDataInput {
-  lambdaRole: LambdaRoleUpdateManyWithoutRoleInput
-  productRole: ProductRoleUpdateManyWithoutRoleInput
-  roleName: String
-  type: String
-}
-
-input RoleUpsertWithoutLambdaRoleInput {
-  update: RoleUpdateWithoutLambdaRoleDataInput!
-  create: RoleCreateWithoutLambdaRoleInput!
-}
-
-input RoleUpsertWithoutProductRoleInput {
-  update: RoleUpdateWithoutProductRoleDataInput!
-  create: RoleCreateWithoutProductRoleInput!
-}
-
-input RoleUpsertWithoutProjectRoleInput {
-  update: RoleUpdateWithoutProjectRoleDataInput!
-  create: RoleCreateWithoutProjectRoleInput!
+input RoleUpsertNestedInput {
+  update: RoleUpdateDataInput!
+  create: RoleCreateInput!
 }
 
 input RoleWhereInput {
@@ -2485,15 +1448,6 @@ input RoleWhereInput {
   id_not_starts_with: ID
   id_ends_with: ID
   id_not_ends_with: ID
-  lambdaRole_every: LambdaRoleWhereInput
-  lambdaRole_some: LambdaRoleWhereInput
-  lambdaRole_none: LambdaRoleWhereInput
-  productRole_every: ProductRoleWhereInput
-  productRole_some: ProductRoleWhereInput
-  productRole_none: ProductRoleWhereInput
-  projectRole_every: ProjectRoleWhereInput
-  projectRole_some: ProjectRoleWhereInput
-  projectRole_none: ProjectRoleWhereInput
   roleName: String
   roleName_not: String
   roleName_in: [String!]
