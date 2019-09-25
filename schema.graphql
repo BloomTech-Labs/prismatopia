@@ -1,0 +1,9 @@
+# import * from "./generated/graphql-schema/prisma-schema.graphql";
+
+
+type Query {
+    projects:[Project]!
+}
+type Mutation {
+    createProject:[Project]!
+}
