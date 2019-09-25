@@ -2,11 +2,30 @@
 
 
 type Query {
-    people: [Person]!
-    projects: [Project]!
-    products: [Product]!
-    roles: [Role]!
+    lambdaRole(where: LambdaRoleWhereUniqueInput!): LambdaRole
+    lambdaRoles(where: LambdaRoleWhereInput, orderBy: LambdaRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [LambdaRole]!
+    peopleGroup(where: PeopleGroupWhereUniqueInput!): PeopleGroup
+    peopleGroups(where: PeopleGroupWhereInput, orderBy: PeopleGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PeopleGroup]!
+    peopleGroupMember(where: PeopleGroupMemberWhereUniqueInput!): PeopleGroupMember
+    peopleGroupMembers(where: PeopleGroupMemberWhereInput, orderBy: PeopleGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PeopleGroupMember]!
+    person(where: PersonWhereUniqueInput!): Person
+    persons(where: PersonWhereInput, orderBy: PersonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Person]!
+    product(where: ProductWhereUniqueInput!): Product
+    products(where: ProductWhereInput, orderBy: ProductOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Product]!
+    productRole(where: ProductRoleWhereUniqueInput!): ProductRole
+    productRoles(where: ProductRoleWhereInput, orderBy: ProductRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProductRole]!
+    project(where: ProjectWhereUniqueInput!): Project
+    projects(where: ProjectWhereInput, orderBy: ProjectOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Project]!
+    projectGroup(where: ProjectGroupWhereUniqueInput!): ProjectGroup
+    projectGroups(where: ProjectGroupWhereInput, orderBy: ProjectGroupOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectGroup]!
+    projectGroupMember(where: ProjectGroupMemberWhereUniqueInput!): ProjectGroupMember
+    projectGroupMembers(where: ProjectGroupMemberWhereInput, orderBy: ProjectGroupMemberOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectGroupMember]!
+    projectRole(where: ProjectRoleWhereUniqueInput!): ProjectRole
+    projectRoles(where: ProjectRoleWhereInput, orderBy: ProjectRoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [ProjectRole]!
+    role(where: RoleWhereUniqueInput!): Role
+    roles(where: RoleWhereInput, orderBy: RoleOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Role]!
 }
+
 type Mutation {
     createProject:[Project]!
 }

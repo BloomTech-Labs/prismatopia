@@ -13,8 +13,8 @@ functions:
   graphql:
     handler: index.server
     environment:
-      PRISMA_ENDPOINT: http://labby-publi-19c6vyqg6ocaw-579895022.us-east-1.elb.amazonaws.com/labby-prisma-server/prod
-      PRISMA_SECRET: 5711d4705fbd54cfcc6f3c28ed34f3ef623d1b37386bef7a
+      PRISMA_ENDPOINT: ${env:PRISMA_ENDPOINT}
+      PRISMA_SECRET: ${env:PRISMA_SECRET}
     events:
       - http:
           path: /
@@ -23,8 +23,8 @@ functions:
   playground:
     handler: index.playground
     environment:
-      PRISMA_ENDPOINT: http://labby-publi-19c6vyqg6ocaw-579895022.us-east-1.elb.amazonaws.com/labby-prisma-server/prod
-      PRISMA_SECRET: 5711d4705fbd54cfcc6f3c28ed34f3ef623d1b37386bef7a
+      PRISMA_ENDPOINT: ${env:PRISMA_ENDPOINT}
+      PRISMA_SECRET: ${env:PRISMA_SECRET}
     events:
       - http:
           path: /
