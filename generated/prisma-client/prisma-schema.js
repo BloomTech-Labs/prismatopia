@@ -271,7 +271,7 @@ type PageInfo {
 }
 
 type Person {
-  labs_id: Int!
+  id: Int!
   email: String
   firstname: String
   githubId: String
@@ -304,8 +304,8 @@ type PersonEdge {
 }
 
 enum PersonOrderByInput {
-  labs_id_ASC
-  labs_id_DESC
+  id_ASC
+  id_DESC
   email_ASC
   email_DESC
   firstname_ASC
@@ -319,7 +319,7 @@ enum PersonOrderByInput {
 }
 
 type PersonPreviousValues {
-  labs_id: Int!
+  id: Int!
   email: String
   firstname: String
   githubId: String
@@ -382,14 +382,14 @@ input PersonUpsertNestedInput {
 }
 
 input PersonWhereInput {
-  labs_id: Int
-  labs_id_not: Int
-  labs_id_in: [Int!]
-  labs_id_not_in: [Int!]
-  labs_id_lt: Int
-  labs_id_lte: Int
-  labs_id_gt: Int
-  labs_id_gte: Int
+  id: Int
+  id_not: Int
+  id_in: [Int!]
+  id_not_in: [Int!]
+  id_lt: Int
+  id_lte: Int
+  id_gt: Int
+  id_gte: Int
   email: String
   email_not: String
   email_in: [String!]
@@ -466,7 +466,7 @@ input PersonWhereInput {
 }
 
 input PersonWhereUniqueInput {
-  labs_id: Int
+  id: Int
 }
 
 type Product {
