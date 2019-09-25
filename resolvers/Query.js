@@ -1,3 +1,4 @@
+
 const LambdaRole = require("./QueryHelpers/LambdaRole");
 const PeopleGroup = require("./QueryHelpers/PeopleGroup");
 const PeopleGroupMembers = require("./QueryHelpers/PeopleGroupMember");
@@ -9,6 +10,7 @@ const ProjectGroup = require("./QueryHelpers/ProjectGroup");
 const ProjectGroupMember = require("./QueryHelpers/ProjectGroupMember");
 const ProjectRoles = require("./QueryHelpers/ProjectRoles");
 const Role = require("./QueryHelpers/Role");
+
 module.exports = {
   ...LambdaRole,
   ...PeopleGroup,

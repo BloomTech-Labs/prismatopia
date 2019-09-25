@@ -1,4 +1,4 @@
-# import * from "./generated/graphql-schema/prisma-schema.graphql";
+#import Project from "./generated/graphql-schema/prisma-schema.graphql";
 
 
 type Query {
@@ -61,3 +61,4 @@ type Mutation {
   updateRole(data: RoleUpdateInput!, where: RoleWhereUniqueInput!): Role
    deleteRole(where: RoleWhereUniqueInput!): Role
 }
+
