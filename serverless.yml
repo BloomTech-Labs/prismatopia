@@ -12,6 +12,9 @@ provider:
 functions:
   graphql:
     handler: index.server
+    environment:
+      PRISMA_ENDPOINT: ${env:PRISMA_ENDPOINT}
+      PRISMA_SECRET: ${env:PRISMA_SECRET}
     events:
       - http:
           path: /
@@ -20,6 +23,9 @@ functions:
           private: true
   playground:
     handler: index.playground
+    environment:
+      PRISMA_ENDPOINT: ${env:PRISMA_ENDPOINT}
+      PRISMA_SECRET: ${env:PRISMA_SECRET}
     events:
       - http:
           path: /
