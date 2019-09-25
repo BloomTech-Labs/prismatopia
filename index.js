@@ -1,9 +1,9 @@
-const { GraphQLServer } = require("graphql-yoga");
+const { GraphQLServerLambda } = require("graphql-yoga");
 const { prisma } = require("./generated/prisma-client");
 const Mutation = require("./resolvers/Mutation");
 const Query = require("./resolvers/Query");
 
-const server = new GraphQLServer({
+const lambda = new GraphQLServerLambda({
   typeDefs: "schema.graphql",
   resolvers: {
     Mutation,
@@ -17,15 +17,16 @@ const server = new GraphQLServer({
     prisma
   })
 });
-
-server.start(
-  {
-    cors: {
-      credentials: true,
-      origin: "http://localhost:3000"
-    }
-  },
-  details => {
-    console.log(`server running on ${details.port}`);
-  }
-);
+exports.server = lambda.graphqlHandler;
+exports.playground = lambda.playgroundHandler;
+// server.start(
+//   {
+//     cors: {
+//       credentials: true,
+//       origin: "http://localhost:3000"
+//     }
+//   },
+//   details => {
+//     console.log(`server running on ${details.port}`);
+//   }
+// );

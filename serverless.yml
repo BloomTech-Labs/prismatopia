@@ -1,0 +1,24 @@
+service: yoga-labby
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+
+functions:
+  graphql:
+    handler: index.server
+    events:
+      - http:
+          path: /
+          method: post
+          cors: true
+  playground:
+    handler: index.playground
+    events:
+      - http:
+          path: /
+          method: get
+          cors: true
