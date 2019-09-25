@@ -1,17 +1,16 @@
 module.exports = {
   async createPerson(parent, args, ctx, info) {
-    const person = await ctx.prisma.createPerson(
-      {
-        ...args
-      },
-      info
-    );
+    const postBody = { ...args.data };
+    const person = await ctx.prisma.createPerson(postBody, info);
     return person;
   },
   async updatePerson(parent, args, ctx, info) {
+    const postBody = { ...args.data };
+    const id = args.data.id;
     const person = await ctx.prisma.updatePerson(
       {
-        ...args
+        data: postBody,
+        where: { id: id }
       },
       info
     );
@@ -20,7 +19,7 @@ module.exports = {
   async deletePerson(parent, args, ctx, info) {
     const person = await ctx.prisma.deletePerson(
       {
-        ...args
+        where: { id: args.data.id }
       },
       info
     );

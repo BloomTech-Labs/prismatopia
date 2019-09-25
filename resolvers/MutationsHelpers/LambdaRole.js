@@ -1,26 +1,26 @@
 module.exports = {
   async createLambdaRole(parent, args, ctx, info) {
-    const lambdaRole = await ctx.prisma.createLambdaRole(
-      {
-        ...args
-      },
-      info
-    );
+    const postBody = { ...args.data };
+    const lambdaRole = await ctx.prisma.createLambdaRole(postBody, info);
     return lambdaRole;
   },
   async updateLambdaRole(parent, args, ctx, info) {
+    const postBody = { ...args.data };
+    const id = args.data.id;
+    delete postBody.id;
     const lambdaRole = await ctx.prisma.updateLambdaRole(
       {
-        ...args
+        data: postBody,
+        where: { id: id }
       },
       info
     );
     return lambdaRole;
   },
   async deleteLambdaRole(parent, args, ctx, info) {
-    const project = await ctx.prisma.deleteLambdaRole(
+    const lambdaRole = await ctx.prisma.deleteLambdaRole(
       {
-        ...args
+        id: args.data.id
       },
       info
     );
