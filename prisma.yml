@@ -1,4 +1,4 @@
-endpoint: http://labby-Publi-19C6VYQG6OCAW-579895022.us-east-1.elb.amazonaws.com
+endpoint: ${env:PRISMA_ENDPOINT}
 datamodel: datamodel.prisma
 secret: ${env:PRISMA_SECRET}
 # generate:
