@@ -1,8 +1,11 @@
-#import Project from "./generated/graphql-schema/prisma-schema.graphql";
+#import * from "./generated/graphql-schema/prisma-schema.graphql";
 
 
 type Query {
+    people: [Person]!
     projects: [Project]!
+    products: [Product]!
+    roles: [Role]!
 }
 type Mutation {
     createProject:[Project]!
