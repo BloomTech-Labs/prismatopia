@@ -17,9 +17,10 @@ module.exports = {
     return role;
   },
   async deleteRole(parent, args, ctx, info) {
+    const id = args.data.id;
     const role = await ctx.prisma.deleteRole(
       {
-        ...args
+        id
       },
       info
     );
