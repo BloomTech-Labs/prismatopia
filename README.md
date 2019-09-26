@@ -1,4 +1,4 @@
-# labby-prisma
+# labby Serverless 
 
 ![](./assets/stack.png)
 
