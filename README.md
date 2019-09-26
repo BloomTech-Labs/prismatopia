@@ -1,24 +1,23 @@
 # labby Serverless 
 
+## Introduction
+
+This document provides a high level overview and explains the architecture of Labby Serveless. The Document defines goals of the architecture and the use cases supported by this system
+
+## Purpose 
+
+This software is intended to be the foundation and source of truth for multiple products that will help run Lambda Labs smoothly at scale. Also, provide a secure way to access relevant information. 
+
+## Architecture Representation 
+
 ![](./assets/stack.png)
+ 
 
-#####Detailed Explanation On How the GraphQL Labby Stack Works.
+AWS cloudformation is used to create 3 differrent stacks:
+1. A Postgres RDS
+2. A Fargate container with Prisma.
+3. A Graphql Yoga Lambda function deployed using serverless and exposed using API Gateway
+    
+This service can only be accessed using an API key passed in through the header. The exposed endpoint allows graphql queries and mutations. 
 
-##CloudFormation
-#####Creates 3 seperate stacks that will create the services needed for our Postgres RDS Instance,Fargate Container and Lambda Function.
 
-##Postgres RDS
-#####It is used to store data for our Prisma API.
-
-- Subnet 1: 10.192.12.0/24
-- Subnet 2: 10.192.12.0/24
-- PORT :5432
-
-##Fargate Container (Primsa GraphQL API)
-#####Creates all of our CRUD operation on the given schema.
-
-- VPC: 10.0.0.0/16
-- PORT: 80
-
-##Lambda Function (GraphQL Yoga) -
-#####Serves data from our Prisma API to the client (needs a apikey to make requests. and on the header add `x-api-key` ).
