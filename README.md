@@ -45,6 +45,6 @@ Step 3. Secondly you need to see the schema to be able know how to write queries
 
 After attaching the provider you can make queries by following the example.
 
-![](./assets/ApolloPart2.png)
+![](./assets/ApolloPart3.png)
 
 For more information please visit https://www.apollographql.com/docs/react/
