@@ -22,4 +22,4 @@ This service can only be accessed using an API key passed in through the header.
 
 ## Detailed Usage Documentation
 
-![Documentation](https://documenter.getpostman.com/view/5657034/SVtN4rhU?version=latest#fc3525fa-ac3a-45be-ae99-5cee90fcff35)
+[Documentation](https://documenter.getpostman.com/view/5657034/SVtN4rhU?version=latest#fc3525fa-ac3a-45be-ae99-5cee90fcff35)
