@@ -12,7 +12,7 @@ module.exports = {
     const project = await ctx.prisma.updateProject(
       {
         body: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
@@ -22,7 +22,7 @@ module.exports = {
     const id = args.data.id;
     const project = await ctx.prisma.deleteProject(
       {
-        id
+        ...args.where
       },
       info
     );

@@ -11,7 +11,7 @@ module.exports = {
     const lambdaRole = await ctx.prisma.updateLambdaRole(
       {
         data: postBody,
-        where: { id: id }
+        where: { ...args.where }
       },
       info
     );
@@ -20,7 +20,7 @@ module.exports = {
   async deleteLambdaRole(parent, args, ctx, info) {
     const lambdaRole = await ctx.prisma.deleteLambdaRole(
       {
-        id: args.data.id
+        ...args.where
       },
       info
     );

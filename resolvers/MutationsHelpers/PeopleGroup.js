@@ -1,7 +1,7 @@
 module.exports = {
   async createPeopleGroup(parent, args, ctx, info) {
     const postBody = { ...args.data };
-
+    delete postBody.id;
     const peopleGroup = await ctx.prisma.createPeopleGroup(postBody, info);
     return peopleGroup;
   },
@@ -12,17 +12,16 @@ module.exports = {
     const peopleGroup = await ctx.prisma.updatePeopleGroup(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
     return peopleGroup;
   },
   async deletePeopleGroup(parent, args, ctx, info) {
-    const id = args.data.id;
     const peopleGroup = await ctx.prisma.deletePeopleGroup(
       {
-        id
+        ...args.where
       },
       info
     );

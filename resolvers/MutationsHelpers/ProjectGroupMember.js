@@ -16,7 +16,7 @@ module.exports = {
     const projectGroup = await ctx.prisma.updateProjectGroupMember(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
@@ -26,7 +26,7 @@ module.exports = {
     const id = args.data.id;
     const projectGroup = await ctx.prisma.deleteProjectGroupMember(
       {
-        id
+        ...args.where
       },
       info
     );

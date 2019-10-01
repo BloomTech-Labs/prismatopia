@@ -13,17 +13,16 @@ module.exports = {
     const projectGroup = await ctx.prisma.updateProjectGroup(
       {
         body: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
     return projectGroup;
   },
   async deleteLambdaRole(parent, args, ctx, info) {
-    const id = args.data.id;
     const projectGroup = await ctx.prisma.deleteProjectGroup(
       {
-        id
+        ...args.where
       },
       info
     );
