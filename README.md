@@ -34,6 +34,7 @@ Type in the terminal
 Step 1. `import ApolloClient from "apollo-boost"`
 and
 `import { ApolloProvider } from "@apollo/react-hooks"`
+
 ![](./assets/ApolloPart1.png)
 
 Step 2. Create a Apollo Client and Attach it to your Apollo Provider and Wrap your React Components in Index.js.
