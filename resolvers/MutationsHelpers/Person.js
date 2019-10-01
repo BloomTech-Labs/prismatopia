@@ -5,24 +5,20 @@ module.exports = {
     return person;
   },
   async updatePerson(parent, args, ctx, info) {
+    console.log("help god i love you");
     const postBody = { ...args.data };
     const id = args.data.id;
     const person = await ctx.prisma.updatePerson(
       {
         data: postBody,
-        where: { id: id }
+        where: { ...args.where }
       },
       info
     );
     return person;
   },
   async deletePerson(parent, args, ctx, info) {
-    const person = await ctx.prisma.deletePerson(
-      {
-        where: { id: args.data.id }
-      },
-      info
-    );
+    const person = await ctx.prisma.deletePerson({ ...args.where }, info);
     return person;
   }
 };

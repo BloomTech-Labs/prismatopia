@@ -13,7 +13,7 @@ module.exports = {
     const projectRole = await ctx.prisma.updateProjectRole(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
@@ -23,7 +23,7 @@ module.exports = {
     const id = args.data.id;
     const projectRole = await ctx.prisma.deleteProjectRole(
       {
-        id
+        ...args.where
       },
       info
     );

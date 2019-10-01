@@ -7,11 +7,10 @@ module.exports = {
   async updateProductRole(parent, args, ctx, info) {
     const postBody = { ...args.data };
     delete postBody.id;
-    const id = args.data.id;
     const productRole = await ctx.prisma.updateProductRole(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
@@ -21,7 +20,7 @@ module.exports = {
     const id = args.data.id;
     const productRole = await ctx.prisma.deleteProductRole(
       {
-        id
+        ...args.where
       },
       info
     );

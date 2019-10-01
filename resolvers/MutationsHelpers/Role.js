@@ -7,20 +7,22 @@ module.exports = {
     return role;
   },
   async updateRole(parent, args, ctx, info) {
+    const postBody = { ...args.data };
+    delete postBody.id;
+
     const role = await ctx.prisma.updateRole(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
     return role;
   },
   async deleteRole(parent, args, ctx, info) {
-    const id = args.data.id;
     const role = await ctx.prisma.deleteRole(
       {
-        id
+        id: args.where.id
       },
       info
     );

@@ -1,11 +1,7 @@
 module.exports = {
   async createProduct(parent, args, ctx, info) {
-    const product = await ctx.prisma.createProduct(
-      {
-        ...args
-      },
-      info
-    );
+    const postBody = { ...args.data };
+    const product = await ctx.prisma.createProduct(postBody, info);
     return product;
   },
   async updateProduct(parent, args, ctx, info) {
@@ -15,18 +11,16 @@ module.exports = {
     const product = await ctx.prisma.updateProduct(
       {
         data: postBody,
-        where: { id }
+        where: { ...args.where }
       },
       info
     );
     return product;
   },
   async deleteProduct(parent, args, ctx, info) {
-    const id = args.data.id;
-
     const product = await ctx.prisma.deleteProduct(
       {
-        id
+        ...args.where
       },
       info
     );
