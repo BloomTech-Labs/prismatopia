@@ -19,3 +19,7 @@ AWS cloudformation is used to create 3 differrent stacks:
 3. A Graphql Yoga Lambda function deployed using serverless and exposed using API Gateway
 
 This service can only be accessed using an API key passed in through the header. The exposed endpoint allows graphql queries and mutations.
+
+## Detailed Usage Documentation
+
+![Documentation](https://documenter.getpostman.com/view/5657034/SVtN4rhU?version=latest#fc3525fa-ac3a-45be-ae99-5cee90fcff35)
