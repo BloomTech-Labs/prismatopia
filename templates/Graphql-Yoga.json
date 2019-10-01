@@ -1,0 +1,487 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            { "ServerSideEncryptionByDefault": { "SSEAlgorithm": "AES256" } }
+          ]
+        }
+      }
+    },
+    "GraphqlLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": { "LogGroupName": "/aws/lambda/yoga-labby-dev-graphql" }
+    },
+    "PlaygroundLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": { "LogGroupName": "/aws/lambda/yoga-labby-dev-playground" }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": ["lambda.amazonaws.com"] },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": ["-", ["dev", "yoga-labby", "lambda"]]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": ["logs:CreateLogStream"],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/yoga-labby-dev*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": ["logs:PutLogEvents"],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/yoga-labby-dev*:*:*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            ["yoga-labby", "dev", { "Ref": "AWS::Region" }, "lambdaRole"]
+          ]
+        }
+      }
+    },
+    "EnterpriseLogAccessIamRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "AWS": "arn:aws:iam::802587217904:root" },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": "ServerlessEnterprise-z1Y3S0bbXNkbscxSN6"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LogFilterAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": ["logs:FilterLogEvents"],
+                  "Resource": [
+                    { "Fn::GetAtt": ["GraphqlLogGroup", "Arn"] },
+                    { "Fn::GetAtt": ["PlaygroundLogGroup", "Arn"] }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "GraphqlLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": { "Ref": "ServerlessDeploymentBucket" },
+          "S3Key": "serverless/yoga-labby/dev/1569895325713-2019-10-01T02:02:05.713Z/yoga-labby.zip"
+        },
+        "FunctionName": "yoga-labby-dev-graphql",
+        "Handler": "s_graphql.handler",
+        "MemorySize": 1024,
+        "Role": { "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"] },
+        "Runtime": "nodejs10.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "PRISMA_ENDPOINT": "http://labby-Publi-19C6VYQG6OCAW-579895022.us-east-1.elb.amazonaws.com",
+            "PRISMA_SECRET": "5711d4705fbd54cfcc6f3c28ed34f3ef623d1b37386bef7a"
+          }
+        }
+      },
+      "DependsOn": ["GraphqlLogGroup", "IamRoleLambdaExecution"]
+    },
+    "GraphqlLambdaVersionSN5zxxFnanAHHGktPJOqAcmHIxkbkIU5bGj50lOmKgU": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": { "Ref": "GraphqlLambdaFunction" },
+        "CodeSha256": "9yLXmee8QonmgvCBrSfJT7qXbBEs+VcbXkNpaYo1snM="
+      }
+    },
+    "PlaygroundLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": { "Ref": "ServerlessDeploymentBucket" },
+          "S3Key": "serverless/yoga-labby/dev/1569895325713-2019-10-01T02:02:05.713Z/yoga-labby.zip"
+        },
+        "FunctionName": "yoga-labby-dev-playground",
+        "Handler": "s_playground.handler",
+        "MemorySize": 1024,
+        "Role": { "Fn::GetAtt": ["IamRoleLambdaExecution", "Arn"] },
+        "Runtime": "nodejs10.x",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "PRISMA_ENDPOINT": "http://labby-Publi-19C6VYQG6OCAW-579895022.us-east-1.elb.amazonaws.com",
+            "PRISMA_SECRET": "5711d4705fbd54cfcc6f3c28ed34f3ef623d1b37386bef7a"
+          }
+        }
+      },
+      "DependsOn": ["PlaygroundLogGroup", "IamRoleLambdaExecution"]
+    },
+    "PlaygroundLambdaVersiontJ6iBNmYAwGzxVMwcVjrn17MM9W3TC9XEgUxdxURI48": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": { "Ref": "PlaygroundLambdaFunction" },
+        "CodeSha256": "9yLXmee8QonmgvCBrSfJT7qXbBEs+VcbXkNpaYo1snM="
+      }
+    },
+    "ApiGatewayRestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "dev-yoga-labby",
+        "EndpointConfiguration": { "Types": ["EDGE"] }
+      }
+    },
+    "ApiGatewayMethodOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": { "application/json": "{statusCode:200}" },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": { "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"] },
+        "RestApiId": { "Ref": "ApiGatewayRestApi" }
+      }
+    },
+    "ApiGatewayMethodPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": { "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"] },
+        "RestApiId": { "Ref": "ApiGatewayRestApi" },
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                { "Ref": "AWS::Partition" },
+                ":apigateway:",
+                { "Ref": "AWS::Region" },
+                ":lambda:path/2015-03-31/functions/",
+                { "Fn::GetAtt": ["GraphqlLambdaFunction", "Arn"] },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayMethodGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": { "Fn::GetAtt": ["ApiGatewayRestApi", "RootResourceId"] },
+        "RestApiId": { "Ref": "ApiGatewayRestApi" },
+        "ApiKeyRequired": true,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                { "Ref": "AWS::Partition" },
+                ":apigateway:",
+                { "Ref": "AWS::Region" },
+                ":lambda:path/2015-03-31/functions/",
+                { "Fn::GetAtt": ["PlaygroundLambdaFunction", "Arn"] },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayDeployment1569895304044": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": { "Ref": "ApiGatewayRestApi" },
+        "StageName": "dev"
+      },
+      "DependsOn": [
+        "ApiGatewayMethodOptions",
+        "ApiGatewayMethodPost",
+        "ApiGatewayMethodGet"
+      ]
+    },
+    "GraphqlLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Fn::GetAtt": ["GraphqlLambdaFunction", "Arn"] },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              { "Ref": "AWS::Partition" },
+              ":execute-api:",
+              { "Ref": "AWS::Region" },
+              ":",
+              { "Ref": "AWS::AccountId" },
+              ":",
+              { "Ref": "ApiGatewayRestApi" },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PlaygroundLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Fn::GetAtt": ["PlaygroundLambdaFunction", "Arn"] },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              { "Ref": "AWS::Partition" },
+              ":execute-api:",
+              { "Ref": "AWS::Region" },
+              ":",
+              { "Ref": "AWS::AccountId" },
+              ":",
+              { "Ref": "ApiGatewayRestApi" },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "ApiGatewayLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": { "LogGroupName": "/aws/api-gateway/yoga-labby-dev" }
+    },
+    "CustomApiGatewayAccountCloudWatchRole": {
+      "Type": "Custom::ApiGatewayAccountRole",
+      "Version": 1,
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": { "Ref": "ServerlessDeploymentBucket" },
+          "S3Key": "serverless/yoga-labby/dev/1569895325713-2019-10-01T02:02:05.713Z/custom-resources.zip"
+        },
+        "FunctionName": "yoga-labby-dev-custom-resource-apigw-cw-role",
+        "Handler": "apiGatewayCloudWatchRole/handler.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": ["IamRoleCustomResourcesLambdaExecution", "Arn"]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 180
+      },
+      "DependsOn": ["IamRoleCustomResourcesLambdaExecution"]
+    },
+    "IamRoleCustomResourcesLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": ["lambda.amazonaws.com"] },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                ["dev", "yoga-labby", "custom-resources-lambda"]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      ["arn:aws:iam:", { "Ref": "AWS::AccountId" }, "role/*"]
+                    ]
+                  },
+                  "Action": [
+                    "iam:AttachRolePolicy",
+                    "iam:CreateRole",
+                    "iam:ListAttachedRolePolicies",
+                    "iam:PassRole"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:apigateway:*::/account",
+                  "Action": ["apigateway:GET", "apigateway:PATCH"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CloudWatchLogsSubscriptionFilterGraphqlLogGroup": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:z1Y3S0bbXNkbscxSN6#lFfbFmSTSkqWm7Dx9N#yoga-labby#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": { "Ref": "GraphqlLogGroup" }
+      }
+    },
+    "CloudWatchLogsSubscriptionFilterPlaygroundLogGroup": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:z1Y3S0bbXNkbscxSN6#lFfbFmSTSkqWm7Dx9N#yoga-labby#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": { "Ref": "PlaygroundLogGroup" }
+      }
+    },
+    "CloudWatchLogsSubscriptionFilterApiGatewayLogGroup": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:z1Y3S0bbXNkbscxSN6#lFfbFmSTSkqWm7Dx9N#yoga-labby#dev",
+        "FilterPattern": "\"SLS_ACCESS_LOG\"",
+        "LogGroupName": { "Ref": "ApiGatewayLogGroup" }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": { "Ref": "ServerlessDeploymentBucket" }
+    },
+    "EnterpriseLogAccessIamRole": {
+      "Value": { "Fn::GetAtt": ["EnterpriseLogAccessIamRole", "Arn"] }
+    },
+    "GraphqlLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "GraphqlLambdaVersionSN5zxxFnanAHHGktPJOqAcmHIxkbkIU5bGj50lOmKgU"
+      }
+    },
+    "PlaygroundLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PlaygroundLambdaVersiontJ6iBNmYAwGzxVMwcVjrn17MM9W3TC9XEgUxdxURI48"
+      }
+    },
+    "ServiceEndpoint": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            { "Ref": "ApiGatewayRestApi" },
+            ".execute-api.",
+            { "Ref": "AWS::Region" },
+            ".",
+            { "Ref": "AWS::URLSuffix" },
+            "/dev"
+          ]
+        ]
+      }
+    }
+  }
+}
