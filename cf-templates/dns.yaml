@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: DNS and certs for Mission Control
+
+Resources:
+  DNS: 
+    Type: "AWS::Route53::HostedZone"
+    Properties: 
+      HostedZoneConfig: 
+        Comment: "Hosted zone for use-mission-control.com"
+      Name: "use-mission-control.com"
+  
+  APIDNS: 
+    Type: "AWS::Route53::HostedZone"
+    Properties: 
+      HostedZoneConfig: 
+        Comment: "Hosted zone for use-mission-control.com"
+      Name: "api.use-mission-control.com"
+  

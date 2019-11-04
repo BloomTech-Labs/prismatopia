@@ -1,0 +1,8 @@
+endpoint: https://pma-n-Publi-11BVC0Q971MNJ-2025074476.us-east-1.elb.amazonaws.com
+datamodel: datamodel.prisma
+
+secret: ${env:GRAPHQL_SERVICE_SECRET}
+
+generate:
+  - generator: typescript-client
+    output: ./generated/prisma-client/
