@@ -26,4 +26,6 @@ If the endpoint is using a self-signed certificate, you need to set a variable w
 ```shell
 # Tell Prisma client to ignore the certificate
 NODE_TLS_REJECT_UNAUTHORIZED=0 prisma deploy
+
+NODE_TLS_REJECT_UNAUTHORIZED=0 prisma playground
 ```
