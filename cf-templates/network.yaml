@@ -130,18 +130,18 @@ Resources:
     Properties:
         VpcId: !Ref VPC
   
-  PublicSubnetNACLEntryHTTPS:
+  PublicSubnetNACLEntryHTTP:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref PublicSubnetNACL
-      RuleNumber: 100
+      RuleNumber: 1000
       Protocol: 6
       RuleAction: allow
       Egress: false
       CidrBlock: 0.0.0.0/0
       PortRange:
-        From: 443
-        To: 443
+        From: 80
+        To: 80
 
   PublicSubnetNACLEntryEphemeralWithNAT:
     Type: AWS::EC2::NetworkAclEntry
@@ -404,8 +404,8 @@ Resources:
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: "6"
-          FromPort: 443
-          ToPort: 443
+          FromPort: 80
+          ToPort: 80
 
   PublicLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -439,14 +439,14 @@ Resources:
   PublicLoadBalancerListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      Certificates:
-        - CertificateArn: arn:aws:acm:us-east-1:576275871595:certificate/bf4af626-3995-4c99-b3b5-b6a838286616
+      # Certificates:
+      #   - CertificateArn: arn:aws:acm:us-east-1:576275871595:certificate/bf4af626-3995-4c99-b3b5-b6a838286616
       DefaultActions:
         - TargetGroupArn: !Ref 'PrismaTargetGroup'
           Type: 'forward'
       LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Port: 443
-      Protocol: HTTPS
+      Port: 80
+      Protocol: HTTP
 
   PrismaTaskDefinition:
     Type: AWS::ECS::TaskDefinition

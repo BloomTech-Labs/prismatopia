@@ -6,3 +6,6 @@ secret:   ${env:PM_API_DEV_SECRET}
 generate:
   - generator: typescript-client
     output: ./generated/prisma-client/
+
+seed:
+  import: seed.graphql

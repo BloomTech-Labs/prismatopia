@@ -1,0 +1,19 @@
+mutation {
+  product01: createProduct(
+    data:{
+      name: "Mission Control"
+    }
+  ) 
+  {
+    id
+  }
+
+  product02: createProduct(
+    data:{
+      name: "Labby"
+    }
+  ) 
+  {
+    id
+  }
+}
