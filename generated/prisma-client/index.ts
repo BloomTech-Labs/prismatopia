@@ -2256,7 +2256,7 @@ export const models: Model[] = [
 export const Prisma = makePrismaClientClass<ClientConstructor<Prisma>>({
   typeDefs,
   models,
-  endpoint: `https://pma-n-Publi-11BVC0Q971MNJ-2025074476.us-east-1.elb.amazonaws.com`,
-  secret: `${process.env["GRAPHQL_SERVICE_SECRET"]}`
+  endpoint: `${process.env["PM_API_DEV_ENDPOINT"]}`,
+  secret: `${process.env["PM_API_DEV_SECRET"]}`
 });
 export const prisma = new Prisma();
