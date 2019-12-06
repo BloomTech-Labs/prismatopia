@@ -28,4 +28,7 @@ If the endpoint is using a self-signed certificate, you need to set a variable w
 NODE_TLS_REJECT_UNAUTHORIZED=0 prisma deploy
 
 NODE_TLS_REJECT_UNAUTHORIZED=0 prisma playground
+
+# Clear and re-seed the database
+NODE_TLS_REJECT_UNAUTHORIZED=0 prisma seed -r
 ```

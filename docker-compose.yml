@@ -1,0 +1,40 @@
+version: '3'
+services:
+  apollo:
+    build:
+      context: ./apollo
+      dockerfile: Dockerfile
+    ports:
+     - '5555:5555'
+    environment:
+      APOLLO_LISTEN_PORT: 5555
+      OKTA_TOKEN: "${OKTA_TOKEN}"
+      OKTA_ORG_URL: "${OKTA_ORG_URL}"
+      PRISMA_ENDPOINT: http://prisma:6666
+      PRISMA_SECRET: "${PRISMA_SECRET}"
+  prisma:
+    image: prismagraphql/prisma:1.34
+    restart: always
+    ports:
+      - '6666:6666'
+    environment:
+      PRISMA_CONFIG: |
+        port: 6666
+        managementApiSecret: mysecret42
+        databases:
+          default:
+            connector: postgres
+            host: postgres-db
+            port: 5432
+            user: prisma
+            password: prisma
+  postgres-db:
+    image: postgres:10.3
+    restart: always
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+    volumes:
+      - postgres:/var/lib/postgresql-prisma/data
+volumes:
+  postgres: ~

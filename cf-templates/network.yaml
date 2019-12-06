@@ -130,7 +130,7 @@ Resources:
     Properties:
         VpcId: !Ref VPC
   
-  PublicSubnetNACLEntryHTTP:
+  PublicSubnetNACLIngressHTTP:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref PublicSubnetNACL
@@ -142,6 +142,19 @@ Resources:
       PortRange:
         From: 80
         To: 80
+  
+  PublicSubnetNACLIngressHTTPS:
+    Type: AWS::EC2::NetworkAclEntry
+    Properties:
+      NetworkAclId: !Ref PublicSubnetNACL
+      RuleNumber: 2000
+      Protocol: 6
+      RuleAction: allow
+      Egress: false
+      CidrBlock: 0.0.0.0/0
+      PortRange:
+        From: 443
+        To: 443
 
   PublicSubnetNACLEntryEphemeralWithNAT:
     Type: AWS::EC2::NetworkAclEntry
@@ -302,11 +315,11 @@ Resources:
         From: 1024
         To: 65535
   
-  PrivateSubnetNACLEntryEgressToVPC:
+  PrivateSubnetNACLEntryEgress:
     Type: AWS::EC2::NetworkAclEntry
     Properties:
       NetworkAclId: !Ref PrivateSubnetNACL
-      RuleNumber: 100
+      RuleNumber: 1000
       Protocol: 6
       RuleAction: allow
       Egress: true
@@ -368,6 +381,20 @@ Resources:
       DBSubnetGroupName: !Ref RDSSubnetGroup
       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
+  
+  RDSInstanceDev:
+    Type: "AWS::RDS::DBInstance"
+    Properties:
+      DBName: "prisma"
+      PubliclyAccessible: false
+      VPCSecurityGroups:
+        - !Ref RDSInstanceSecurityGroup
+      DBInstanceClass: "db.t3.small"
+      Engine: "postgres"
+      AllocatedStorage: "100"
+      DBSubnetGroupName: !Ref RDSSubnetGroup
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
 
   ECSTaskExecutionRole:
     Type: AWS::IAM::Role
@@ -403,9 +430,13 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
-          IpProtocol: "6"
+          IpProtocol: "tcp"
           FromPort: 80
           ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "tcp"
+          FromPort: 443
+          ToPort: 443
 
   PublicLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -420,6 +451,23 @@ Resources:
         - !Ref PublicSubnet02
       SecurityGroups:
         - !Ref PublicLoadBalancerSG
+
+  PublicLoadBalancerDev:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      LoadBalancerAttributes:
+      - Key: idle_timeout.timeout_seconds
+        Value: '30'
+      Subnets:
+        - !Ref PublicSubnet01
+        - !Ref PublicSubnet02
+      SecurityGroups:
+        - !Ref PublicLoadBalancerSG
+      Tags:
+        - Key: Environment
+          Value: Dev
   
   PrismaTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
@@ -436,17 +484,76 @@ Resources:
       VpcId: !Ref 'VPC'
       TargetType: 'ip'
 
-  PublicLoadBalancerListener:
+  PrismaTargetGroupDev:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Join ['-', [!Ref 'AWS::StackName', 'prismadev']]
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref 'VPC'
+      TargetType: 'ip'
+
+  PublicLoadBalancerListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      # Certificates:
-      #   - CertificateArn: arn:aws:acm:us-east-1:576275871595:certificate/bf4af626-3995-4c99-b3b5-b6a838286616
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      Protocol: HTTP
+      Port: 80
+
+  PublicLoadBalancerListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
       DefaultActions:
         - TargetGroupArn: !Ref 'PrismaTargetGroup'
           Type: 'forward'
       LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Port: 80
+      Protocol: HTTPS
+      Port: 443
+
+  PublicLoadBalancerListenerHTTPDev:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
       Protocol: HTTP
+      Port: 80
+
+  PublicLoadBalancerListenerHTTPSDev:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
+      DefaultActions:
+        - TargetGroupArn: !Ref 'PrismaTargetGroupDev'
+          Type: 'forward'
+      LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
+      Protocol: HTTPS
+      Port: 443
 
   PrismaTaskDefinition:
     Type: AWS::ECS::TaskDefinition
@@ -491,6 +598,49 @@ Resources:
             - Name: JAVA_OPTS
               Value: -Xmx1350m
 
+  PrismaTaskDefinitionDev:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      NetworkMode: awsvpc
+      RequiresCompatibilities: 
+        - FARGATE
+      Family: prisma
+      Cpu: "1024"
+      Memory: "2048"
+      ExecutionRoleArn: !Ref ECSTaskExecutionRole
+      TaskRoleArn: !Ref ECSTaskExecutionRole
+      ContainerDefinitions:
+        - Name: prisma-container
+          Image: 'prismagraphql/prisma:1.34'
+          Essential: true
+          PortMappings:
+            - ContainerPort: 60000
+          Ulimits:
+            - Name: nofile
+              HardLimit: 1000000
+              SoftLimit: 1000000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref PrismaLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: prisma
+          Environment:
+            - Name: PRISMA_CONFIG
+              Value: !Sub |
+                  port: 60000
+                  managementApiSecret: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+                  databases:
+                    default:
+                      connector: postgres
+                      host: ${RDSInstanceDev.Endpoint.Address}
+                      port: ${RDSInstanceDev.Endpoint.Port}
+                      user: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:username}}'
+                      password: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+                      migrations: true
+            - Name: JAVA_OPTS
+              Value: -Xmx1350m
+
   ECSCluster:
     Type: AWS::ECS::Cluster
 
@@ -501,7 +651,7 @@ Resources:
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - CidrIp: !GetAtt VPC.CidrBlock
-          IpProtocol: "6"
+          IpProtocol: "tcp"
           FromPort: 60000
           ToPort: 60000
 
@@ -517,6 +667,27 @@ Resources:
         - ContainerName: prisma-container
           ContainerPort: 60000
           TargetGroupArn: !Ref PrismaTargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets:
+            - !Ref PrivateSubnet01
+            - !Ref PrivateSubnet02
+          SecurityGroups:
+            - !Ref PrismaServiceSG
+  
+  PrismaServiceDev:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: PrismaDev
+      LaunchType: FARGATE
+      TaskDefinition: !Ref 'PrismaTaskDefinitionDev'
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      LoadBalancers: 
+        - ContainerName: prisma-container
+          ContainerPort: 60000
+          TargetGroupArn: !Ref PrismaTargetGroupDev
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED

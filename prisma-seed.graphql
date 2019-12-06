@@ -1,0 +1,53 @@
+mutation {
+  createProduct(
+    data:{
+      name: "Mission Control"
+    }
+  ) 
+  {
+    id
+  }
+}
+
+mutation {
+  createProduct(
+    data:{
+      name: "Best Places to Live"
+    }
+  ) 
+  {
+    id
+  }
+}
+mutation {
+  createProduct(
+    data:{
+      name: "Labby"
+    }
+  ) 
+  {
+    id
+  }
+}
+
+mutation {
+  createProduct(
+    data:{
+      name: "Blitz Build"
+    }
+  ) 
+  {
+    id
+  }
+}
+
+mutation {
+  createProduct(
+    data:{
+      name: "Memefly"
+    }
+  ) 
+  {
+    id
+  }
+}

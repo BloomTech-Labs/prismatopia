@@ -1,11 +1,14 @@
-datamodel: datamodel.prisma
+datamodel: prisma-datamodel.graphql
 
-endpoint: ${env:PM_API_DEV_ENDPOINT}
-secret:   ${env:PM_API_DEV_SECRET}
+endpoint: ${env:PRISMA_ENDPOINT}
+secret:   ${env:PRISMA_SECRET}
 
+# Generate the schema and client for Apollo to use
 generate:
+  - generator: graphql-schema
+    output: ./apollo/src/generated/prisma.graphql
   - generator: typescript-client
-    output: ./generated/prisma-client/
+    output: ./apollo/src/generated/prisma-client
 
 seed:
-  import: seed.graphql
+  import: prisma-seed.graphql

@@ -102,3 +102,11 @@ package-lock.json
 
 #serverless 
 serverless.yml
+
+generated/
+
+.vscode
+
+out/
+
+.env
