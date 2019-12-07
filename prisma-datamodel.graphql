@@ -12,6 +12,7 @@ type Project {
   product:  Product!
   start:    DateTime
   end:      DateTime
+  projectRoles: [ProjectRole]
 }
 
 type Person {
@@ -33,9 +34,9 @@ type Role {
 
 type ProjectRole {
   id:       ID! @id
-  person:   Person!
-  project:  Project!
-  role:     Role!
+  person:   Person
+  project:  Project
+  role:     Role
 }
 
 type ProductRole {
@@ -49,4 +50,21 @@ type LambdaRole {
   id:       ID! @id
   person:   Person!
   role:     Role!
+}
+
+type ProjectNote {
+  id:                 ID! @id
+  project:            Project!
+  topic:              ProjectNoteTopic!
+  performanceRating:  Int
+  createdBy:          Person!
+  note:               String!
+  attendees:          [Person!]!
+  createdAt:          DateTime
+  updatedAt:          DateTime
+}
+
+type ProjectNoteTopic {
+  id:   ID! @id
+  name: String!
 }

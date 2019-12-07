@@ -2,6 +2,57 @@ mutation {
   createProduct(
     data:{
       name: "Mission Control"
+      projects: {
+        create: [
+          {
+            name: "Labs 18 - Greenfield"
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Sally"
+                      lastname: "Strong"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Beth"
+                      lastname: "Page"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Ray"
+                      lastname: "Delanson"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+          { name: "Labs 19 - API" }
+        ]
+      }
     }
   ) 
   {
@@ -13,6 +64,11 @@ mutation {
   createProduct(
     data:{
       name: "Best Places to Live"
+      projects: {
+        create: [
+          { name: "Labs 18 - Greenfield" }
+        ]
+      }
     }
   ) 
   {
@@ -23,28 +79,12 @@ mutation {
   createProduct(
     data:{
       name: "Labby"
-    }
-  ) 
-  {
-    id
-  }
-}
-
-mutation {
-  createProduct(
-    data:{
-      name: "Blitz Build"
-    }
-  ) 
-  {
-    id
-  }
-}
-
-mutation {
-  createProduct(
-    data:{
-      name: "Memefly"
+      projects: {
+        create: [
+          { name: "Labs 18 - Greenfield" }
+          { name: "Labs 19 - Dedication" }
+        ]
+      }
     }
   ) 
   {
