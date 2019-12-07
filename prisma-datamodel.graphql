@@ -50,3 +50,20 @@ type LambdaRole {
   person:   Person!
   role:     Role!
 }
+
+type ProjectNote {
+  id:                 ID! @id
+  project:            Project!
+  topic:              ProjectNoteTopic!
+  performanceRating:  Int
+  createdBy:          Person!
+  note:               String!
+  attendees:          [Person!]!
+  createdAt:          DateTime
+  updatedAt:          DateTime
+}
+
+type ProjectNoteTopic {
+  id:   ID! @id
+  name: String!
+}
