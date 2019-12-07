@@ -2,6 +2,13 @@
 
 A GraphQL API with data model for managing products, projects, people and roles
 
+* prisma.io is used for the base (raw) data model/schema mgmt
+* An apollo server is used to create the public API
+
+## Docker
+
+A docker compose file is used to manage the services
+
 ## Usage
 
 The `prisma.yml` configuration file is used to manage the service, it requires some environment variable to be set:
