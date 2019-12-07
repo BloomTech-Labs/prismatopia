@@ -3,50 +3,50 @@ type Product {
   name:      String! @unique
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
-  # projects: [Project]
+  projects: [Project]
 }
 
-# type Project {
-#   id:       ID! @id
-#   name:     String!
-#   product:  Product!
-#   start:    DateTime
-#   end:      DateTime
-# }
+type Project {
+  id:       ID! @id
+  name:     String!
+  product:  Product!
+  start:    DateTime
+  end:      DateTime
+}
 
-# type Person {
-#   id:         ID! @id
-#   firstname:  String
-#   lastname:   String
-#   timezone:   String
-#   program:    String
-#   email:      String
-#   githubId:   String
-#   slackId:    String
-# }
+type Person {
+  id:         ID! @id
+  firstname:  String
+  lastname:   String
+  timezone:   String
+  program:    String
+  email:      String
+  githubId:   String
+  slackId:    String
+}
 
-# type Role {
-#   id:     ID! @id
-#   name:   String
-#   type:   String
-# }
+type Role {
+  id:     ID! @id
+  name:   String
+  type:   String
+}
 
-# type ProjectRole {
-#   id:       ID! @id
-#   person:   Person!
-#   project:  Project!
-#   role:     Role!
-# }
+type ProjectRole {
+  id:       ID! @id
+  person:   Person!
+  project:  Project!
+  role:     Role!
+}
 
-# type ProductRole {
-#   id:       ID! @id
-#   person:   Person!
-#   product:  Product!
-#   role:     Role!
-# }
+type ProductRole {
+  id:       ID! @id
+  person:   Person!
+  product:  Product!
+  role:     Role!
+}
 
-# type LambdaRole {
-#   id:       ID! @id
-#   person:   Person!
-#   role:     Role!
-# }
+type LambdaRole {
+  id:       ID! @id
+  person:   Person!
+  role:     Role!
+}
