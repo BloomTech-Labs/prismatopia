@@ -19,14 +19,15 @@ type Project {
 }
 
 type Person {
-  id:         ID! @id
-  firstname:  String
-  lastname:   String
-  timezone:   String
-  program:    String
-  email:      String
-  githubId:   String
-  slackId:    String
+  id:            ID! @id
+  firstname:     String
+  lastname:      String
+  timezone:      String
+  program:       String
+  email:         String
+  githubId:      String
+  slackId:       String
+  profilePicURL: String
 
   createdAt:  DateTime @createdAt
   updatedAt:  DateTime @updatedAt

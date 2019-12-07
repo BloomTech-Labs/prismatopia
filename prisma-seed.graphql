@@ -50,7 +50,64 @@ mutation {
               ]
             }
           }
-          { name: "Labs 19 - API" }
+          { name: "Labs 19 - API"
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Gary"
+                      lastname: "Trang"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Stan"
+                      lastname: "Looker"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Sarah"
+                      lastname: "Halison"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Web Engineer"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Bill"
+                      lastname: "Fields"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
         ]
       }
     }
@@ -66,7 +123,64 @@ mutation {
       name: "Best Places to Live"
       projects: {
         create: [
-          { name: "Labs 18 - Greenfield" }
+          { name: "Labs 18 - Greenfield"
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Melanie"
+                      lastname: "Long"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Tammy"
+                      lastname: "Carrera"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Travon"
+                      lastname: "Steele"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Web Engineer"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Trang"
+                      lastname: "Ng"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
         ]
       }
     }
@@ -81,8 +195,122 @@ mutation {
       name: "Labby"
       projects: {
         create: [
-          { name: "Labs 18 - Greenfield" }
-          { name: "Labs 19 - Dedication" }
+          { name: "Labs 18 - Greenfield"
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Thelma"
+                      lastname: "Loise"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Alex"
+                      lastname: "Pickering"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Jake"
+                      lastname: "Isle"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Data Scientist"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Phillip"
+                      lastname: "Garcia"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+          { name: "Labs 19 - Dedication"
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Constantine"
+                      lastname: "Kargill"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Jessica"
+                      lastname: "Stanley"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Liz"
+                      lastname: "Charlton"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Data Scientist"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Bernie"
+                      lastname: "Rocks"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "DevOps Engineer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
         ]
       }
     }
