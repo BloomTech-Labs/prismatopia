@@ -13,6 +13,7 @@ type Project {
   start:        DateTime
   end:          DateTime
   projectRoles: [ProjectRole]
+  projectNotes: [ProjectNote]
 
   createdAt:    DateTime @createdAt
   updatedAt:    DateTime @updatedAt
@@ -74,20 +75,22 @@ type LambdaRole {
 type ProjectNote {
   id:                 ID! @id
   project:            Project!
-  topic:              ProjectNoteTopic!
-  performanceRating:  Int
-  createdBy:          Person! @relation(name: "ProjectNoteCreatedBy")
+  topic:              String!
   note:               String!
-  attendees:          [Person!]! @relation(name: "MeetingAttendee")
+
+  # performanceRating:  Int
+
+  createdBy:          Person   @relation(name: "ProjectNoteCreatedBy")
+  # attendees:          [Person] @relation(name: "MeetingAttendee")
 
   createdAt:          DateTime @createdAt
   updatedAt:          DateTime @updatedAt
 }
 
-type ProjectNoteTopic {
-  id:   ID! @id
-  name: String!
+# type ProjectNoteTopic {
+#   id:   ID! @id
+#   name: String!
 
-  createdAt:          DateTime @createdAt
-  updatedAt:          DateTime @updatedAt
-}
+#   createdAt:          DateTime @createdAt
+#   updatedAt:          DateTime @updatedAt
+# }
