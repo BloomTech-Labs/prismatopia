@@ -19,17 +19,17 @@ mutation {
                     }
                   }
                 }
-                {
-                  topic: "Team Checkin"
-                  note: "Team is doing awesome!"
-                  createdBy: {
-                    create: {
-                      firstname: "Carol"
-                      lastname: "Francis"
-                      profilePicURL: "https://randomuser.me/api/portraits/women/2.jpg"
-                    }
-                  }
-                }
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Team is doing awesome!"
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Carol"
+                #       lastname: "Francis"
+                #       profilePicURL: "https://randomuser.me/api/portraits/women/2.jpg"
+                #     }
+                #   }
+                # }
               ]
             }
             projectRoles: {
@@ -79,17 +79,17 @@ mutation {
           { name: "Labs 19 - API"
             projectNotes: {
               create: [
-                {
-                  topic: "Product Cycle Review"
-                  note: "Team is crushing it! No roadblocks or other issues."
-                  createdBy: {
-                    create: {
-                      firstname: "Gary"
-                      lastname: "Gaxton"
-                      profilePicURL: "https://randomuser.me/api/portraits/men/58.jpg"
-                    }
-                  }
-                }
+                # {
+                #   topic: "Product Cycle Review"
+                #   note: "Team is crushing it! No roadblocks or other issues."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Gary"
+                #       lastname: "Gaxton"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/58.jpg"
+                #     }
+                #   }
+                # }
                 {
                   topic: "Team Release Canvas Approval"
                   note: "Needed to tune some of the requirements. Overall excellent work though."
@@ -101,17 +101,17 @@ mutation {
                     }
                   }
                 }
-                {
-                  topic: "Team Product Cycle Approval"
-                  note: "I love this team! They're doing great."
-                  createdBy: {
-                    create: {
-                      firstname: "Shaun"
-                      lastname: "Goldblatt"
-                      profilePicURL: "https://randomuser.me/api/portraits/men/59.jpg"
-                    }
-                  }
-                }
+                # {
+                #   topic: "Team Product Cycle Approval"
+                #   note: "I love this team! They're doing great."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Shaun"
+                #       lastname: "Goldblatt"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/59.jpg"
+                #     }
+                #   }
+                # }
               ]
             }
             projectRoles: {
@@ -189,28 +189,28 @@ mutation {
           { name: "Labs 18 - Greenfield"
             projectNotes: {
               create: [
-                {
-                  topic: "Team Checkin"
-                  note: "Some struggles, but seem to be gelling. Need to keep an eye on the mobile codebase."
-                  createdBy: {
-                    create: {
-                      firstname: "Tracy"
-                      lastname: "Sleed"
-                      profilePicURL: "https://pbs.twimg.com/profile_images/932898022303739904/9vLfhK9h.jpg"
-                    }
-                  }
-                }
-                {
-                  topic: "Team Release Canvas Approval"
-                  note: "Great job, good collaboration on the release canvas. Really great ideas."
-                  createdBy: {
-                    create: {
-                      firstname: "Beth"
-                      lastname: "Beech"
-                      profilePicURL: "https://randomuser.me/api/portraits/women/8.jpg"
-                    }
-                  }
-                }
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Some struggles, but seem to be gelling. Need to keep an eye on the mobile codebase."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Tracy"
+                #       lastname: "Sleed"
+                #       profilePicURL: "https://pbs.twimg.com/profile_images/932898022303739904/9vLfhK9h.jpg"
+                #     }
+                #   }
+                # }
+                # {
+                #   topic: "Team Release Canvas Approval"
+                #   note: "Great job, good collaboration on the release canvas. Really great ideas."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Beth"
+                #       lastname: "Beech"
+                #       profilePicURL: "https://randomuser.me/api/portraits/women/8.jpg"
+                #     }
+                #   }
+                # }
               ]
             }
             projectRoles: {
@@ -287,17 +287,17 @@ mutation {
           { name: "Labs 18 - Greenfield"
             projectNotes: {
               create: [
-                {
-                  topic: "Team Checkin"
-                  note: "Dynamite team dynamics... as in explosive! Need to keep tabs on this team. Great talent though."
-                  createdBy: {
-                    create: {
-                      firstname: "Igor"
-                      lastname: "Stanislaus"
-                      profilePicURL: "https://randomuser.me/api/portraits/men/95.jpg"
-                    }
-                  }
-                }
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Dynamite team dynamics... as in explosive! Need to keep tabs on this team. Great talent though."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Igor"
+                #       lastname: "Stanislaus"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/95.jpg"
+                #     }
+                #   }
+                # }
               ]
             }
             projectRoles: {

@@ -108,5 +108,6 @@ generated/
 .vscode
 
 out/
+dist/
 
 .env
