@@ -1,0 +1,440 @@
+mutation {
+  createProduct(
+    data:{
+      name: "Mission Control"
+      projects: {
+        create: [
+          {
+            name: "Labs 18 - Greenfield"
+            projectNotes: {
+              create: [
+                {
+                  topic: "Product Cycle Review"
+                  note: "Making really good progress on the prototyping of RC #1 but having some concerns about the technical decisions."
+                  createdBy: {
+                    create: {
+                      firstname: "Stan"
+                      lastname: "Lee"
+                      profilePicURL: "https://tinyfac.es/data/avatars/7D3FA6C0-83C8-4834-B432-6C65ED4FD4C3-500w.jpeg"
+                    }
+                  }
+                }
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Team is doing awesome!"
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Carol"
+                #       lastname: "Francis"
+                #       profilePicURL: "https://randomuser.me/api/portraits/women/2.jpg"
+                #     }
+                #   }
+                # }
+              ]
+            }
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Sally"
+                      lastname: "Strong"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Beth"
+                      lastname: "Page"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Ray"
+                      lastname: "Delanson"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+          { name: "Labs 19 - API"
+            projectNotes: {
+              create: [
+                # {
+                #   topic: "Product Cycle Review"
+                #   note: "Team is crushing it! No roadblocks or other issues."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Gary"
+                #       lastname: "Gaxton"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/58.jpg"
+                #     }
+                #   }
+                # }
+                {
+                  topic: "Team Release Canvas Approval"
+                  note: "Needed to tune some of the requirements. Overall excellent work though."
+                  createdBy: {
+                    create: {
+                      firstname: "Beth"
+                      lastname: "Shelton"
+                      profilePicURL: "https://randomuser.me/api/portraits/women/62.jpg"
+                    }
+                  }
+                }
+                # {
+                #   topic: "Team Product Cycle Approval"
+                #   note: "I love this team! They're doing great."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Shaun"
+                #       lastname: "Goldblatt"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/59.jpg"
+                #     }
+                #   }
+                # }
+              ]
+            }
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Gary"
+                      lastname: "Trang"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Stan"
+                      lastname: "Looker"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Sarah"
+                      lastname: "Halison"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Web Engineer"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Bill"
+                      lastname: "Fields"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ) 
+  {
+    id
+  }
+}
+
+mutation {
+  createProduct(
+    data:{
+      name: "Best Places to Live"
+      projects: {
+        create: [
+          { name: "Labs 18 - Greenfield"
+            projectNotes: {
+              create: [
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Some struggles, but seem to be gelling. Need to keep an eye on the mobile codebase."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Tracy"
+                #       lastname: "Sleed"
+                #       profilePicURL: "https://pbs.twimg.com/profile_images/932898022303739904/9vLfhK9h.jpg"
+                #     }
+                #   }
+                # }
+                # {
+                #   topic: "Team Release Canvas Approval"
+                #   note: "Great job, good collaboration on the release canvas. Really great ideas."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Beth"
+                #       lastname: "Beech"
+                #       profilePicURL: "https://randomuser.me/api/portraits/women/8.jpg"
+                #     }
+                #   }
+                # }
+              ]
+            }
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Melanie"
+                      lastname: "Long"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Tammy"
+                      lastname: "Carrera"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Travon"
+                      lastname: "Steele"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Web Engineer"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Trang"
+                      lastname: "Ng"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ) 
+  {
+    id
+  }
+}
+mutation {
+  createProduct(
+    data:{
+      name: "Labby"
+      projects: {
+        create: [
+          { name: "Labs 18 - Greenfield"
+            projectNotes: {
+              create: [
+                # {
+                #   topic: "Team Checkin"
+                #   note: "Dynamite team dynamics... as in explosive! Need to keep tabs on this team. Great talent though."
+                #   createdBy: {
+                #     create: {
+                #       firstname: "Igor"
+                #       lastname: "Stanislaus"
+                #       profilePicURL: "https://randomuser.me/api/portraits/men/95.jpg"
+                #     }
+                #   }
+                # }
+              ]
+            }
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Thelma"
+                      lastname: "Loise"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Alex"
+                      lastname: "Pickering"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Jake"
+                      lastname: "Isle"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Data Scientist"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Phillip"
+                      lastname: "Garcia"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "UX Designer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+          { name: "Labs 19 - Dedication"
+            projectNotes: {
+              create: [
+                {
+                  topic: "Team Release Canvas Review"
+                  note: "Nice work on the canvas!"
+                  createdBy: {
+                    create: {
+                      firstname: "Igor"
+                      lastname: "Stanislaus"
+                      profilePicURL: "https://randomuser.me/api/portraits/men/86.jpg"
+                    }
+                  }
+                }
+              ]
+            }
+            projectRoles: {
+              create: [
+                {
+                  person: {
+                    create: {
+                      firstname: "Constantine"
+                      lastname: "Kargill"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Team Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Jessica"
+                      lastname: "Stanley"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Section Lead"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Liz"
+                      lastname: "Charlton"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "Data Scientist"
+                    }
+                  }
+                }
+                {
+                  person: {
+                    create: {
+                      firstname: "Bernie"
+                      lastname: "Rocks"
+                    }
+                  }
+                  role: {
+                    create: {
+                      name: "DevOps Engineer"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ) 
+  {
+    id
+  }
+}
