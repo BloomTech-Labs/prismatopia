@@ -3,12 +3,12 @@ Description: A very simple VPC for hosting an application
 
 Resources:
   ECSCluster:
-  Type: "AWS::ECS::Cluster"
-  Properties:      
-    ClusterName: 2019-retreat
-    Tags: 
-        - Key: Name
-          Value: 2019-retreat
+    Type: "AWS::ECS::Cluster"
+    Properties:      
+      ClusterName: 2019-retreat
+      Tags: 
+          - Key: Name
+            Value: 2019-retreat
 
   PrismaLogGroup:
     Type: "AWS::Logs::LogGroup"
