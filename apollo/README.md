@@ -1,4 +1,4 @@
-# Apollo Server
+# The Apollo Layer of Prismapokalypse
 
 This is an Apollo Server that is pre-configured for use in this stack. It has some stuff already configured:
 

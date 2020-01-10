@@ -1,6 +1,6 @@
-# Mission Control API
+# Prismapokalypse
 
-A GraphQL API with data model for managing products, projects, people and roles
+A backend API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, Okta, Postgres, Docker, Typescript and more!
 
 ## The Production Stack
 
