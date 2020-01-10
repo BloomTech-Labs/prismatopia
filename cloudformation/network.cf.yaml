@@ -345,381 +345,381 @@ Resources:
       SubnetId: !Ref PrivateSubnet02
       NetworkAclId: !Ref PrivateSubnetNACL
 
-  RDSSubnetGroup: 
-    Type: "AWS::RDS::DBSubnetGroup"
-    Properties:
-      DBSubnetGroupDescription: "Subnet group for the API database"
-      SubnetIds: 
-        - !Ref PrivateSubnet01
-        - !Ref PrivateSubnet02
+#   RDSSubnetGroup: 
+#     Type: "AWS::RDS::DBSubnetGroup"
+#     Properties:
+#       DBSubnetGroupDescription: "Subnet group for the API database"
+#       SubnetIds: 
+#         - !Ref PrivateSubnet01
+#         - !Ref PrivateSubnet02
 
-  RDSInstanceSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-        GroupDescription: Allow Postgres
-        VpcId: !Ref VPC
-        SecurityGroupIngress:
-          - IpProtocol: tcp
-            FromPort: 5432
-            ToPort: 5432
-            CidrIp: !GetAtt VPC.CidrBlock
+#   RDSInstanceSecurityGroup:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#         GroupDescription: Allow Postgres
+#         VpcId: !Ref VPC
+#         SecurityGroupIngress:
+#           - IpProtocol: tcp
+#             FromPort: 5432
+#             ToPort: 5432
+#             CidrIp: !GetAtt VPC.CidrBlock
 
-  RDSInstanceSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "master"}'
-        GenerateStringKey: 'password'
-        PasswordLength: 16
-        ExcludeCharacters: '"@/\'
+#   RDSInstanceSecret:
+#     Type: AWS::SecretsManager::Secret
+#     Properties:
+#       GenerateSecretString:
+#         SecretStringTemplate: '{"username": "master"}'
+#         GenerateStringKey: 'password'
+#         PasswordLength: 16
+#         ExcludeCharacters: '"@/\'
 
-  RDSInstance:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBName: "prisma"
-      PubliclyAccessible: false
-      VPCSecurityGroups:
-        - !Ref RDSInstanceSecurityGroup
-      DBInstanceClass: "db.t3.small"
-      Engine: "postgres"
-      AllocatedStorage: "100"
-      DBSubnetGroupName: !Ref RDSSubnetGroup
-      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
-      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
+#   RDSInstance:
+#     Type: "AWS::RDS::DBInstance"
+#     Properties:
+#       DBName: "prisma"
+#       PubliclyAccessible: false
+#       VPCSecurityGroups:
+#         - !Ref RDSInstanceSecurityGroup
+#       DBInstanceClass: "db.t3.small"
+#       Engine: "postgres"
+#       AllocatedStorage: "100"
+#       DBSubnetGroupName: !Ref RDSSubnetGroup
+#       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
+#       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
   
-  RDSInstanceDev:
-    Type: "AWS::RDS::DBInstance"
-    Properties:
-      DBName: "prisma"
-      PubliclyAccessible: false
-      VPCSecurityGroups:
-        - !Ref RDSInstanceSecurityGroup
-      DBInstanceClass: "db.t3.small"
-      Engine: "postgres"
-      AllocatedStorage: "100"
-      DBSubnetGroupName: !Ref RDSSubnetGroup
-      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
-      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
+#   RDSInstanceDev:
+#     Type: "AWS::RDS::DBInstance"
+#     Properties:
+#       DBName: "prisma"
+#       PubliclyAccessible: false
+#       VPCSecurityGroups:
+#         - !Ref RDSInstanceSecurityGroup
+#       DBInstanceClass: "db.t3.small"
+#       Engine: "postgres"
+#       AllocatedStorage: "100"
+#       DBSubnetGroupName: !Ref RDSSubnetGroup
+#       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:username}}' ]]
+#       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSInstanceSecret, ':SecretString:password}}' ]]
 
-  ECSTaskExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: ecs-tasks.amazonaws.com
-          Action:
-            - 'sts:AssumeRole'
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      Policies:
-        - PolicyName: AmazonECSTaskExecutionRolePolicy
-          PolicyDocument:
-            Statement:
-            - Effect: Allow
-              Action:
-                - 'logs:*'
-                - 'ecr:*'
-              Resource: '*'
+#   ECSTaskExecutionRole:
+#     Type: AWS::IAM::Role
+#     Properties:
+#       AssumeRolePolicyDocument:
+#         Statement:
+#         - Effect: Allow
+#           Principal:
+#             Service: ecs-tasks.amazonaws.com
+#           Action:
+#             - 'sts:AssumeRole'
+#       ManagedPolicyArns:
+#         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+#       Policies:
+#         - PolicyName: AmazonECSTaskExecutionRolePolicy
+#           PolicyDocument:
+#             Statement:
+#             - Effect: Allow
+#               Action:
+#                 - 'logs:*'
+#                 - 'ecr:*'
+#               Resource: '*'
 
-  PrismaLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      RetentionInDays: 14
+#   PrismaLogGroup:
+#     Type: AWS::Logs::LogGroup
+#     Properties:
+#       RetentionInDays: 14
 
-  PublicLoadBalancerSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security Group for the Mission Control API ELB
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - CidrIp: 0.0.0.0/0
-          IpProtocol: "tcp"
-          FromPort: 80
-          ToPort: 80
-        - CidrIp: 0.0.0.0/0
-          IpProtocol: "tcp"
-          FromPort: 443
-          ToPort: 443
+#   PublicLoadBalancerSG:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       GroupDescription: Security Group for the Mission Control API ELB
+#       VpcId: !Ref VPC
+#       SecurityGroupIngress:
+#         - CidrIp: 0.0.0.0/0
+#           IpProtocol: "tcp"
+#           FromPort: 80
+#           ToPort: 80
+#         - CidrIp: 0.0.0.0/0
+#           IpProtocol: "tcp"
+#           FromPort: 443
+#           ToPort: 443
 
-  PublicLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Scheme: internet-facing
-      LoadBalancerAttributes:
-      - Key: idle_timeout.timeout_seconds
-        Value: '30'
-      Subnets:
-        - !Ref PublicSubnet01
-        - !Ref PublicSubnet02
-      SecurityGroups:
-        - !Ref PublicLoadBalancerSG
+#   PublicLoadBalancer:
+#     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+#     Properties:
+#       Type: application
+#       Scheme: internet-facing
+#       LoadBalancerAttributes:
+#       - Key: idle_timeout.timeout_seconds
+#         Value: '30'
+#       Subnets:
+#         - !Ref PublicSubnet01
+#         - !Ref PublicSubnet02
+#       SecurityGroups:
+#         - !Ref PublicLoadBalancerSG
 
-  PublicLoadBalancerDev:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
-    Properties:
-      Type: application
-      Scheme: internet-facing
-      LoadBalancerAttributes:
-      - Key: idle_timeout.timeout_seconds
-        Value: '30'
-      Subnets:
-        - !Ref PublicSubnet01
-        - !Ref PublicSubnet02
-      SecurityGroups:
-        - !Ref PublicLoadBalancerSG
-      Tags:
-        - Key: Environment
-          Value: Dev
+#   PublicLoadBalancerDev:
+#     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+#     Properties:
+#       Type: application
+#       Scheme: internet-facing
+#       LoadBalancerAttributes:
+#       - Key: idle_timeout.timeout_seconds
+#         Value: '30'
+#       Subnets:
+#         - !Ref PublicSubnet01
+#         - !Ref PublicSubnet02
+#       SecurityGroups:
+#         - !Ref PublicLoadBalancerSG
+#       Tags:
+#         - Key: Environment
+#           Value: Dev
   
-  PrismaTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Name: !Join ['-', [!Ref 'AWS::StackName', 'prisma']]
-      HealthCheckIntervalSeconds: 6
-      HealthCheckPath: /status
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      Port: 80
-      Protocol: HTTP
-      UnhealthyThresholdCount: 2
-      VpcId: !Ref 'VPC'
-      TargetType: 'ip'
+#   PrismaTargetGroup:
+#     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+#     Properties:
+#       Name: !Join ['-', [!Ref 'AWS::StackName', 'prisma']]
+#       HealthCheckIntervalSeconds: 6
+#       HealthCheckPath: /status
+#       HealthCheckProtocol: HTTP
+#       HealthCheckTimeoutSeconds: 5
+#       HealthyThresholdCount: 2
+#       Port: 80
+#       Protocol: HTTP
+#       UnhealthyThresholdCount: 2
+#       VpcId: !Ref 'VPC'
+#       TargetType: 'ip'
 
-  PrismaTargetGroupDev:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      Name: !Join ['-', [!Ref 'AWS::StackName', 'prismadev']]
-      HealthCheckIntervalSeconds: 6
-      HealthCheckPath: /status
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 2
-      Port: 80
-      Protocol: HTTP
-      UnhealthyThresholdCount: 2
-      VpcId: !Ref 'VPC'
-      TargetType: 'ip'
+#   PrismaTargetGroupDev:
+#     Type: AWS::ElasticLoadBalancingV2::TargetGroup
+#     Properties:
+#       Name: !Join ['-', [!Ref 'AWS::StackName', 'prismadev']]
+#       HealthCheckIntervalSeconds: 6
+#       HealthCheckPath: /status
+#       HealthCheckProtocol: HTTP
+#       HealthCheckTimeoutSeconds: 5
+#       HealthyThresholdCount: 2
+#       Port: 80
+#       Protocol: HTTP
+#       UnhealthyThresholdCount: 2
+#       VpcId: !Ref 'VPC'
+#       TargetType: 'ip'
 
-  PublicLoadBalancerListenerHTTP:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: redirect
-          RedirectConfig:
-            Protocol: HTTPS
-            Port: '443'
-            Host: '#{host}'
-            Path: '/#{path}'
-            Query: '#{query}'
-            StatusCode: HTTP_301
-      LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Protocol: HTTP
-      Port: 80
+#   PublicLoadBalancerListenerHTTP:
+#     Type: AWS::ElasticLoadBalancingV2::Listener
+#     Properties:
+#       DefaultActions:
+#         - Type: redirect
+#           RedirectConfig:
+#             Protocol: HTTPS
+#             Port: '443'
+#             Host: '#{host}'
+#             Path: '/#{path}'
+#             Query: '#{query}'
+#             StatusCode: HTTP_301
+#       LoadBalancerArn: !Ref 'PublicLoadBalancer'
+#       Protocol: HTTP
+#       Port: 80
 
-  PublicLoadBalancerListenerHTTPS:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      Certificates:
-        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
-      DefaultActions:
-        - TargetGroupArn: !Ref 'PrismaTargetGroup'
-          Type: 'forward'
-      LoadBalancerArn: !Ref 'PublicLoadBalancer'
-      Protocol: HTTPS
-      Port: 443
+#   PublicLoadBalancerListenerHTTPS:
+#     Type: AWS::ElasticLoadBalancingV2::Listener
+#     Properties:
+#       Certificates:
+#         - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
+#       DefaultActions:
+#         - TargetGroupArn: !Ref 'PrismaTargetGroup'
+#           Type: 'forward'
+#       LoadBalancerArn: !Ref 'PublicLoadBalancer'
+#       Protocol: HTTPS
+#       Port: 443
 
-  PublicLoadBalancerListenerHTTPDev:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: redirect
-          RedirectConfig:
-            Protocol: HTTPS
-            Port: '443'
-            Host: '#{host}'
-            Path: '/#{path}'
-            Query: '#{query}'
-            StatusCode: HTTP_301
-      LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
-      Protocol: HTTP
-      Port: 80
+#   PublicLoadBalancerListenerHTTPDev:
+#     Type: AWS::ElasticLoadBalancingV2::Listener
+#     Properties:
+#       DefaultActions:
+#         - Type: redirect
+#           RedirectConfig:
+#             Protocol: HTTPS
+#             Port: '443'
+#             Host: '#{host}'
+#             Path: '/#{path}'
+#             Query: '#{query}'
+#             StatusCode: HTTP_301
+#       LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
+#       Protocol: HTTP
+#       Port: 80
 
-  PublicLoadBalancerListenerHTTPSDev:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      Certificates:
-        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
-      DefaultActions:
-        - TargetGroupArn: !Ref 'PrismaTargetGroupDev'
-          Type: 'forward'
-      LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
-      Protocol: HTTPS
-      Port: 443
+#   PublicLoadBalancerListenerHTTPSDev:
+#     Type: AWS::ElasticLoadBalancingV2::Listener
+#     Properties:
+#       Certificates:
+#         - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
+#       DefaultActions:
+#         - TargetGroupArn: !Ref 'PrismaTargetGroupDev'
+#           Type: 'forward'
+#       LoadBalancerArn: !Ref 'PublicLoadBalancerDev'
+#       Protocol: HTTPS
+#       Port: 443
 
-  PrismaTaskDefinition:
-    Type: AWS::ECS::TaskDefinition
-    Properties:
-      NetworkMode: awsvpc
-      RequiresCompatibilities: 
-        - FARGATE
-      Family: prisma
-      Cpu: "1024"
-      Memory: "2048"
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      TaskRoleArn: !Ref ECSTaskExecutionRole
-      ContainerDefinitions:
-        - Name: prisma-container
-          Image: 'prismagraphql/prisma:1.34'
-          Essential: true
-          PortMappings:
-            - ContainerPort: 60000
-          Ulimits:
-            - Name: nofile
-              HardLimit: 1000000
-              SoftLimit: 1000000
-          LogConfiguration:
-            LogDriver: awslogs
-            Options:
-              awslogs-group: !Ref PrismaLogGroup
-              awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: prisma
-          Environment:
-            - Name: PRISMA_CONFIG
-              Value: !Sub |
-                  port: 60000
-                  managementApiSecret: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
-                  databases:
-                    default:
-                      connector: postgres
-                      host: ${RDSInstance.Endpoint.Address}
-                      port: ${RDSInstance.Endpoint.Port}
-                      user: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:username}}'
-                      password: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
-                      migrations: true
-            - Name: JAVA_OPTS
-              Value: -Xmx1350m
+#   PrismaTaskDefinition:
+#     Type: AWS::ECS::TaskDefinition
+#     Properties:
+#       NetworkMode: awsvpc
+#       RequiresCompatibilities: 
+#         - FARGATE
+#       Family: prisma
+#       Cpu: "1024"
+#       Memory: "2048"
+#       ExecutionRoleArn: !Ref ECSTaskExecutionRole
+#       TaskRoleArn: !Ref ECSTaskExecutionRole
+#       ContainerDefinitions:
+#         - Name: prisma-container
+#           Image: 'prismagraphql/prisma:1.34'
+#           Essential: true
+#           PortMappings:
+#             - ContainerPort: 60000
+#           Ulimits:
+#             - Name: nofile
+#               HardLimit: 1000000
+#               SoftLimit: 1000000
+#           LogConfiguration:
+#             LogDriver: awslogs
+#             Options:
+#               awslogs-group: !Ref PrismaLogGroup
+#               awslogs-region: !Ref AWS::Region
+#               awslogs-stream-prefix: prisma
+#           Environment:
+#             - Name: PRISMA_CONFIG
+#               Value: !Sub |
+#                   port: 60000
+#                   managementApiSecret: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+#                   databases:
+#                     default:
+#                       connector: postgres
+#                       host: ${RDSInstance.Endpoint.Address}
+#                       port: ${RDSInstance.Endpoint.Port}
+#                       user: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:username}}'
+#                       password: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+#                       migrations: true
+#             - Name: JAVA_OPTS
+#               Value: -Xmx1350m
 
-  PrismaTaskDefinitionDev:
-    Type: AWS::ECS::TaskDefinition
-    Properties:
-      NetworkMode: awsvpc
-      RequiresCompatibilities: 
-        - FARGATE
-      Family: prisma
-      Cpu: "1024"
-      Memory: "2048"
-      ExecutionRoleArn: !Ref ECSTaskExecutionRole
-      TaskRoleArn: !Ref ECSTaskExecutionRole
-      ContainerDefinitions:
-        - Name: prisma-container
-          Image: 'prismagraphql/prisma:1.34'
-          Essential: true
-          PortMappings:
-            - ContainerPort: 60000
-          Ulimits:
-            - Name: nofile
-              HardLimit: 1000000
-              SoftLimit: 1000000
-          LogConfiguration:
-            LogDriver: awslogs
-            Options:
-              awslogs-group: !Ref PrismaLogGroup
-              awslogs-region: !Ref AWS::Region
-              awslogs-stream-prefix: prisma
-          Environment:
-            - Name: PRISMA_CONFIG
-              Value: !Sub |
-                  port: 60000
-                  managementApiSecret: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
-                  databases:
-                    default:
-                      connector: postgres
-                      host: ${RDSInstanceDev.Endpoint.Address}
-                      port: ${RDSInstanceDev.Endpoint.Port}
-                      user: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:username}}'
-                      password: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
-                      migrations: true
-            - Name: JAVA_OPTS
-              Value: -Xmx1350m
+#   PrismaTaskDefinitionDev:
+#     Type: AWS::ECS::TaskDefinition
+#     Properties:
+#       NetworkMode: awsvpc
+#       RequiresCompatibilities: 
+#         - FARGATE
+#       Family: prisma
+#       Cpu: "1024"
+#       Memory: "2048"
+#       ExecutionRoleArn: !Ref ECSTaskExecutionRole
+#       TaskRoleArn: !Ref ECSTaskExecutionRole
+#       ContainerDefinitions:
+#         - Name: prisma-container
+#           Image: 'prismagraphql/prisma:1.34'
+#           Essential: true
+#           PortMappings:
+#             - ContainerPort: 60000
+#           Ulimits:
+#             - Name: nofile
+#               HardLimit: 1000000
+#               SoftLimit: 1000000
+#           LogConfiguration:
+#             LogDriver: awslogs
+#             Options:
+#               awslogs-group: !Ref PrismaLogGroup
+#               awslogs-region: !Ref AWS::Region
+#               awslogs-stream-prefix: prisma
+#           Environment:
+#             - Name: PRISMA_CONFIG
+#               Value: !Sub |
+#                   port: 60000
+#                   managementApiSecret: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+#                   databases:
+#                     default:
+#                       connector: postgres
+#                       host: ${RDSInstanceDev.Endpoint.Address}
+#                       port: ${RDSInstanceDev.Endpoint.Port}
+#                       user: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:username}}'
+#                       password: '{{resolve:secretsmanager:${RDSInstanceSecret}:SecretString:password}}'
+#                       migrations: true
+#             - Name: JAVA_OPTS
+#               Value: -Xmx1350m
 
-  ECSCluster:
-    Type: AWS::ECS::Cluster
+#   ECSCluster:
+#     Type: AWS::ECS::Cluster
 
-  PrismaServiceSG:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Security Group for the Mission Control API ELB
-      VpcId: !Ref VPC
-      SecurityGroupIngress:
-        - CidrIp: !GetAtt VPC.CidrBlock
-          IpProtocol: "tcp"
-          FromPort: 60000
-          ToPort: 60000
+#   PrismaServiceSG:
+#     Type: AWS::EC2::SecurityGroup
+#     Properties:
+#       GroupDescription: Security Group for the Mission Control API ELB
+#       VpcId: !Ref VPC
+#       SecurityGroupIngress:
+#         - CidrIp: !GetAtt VPC.CidrBlock
+#           IpProtocol: "tcp"
+#           FromPort: 60000
+#           ToPort: 60000
 
-  PrismaService:
-    Type: AWS::ECS::Service
-    Properties:
-      ServiceName: Prisma
-      LaunchType: FARGATE
-      TaskDefinition: !Ref 'PrismaTaskDefinition'
-      Cluster: !Ref ECSCluster
-      DesiredCount: 1
-      LoadBalancers: 
-        - ContainerName: prisma-container
-          ContainerPort: 60000
-          TargetGroupArn: !Ref PrismaTargetGroup
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: DISABLED
-          Subnets:
-            - !Ref PrivateSubnet01
-            - !Ref PrivateSubnet02
-          SecurityGroups:
-            - !Ref PrismaServiceSG
+#   PrismaService:
+#     Type: AWS::ECS::Service
+#     Properties:
+#       ServiceName: Prisma
+#       LaunchType: FARGATE
+#       TaskDefinition: !Ref 'PrismaTaskDefinition'
+#       Cluster: !Ref ECSCluster
+#       DesiredCount: 1
+#       LoadBalancers: 
+#         - ContainerName: prisma-container
+#           ContainerPort: 60000
+#           TargetGroupArn: !Ref PrismaTargetGroup
+#       NetworkConfiguration:
+#         AwsvpcConfiguration:
+#           AssignPublicIp: DISABLED
+#           Subnets:
+#             - !Ref PrivateSubnet01
+#             - !Ref PrivateSubnet02
+#           SecurityGroups:
+#             - !Ref PrismaServiceSG
   
-  PrismaServiceDev:
-    Type: AWS::ECS::Service
-    Properties:
-      ServiceName: PrismaDev
-      LaunchType: FARGATE
-      TaskDefinition: !Ref 'PrismaTaskDefinitionDev'
-      Cluster: !Ref ECSCluster
-      DesiredCount: 1
-      LoadBalancers: 
-        - ContainerName: prisma-container
-          ContainerPort: 60000
-          TargetGroupArn: !Ref PrismaTargetGroupDev
-      NetworkConfiguration:
-        AwsvpcConfiguration:
-          AssignPublicIp: DISABLED
-          Subnets:
-            - !Ref PrivateSubnet01
-            - !Ref PrivateSubnet02
-          SecurityGroups:
-            - !Ref PrismaServiceSG
+#   PrismaServiceDev:
+#     Type: AWS::ECS::Service
+#     Properties:
+#       ServiceName: PrismaDev
+#       LaunchType: FARGATE
+#       TaskDefinition: !Ref 'PrismaTaskDefinitionDev'
+#       Cluster: !Ref ECSCluster
+#       DesiredCount: 1
+#       LoadBalancers: 
+#         - ContainerName: prisma-container
+#           ContainerPort: 60000
+#           TargetGroupArn: !Ref PrismaTargetGroupDev
+#       NetworkConfiguration:
+#         AwsvpcConfiguration:
+#           AssignPublicIp: DISABLED
+#           Subnets:
+#             - !Ref PrivateSubnet01
+#             - !Ref PrivateSubnet02
+#           SecurityGroups:
+#             - !Ref PrismaServiceSG
 
-Outputs:
-  PublicSubnet01:
-    Description: ID for public subnet 01
-    Value: !Ref PublicSubnet01
-    Export:
-      Name: PublicSubnet01
-  PublicSubnet02:
-    Description: ID for public subnet 02
-    Value: !Ref PublicSubnet02
-    Export:
-      Name: PublicSubnet02
-  PrivateSubnet01:
-    Description: ID for private subnet 01
-    Value: !Ref PrivateSubnet01
-    Export:
-      Name: PrivateSubnet01
-  PrivateSubnet02:
-    Description: ID for private subnet 02
-    Value: !Ref PrivateSubnet02
-    Export:
-      Name: PrivateSubnet02
+# Outputs:
+#   PublicSubnet01:
+#     Description: ID for public subnet 01
+#     Value: !Ref PublicSubnet01
+#     Export:
+#       Name: PublicSubnet01
+#   PublicSubnet02:
+#     Description: ID for public subnet 02
+#     Value: !Ref PublicSubnet02
+#     Export:
+#       Name: PublicSubnet02
+#   PrivateSubnet01:
+#     Description: ID for private subnet 01
+#     Value: !Ref PrivateSubnet01
+#     Export:
+#       Name: PrivateSubnet01
+#   PrivateSubnet02:
+#     Description: ID for private subnet 02
+#     Value: !Ref PrivateSubnet02
+#     Export:
+#       Name: PrivateSubnet02

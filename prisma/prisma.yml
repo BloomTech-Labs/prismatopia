@@ -11,4 +11,4 @@ generate:
     output: ../apollo/schema/generated/prisma.graphql
   
 seed:
-  import: prisma-seed.graphql
+  import: ./seeds/prisma-seed.graphql
