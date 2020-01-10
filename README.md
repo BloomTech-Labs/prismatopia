@@ -100,7 +100,8 @@ This step will tell Prisma to deploy the datamodel `prisma-datamodel.graphql' to
 
 If you do talk to Prisma using your browser, you'll need to pass it a token. You create a token using the `prisma token` command, which uses the `PRISMA_SECRET` environment variable to create a token that you can copy into either GraphQL Playground or the Prisma Admin.
 
-More details <prisma/README.md>
+See [the Prisma Layer Readme](prisma/README.md)
+
 
 Notice that the Prisma API allows you to do just about anything you want to the data if you have a token. You can create, read, update and delete everything. Convenient, but not very secure... which is why we need another layer to handle all the detailed business logic to protect our data. Apollo!
 
@@ -108,4 +109,4 @@ Notice that the Prisma API allows you to do just about anything you want to the 
 
 Prisma is the data layer, it doesn't have any business logic for restricting what happens to the data, it just facilitates data passing in and our of our database. Apollo is where the 'backend' logic lives, mainly in the form of resolver functions.
 
-See <apollo/README.md>
+See [the Apollo Layer Readme](apollo/README.md)
