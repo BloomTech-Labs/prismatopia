@@ -1,11 +1,16 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: A very simple VPC for hosting an application
 
+Parameters:
+  CidrBlock:
+    Type: String
+    AllowedPattern: '((\d{1,3})\.){3}\d{1,3}/\d{1,2}'
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/22
+      CidrBlock: !Ref CidrBlock
   
   LoggingRole:
     Type: 'AWS::IAM::Role'
@@ -696,3 +701,25 @@ Resources:
             - !Ref PrivateSubnet02
           SecurityGroups:
             - !Ref PrismaServiceSG
+
+Outputs:
+  PublicSubnet01:
+    Description: ID for public subnet 01
+    Value: !Ref PublicSubnet01
+    Export:
+      Name: PublicSubnet01
+  PublicSubnet02:
+    Description: ID for public subnet 02
+    Value: !Ref PublicSubnet02
+    Export:
+      Name: PublicSubnet02
+  PrivateSubnet01:
+    Description: ID for private subnet 01
+    Value: !Ref PrivateSubnet01
+    Export:
+      Name: PrivateSubnet01
+  PrivateSubnet02:
+    Description: ID for private subnet 02
+    Value: !Ref PrivateSubnet02
+    Export:
+      Name: PrivateSubnet02

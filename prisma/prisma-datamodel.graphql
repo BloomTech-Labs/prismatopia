@@ -1,0 +1,96 @@
+type Product {
+  id:         ID! @id
+  name:       String! @unique
+  createdAt:  DateTime! @createdAt
+  updatedAt:  DateTime! @updatedAt
+  projects:   [Project]
+}
+
+type Project {
+  id:           ID! @id
+  name:         String!
+  product:      Product!
+  start:        DateTime
+  end:          DateTime
+  projectRoles: [ProjectRole]
+  projectNotes: [ProjectNote]
+
+  createdAt:    DateTime @createdAt
+  updatedAt:    DateTime @updatedAt
+}
+
+type Person {
+  id:            ID! @id
+  firstname:     String
+  lastname:      String
+  timezone:      String
+  program:       String
+  email:         String
+  githubId:      String
+  slackId:       String
+  profilePicURL: String
+
+  createdAt:  DateTime @createdAt
+  updatedAt:  DateTime @updatedAt
+}
+
+type Role {
+  id:         ID! @id
+  name:       String
+  type:       String
+
+  createdAt:  DateTime @createdAt
+  updatedAt:  DateTime @updatedAt
+}
+
+type ProjectRole {
+  id:         ID! @id
+  person:     Person
+  project:    Project
+  role:       Role
+
+  createdAt:  DateTime @createdAt
+  updatedAt:  DateTime @updatedAt
+}
+
+type ProductRole {
+  id:         ID! @id
+  person:     Person!
+  product:    Product!
+  role:       Role!
+
+  createdAt:  DateTime @createdAt
+  updatedAt:  DateTime @updatedAt
+}
+
+type LambdaRole {
+  id:         ID! @id
+  person:     Person!
+  role:       Role!
+
+  createdAt:  DateTime @createdAt
+  updatedAt:  DateTime @updatedAt
+}
+
+type ProjectNote {
+  id:                 ID! @id
+  project:            Project!
+  topic:              String!
+  note:               String!
+
+  # performanceRating:  Int
+
+  createdBy:          Person   @relation(name: "ProjectNoteCreatedBy")
+  # attendees:          [Person] @relation(name: "MeetingAttendee")
+
+  createdAt:          DateTime @createdAt
+  updatedAt:          DateTime @updatedAt
+}
+
+# type ProjectNoteTopic {
+#   id:   ID! @id
+#   name: String!
+
+#   createdAt:          DateTime @createdAt
+#   updatedAt:          DateTime @updatedAt
+# }

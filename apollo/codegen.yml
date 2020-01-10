@@ -1,7 +1,10 @@
-overwrite: true
-schema: "src/generated/prisma.graphql"
+schema:
+  - "./schema/schema.graphql"
 generates:
-  src/generated/graphql.ts:
+  ./src/generated/types.ts:
     plugins:
-      - "typescript"
-      - "typescript-resolvers"
+      - typescript
+      - typescript-resolvers:
+          contextType: ../#Context
+          useIndexSignature: true
+    

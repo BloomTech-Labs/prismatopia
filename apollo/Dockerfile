@@ -1,21 +1,17 @@
-FROM alpine:3.9
+FROM node:13-alpine
 
-ARG WORKDIR='/apollo'
-WORKDIR $WORKDIR
+# Drop all the code-stuff in an easy to locate directory
+WORKDIR /app
 
-# Create Apollo directory
-RUN mkdir -p $WORKDIR
-
-# Install app dependencies
+# Copy application source files
 COPY package.json .
-COPY yarn.lock .
+COPY package-lock.json .
+RUN npm install
+
 COPY tsconfig.json .
+COPY src ./src
+COPY schema ./schema
+RUN npm run build
 
-RUN apk add yarn
-RUN yarn install --production
-
-# Bundle app source
-COPY src src
-
+CMD [ "npm", "start" ]
 EXPOSE 8000
-CMD [ "yarn", "start" ]
