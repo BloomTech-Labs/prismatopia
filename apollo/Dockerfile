@@ -1,24 +1,29 @@
-FROM node:12 AS build-stage
-
-# Drop all the code-stuff in an easy to locate directory
+# ======================================================
+# Builds the application
+# ======================================================
+FROM node:12-alpine AS build
 WORKDIR /app
+COPY package.json npm-shrinkwrap.json tsconfig.json ./
+COPY src/ ./src/
+COPY schema/ ./schema/
+RUN npm install --silent && npm run build
 
-# Copy the runtime stuff
+
+# ======================================================
+# Creates an image with just the production deps
+# ======================================================
+FROM node:12-alpine AS deps
+WORKDIR /app
 COPY package.json npm-shrinkwrap.json ./
-
-# Install production dependencies and try to minimize the size of node_modules
-RUN npm install --production --silent && npm dedupe && npm prune && npm cache clean --force && npm run build
+RUN npm install --production --silent
 
 
-
-
+# ======================================================
+# Builds the final image from the previous two
+# ======================================================
 FROM node:12-alpine
-
-# Drop all the code-stuff in an easy to locate directory
 WORKDIR /app
-
-# Copy the pre-built application from the build stage
-COPY --from=build-stage /app/dist .
-
+COPY --from=deps /app/node_modules ./node_modules/
+COPY --from=build /app/dist ./
 CMD [ "node", "index.js" ]
 EXPOSE 8000

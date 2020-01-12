@@ -5,7 +5,7 @@
   "scripts": {
     "prebuild": "rm -rf dist/",
     "build": "tsc",
-    "postbuild": "npm shrinkwrap && cp -r schema dist",
+    "postbuild": "cp -r schema dist",
     "start": "node dist/index.js"
   },
   "dependencies": {
