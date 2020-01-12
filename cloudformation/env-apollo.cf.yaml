@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: The Apollo task and service definitions for ECS
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application 
+
+  EnvironmentName:
+    Type: String
+    Description: The name of the application environment 
+
+Resources:
+  LogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub ${ApplicationName}-${EnvironmentName}-apollo
+      RetentionInDays: 14
+
+  TaskDefinition:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      NetworkMode: awsvpc
+      RequiresCompatibilities: 
+        - FARGATE
+      Family: apollo
+      Cpu: "1024"
+      Memory: "2048"
+      ExecutionRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      TaskRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}
+        - Key: Application
+          Value: !Sub ${ApplicationName}
+        - Key: Environment
+          Value: !Sub ${EnvironmentName}
+      ContainerDefinitions:
+        - Name: "apollo-container"
+          Image: "lambdaschoollabs/prismatropolis:latest"
+          Essential: true
+          PortMappings:
+            - ContainerPort: 60000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: apollo
+          Environment:
+            - Name: PORT
+              Value: "8000"
+            - Name: GRAPHQL_API_PATH
+              Value: /api/graphql
+            - Name: PRISMA_ENDPOINT
+              Value: http://prisma:7000
+            - Name: PRISMA_SECRET
+              Value: "8000"
+            - Name: OAUTH_TOKEN_ENDPOINT
+              Value: https://dev-173777.okta.com/oauth2/default
+            - Name: OAUTH_CLIENT_ID
+              Value: 0oa23ze1sdfwtoKNQ357
+
+  Service:
+    Type: "AWS::ECS::Service"
+    Properties:
+      ServiceName: !Sub ${ApplicationName}-${EnvironmentName}-apollo
+      LaunchType: FARGATE
+      TaskDefinition: !Ref TaskDefinition
+      Cluster: !ImportValue ECSCluster
+      DesiredCount: 1
+      LoadBalancers: 
+        - ContainerName: apollo-container
+          ContainerPort: 60000
+          TargetGroupArn: !ImportValue PrismaTargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets:
+            - Fn::ImportValue: "PrivateSubnet01"
+            - Fn::ImportValue: "PrivateSubnet02"
+          SecurityGroups:
+            - "sg-0c004047020a47eb5"
+  

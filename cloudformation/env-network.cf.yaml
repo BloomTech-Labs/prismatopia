@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A very simple VPC for hosting an application
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application 
+
+  EnvironmentName:
+    Type: String
+    Description: The name of the application environment 
+
+Resources:
+  PublicLoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for the load balancer
+      VpcId: !ImportValue VPC
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "tcp"
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: "tcp"
+          FromPort: 443
+          ToPort: 443
+
+  PublicLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      LoadBalancerAttributes:
+      - Key: idle_timeout.timeout_seconds
+        Value: '30'
+      Subnets:
+        - Fn::ImportValue: "PublicSubnet03"
+        - Fn::ImportValue: "PublicSubnet04"
+      SecurityGroups:
+        - !Ref PublicLoadBalancerSG
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}
+  
+  PrismaTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId: !ImportValue VPC
+      TargetType: 'ip'
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}
+
+  PublicLoadBalancerListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      Protocol: HTTP
+      Port: 80
+
+  PublicLoadBalancerListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
+      DefaultActions:
+        - TargetGroupArn: !Ref 'PrismaTargetGroup'
+          Type: 'forward'
+      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      Protocol: HTTPS
+      Port: 443
+  
+  RecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !ImportValue RootHostedZone
+      Name: !Sub ${EnvironmentName}.api.use-mission-control.com
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt PublicLoadBalancer.DNSName
+        HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
+
+Outputs:
+  PrismaTargetGroup:
+    Description: The target group for the Prisma service
+    Value: !Ref PrismaTargetGroup
+    Export:
+      Name: PrismaTargetGroup

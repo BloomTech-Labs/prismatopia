@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: The Prisma task and service definitions for ECS
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application 
+
+  EnvironmentName:
+    Type: String
+    Description: The name of the application environment 
+
+Resources:
+  ECSCluster:
+    Type: "AWS::ECS::Cluster"
+    Properties:      
+      ClusterName: !Sub ${ApplicationName}-${EnvironmentName}
+      Tags: 
+          - Key: Name
+            Value: !Sub ${ApplicationName}-${EnvironmentName}
+
+  PrismaLogGroup:
+    Type: "AWS::Logs::LogGroup"
+    Properties:
+      LogGroupName: !Sub ${ApplicationName}-${EnvironmentName}-prisma
+      RetentionInDays: 14
+
+  PrismaTaskDefinition:
+    Type: "AWS::ECS::TaskDefinition"
+    Properties:
+      NetworkMode: awsvpc
+      RequiresCompatibilities: 
+        - FARGATE
+      Family: prisma
+      Cpu: "1024"
+      Memory: "2048"
+      ExecutionRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      TaskRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}
+      ContainerDefinitions:
+        - Name: "prisma-container"
+          Image: "prismagraphql/prisma:1.34"
+          Essential: true
+          PortMappings:
+            - ContainerPort: 60000
+          Ulimits:
+            - Name: nofile
+              HardLimit: 1000000
+              SoftLimit: 1000000
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref PrismaLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: prisma
+          Environment:
+            - Name: PRISMA_CONFIG
+              Value:
+                Fn::Sub:
+                  - |
+                    port: 60000
+                    managementApiSecret: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:password}}'
+                    databases:
+                      default:
+                        connector: postgres
+                        host: ${DBAddress}
+                        port: ${DBPort}
+                        user: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}'
+                        password: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:password}}'
+                        migrations: true
+                  - DBAddress: !ImportValue DBAddress
+                    DBPort: !ImportValue DBPort
+                    DBInstanceCredentials: !ImportValue DBInstanceCredentials
+            - Name: JAVA_OPTS
+              Value: -Xmx1350m
+
+  PrismaService:
+    Type: "AWS::ECS::Service"
+    Properties:
+      ServiceName: !Sub ${ApplicationName}-${EnvironmentName}-prisma
+      LaunchType: FARGATE
+      TaskDefinition: !Ref 'PrismaTaskDefinition'
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      LoadBalancers: 
+        - ContainerName: prisma-container
+          ContainerPort: 60000
+          TargetGroupArn: !ImportValue PrismaTargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets:
+            - Fn::ImportValue: "PrivateSubnet01"
+            - Fn::ImportValue: "PrivateSubnet02"
+          SecurityGroups:
+            - "sg-0c004047020a47eb5"
+
+Outputs:
+  ECSCluster:
+    Description: The ECS cluster
+    Value: !Ref ECSCluster
+    Export:
+      Name: ECSCluster
