@@ -100,8 +100,6 @@ public
 #serverless 
 serverless.yml
 
-generated/
-
 .vscode
 
 out/
