@@ -2,9 +2,7 @@ version: '3'
 services:
   # The Apollo service 
   apollo:
-    build:
-      context: ./apollo
-      dockerfile: Dockerfile
+    image: lambdaschoollabs/prismatropolis:latest
     ports:
       - "${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}"
     environment:

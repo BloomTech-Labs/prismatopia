@@ -97,9 +97,6 @@ public
 # DynamoDB Local files
 .dynamodb/
 
-#packages
-package-lock.json
-
 #serverless 
 serverless.yml
 

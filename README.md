@@ -1,10 +1,16 @@
-# Prismapokalypse
+# Prismatropolis
 
-A backend API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, Okta, Postgres, Docker, Typescript and more!
+A backend API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript and more!
 
-## The Production Stack
+## How to use this repository
 
-The production deployment of this API is built as a stack of technologies, from top to bottom...
+You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to clone.
+
+## The Stack
+
+This API is built as a very specific stack of technologies. This is about as opinionated a stack as it gets. There no options, other than configuring the existing stack components or swapping them out in your own copy. Enjoy!
+
+Here are the technologies in this stack...
 
 * AWS
   * Handles networking (ALB, VPC, etc.) and container management (ECS)
@@ -14,6 +20,8 @@ The production deployment of this API is built as a stack of technologies, from 
   * Provides an ORM to translate from Graphql to Postgres, Apollo resolvers mainly call a Prisma Client to access data
 * Postgres
   * Provides persistent storage for data, this is managed by AWS RDS in production but is run in a container during local development
+* Github
+  * Provides a place to hold the source code and Docker images
 
 ## Directories
 
