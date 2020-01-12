@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "ApplicationName",
+    "ParameterValue": "mission-control"
+  },
+  {
+    "ParameterKey": "EnvironmentName",
+    "ParameterValue": "labs19-stage"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "10.0.0.0/22"
+  },
+  {
+    "ParameterKey": "DBName",
+    "ParameterValue": "labs19"
+  },
+  {
+    "ParameterKey": "LoadBalancerName",
+    "ParameterValue": "labs19"
+  }
+]
