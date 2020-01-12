@@ -4,10 +4,10 @@ FROM node:12 AS build-stage
 WORKDIR /app
 
 # Copy the runtime stuff
-COPY package.json npm-shrinkwrap.json dist ./
+COPY package.json npm-shrinkwrap.json ./
 
 # Install production dependencies and try to minimize the size of node_modules
-RUN npm install --production --silent && npm dedupe && npm prune && npm cache clean --force
+RUN npm install --production --silent && npm dedupe && npm prune && npm cache clean --force && npm run build
 
 
 
@@ -18,7 +18,7 @@ FROM node:12-alpine
 WORKDIR /app
 
 # Copy the pre-built application from the build stage
-COPY --from=build-stage /app .
+COPY --from=build-stage /app/dist .
 
 CMD [ "node", "index.js" ]
 EXPOSE 8000
