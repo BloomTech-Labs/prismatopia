@@ -3,14 +3,12 @@
   "version": "1.0.0",
   "description": "Apollo layer for Mission Control",
   "scripts": {
-    "generate": "graphql-codegen",
     "prebuild": "rm -rf dist/",
     "build": "tsc",
-    "postbuild": "cp -r schema dist",
+    "postbuild": "npm shrinkwrap && cp -r schema dist",
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@ist-group/playground-oidc-express": "0.0.10",
     "@okta/jwt-verifier": "^1.0.0",
     "apollo-server-express": "^2.9.15",
     "graphql-import": "^0.7.1",
