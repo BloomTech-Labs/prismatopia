@@ -1,4 +1,4 @@
-# The Apollo Layer of Prismatropolis
+# The Apollo Layer
 
 This is an Apollo Server that is pre-configured for use in this stack. It has some stuff already configured:
 
@@ -25,6 +25,6 @@ The API is protected by requiring all inbound API calls to have a bearer token i
 # Development
 1. Create Github Personal Access Token (Read/Write/Delete Packages)
 2. Docker login `docker login -u <username> -p <personal access token> docker.pkg.github.com`
-3. docker images docker.pkg.github.com/Lambda-School-Labs/prismatropolis
-4. docker build -t docker.pkg.github.com/lambda-school-labs/prismatropolis/default:1.0 .
-5. docker push docker.pkg.github.com/lambda-school-labs/prismatropolis/default:1.0
+3. docker images docker.pkg.github.com/Lambda-School-Labs/prismatopia
+4. docker build -t docker.pkg.github.com/lambda-school-labs/prismatopia/default:1.0 .
+5. docker push docker.pkg.github.com/lambda-school-labs/prismatopia/default:1.0

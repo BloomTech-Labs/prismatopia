@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: A very simple VPC for hosting an application
+Description: Environment specific AWS resources
 
 Parameters:
   ApplicationName:
@@ -8,14 +8,28 @@ Parameters:
 
   EnvironmentName:
     Type: String
-    Description: The name of the application environment 
+    Description: The name of the application environment
+
+  ApplicationCertificateArn:
+    Type: String
+    Description: The ARN of the HTTPS certificate for the application
 
 Resources:
+  PrivateNamespace:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Properties:
+        Name: mission-control-private.com
+        Vpc:
+          Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
+
   PublicLoadBalancerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for the load balancer
-      VpcId: !ImportValue VPC
+      VpcId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: "tcp"
@@ -26,7 +40,7 @@ Resources:
           FromPort: 443
           ToPort: 443
 
-  PublicLoadBalancer:
+  PrismaLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Type: application
@@ -35,18 +49,38 @@ Resources:
       - Key: idle_timeout.timeout_seconds
         Value: '30'
       Subnets:
-        - Fn::ImportValue: "PublicSubnet03"
-        - Fn::ImportValue: "PublicSubnet04"
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PublicSubnet01
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PublicSubnet02
       SecurityGroups:
         - !Ref PublicLoadBalancerSG
       Tags: 
         - Key: Name
-          Value: !Sub ${ApplicationName}-${EnvironmentName}
+          Value: !Sub ${ApplicationName}-${EnvironmentName}-prisma
+
+  ApolloLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      LoadBalancerAttributes:
+      - Key: idle_timeout.timeout_seconds
+        Value: '30'
+      Subnets:
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PublicSubnet01
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PublicSubnet02
+      SecurityGroups:
+        - !Ref PublicLoadBalancerSG
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}-apollo
   
   PrismaTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
-      Name: !Sub ${ApplicationName}-${EnvironmentName}
       HealthCheckIntervalSeconds: 6
       HealthCheckPath: /status
       HealthCheckProtocol: HTTP
@@ -55,13 +89,34 @@ Resources:
       Port: 80
       Protocol: HTTP
       UnhealthyThresholdCount: 2
-      VpcId: !ImportValue VPC
+      VpcId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
       TargetType: 'ip'
       Tags: 
         - Key: Name
-          Value: !Sub ${ApplicationName}-${EnvironmentName}
+          Value: !Sub ${ApplicationName}-${EnvironmentName}-prisma
 
-  PublicLoadBalancerListenerHTTP:
+  ApolloTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /status
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
+      TargetType: 'ip'
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}-apollo
+
+  PrismaLoadBalancerListenerHTTP:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
@@ -73,35 +128,100 @@ Resources:
             Path: '/#{path}'
             Query: '#{query}'
             StatusCode: HTTP_301
-      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      LoadBalancerArn: !Ref 'PrismaLoadBalancer'
       Protocol: HTTP
       Port: 80
 
-  PublicLoadBalancerListenerHTTPS:
+  ApolloLoadBalancerListenerHTTP:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: '443'
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref 'ApolloLoadBalancer'
+      Protocol: HTTP
+      Port: 80
+
+  PrismaLoadBalancerListenerHTTPS:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       Certificates:
-        - CertificateArn: 'arn:aws:acm:us-east-1:576275871595:certificate/44c2ccb9-2333-43f8-8ad6-07a191c8ecfe'
+        - CertificateArn: !Ref ApplicationCertificateArn
       DefaultActions:
         - TargetGroupArn: !Ref 'PrismaTargetGroup'
           Type: 'forward'
-      LoadBalancerArn: !Ref 'PublicLoadBalancer'
+      LoadBalancerArn: !Ref 'PrismaLoadBalancer'
+      Protocol: HTTPS
+      Port: 443
+
+  ApolloLoadBalancerListenerHTTPS:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref ApplicationCertificateArn
+      DefaultActions:
+        - TargetGroupArn: !Ref 'ApolloTargetGroup'
+          Type: 'forward'
+      LoadBalancerArn: !Ref 'ApolloLoadBalancer'
       Protocol: HTTPS
       Port: 443
   
-  RecordSet:
+  ARecordApolloAPI:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneId: !ImportValue RootHostedZone
+      HostedZoneId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-HostedZone
       Name: !Sub ${EnvironmentName}.api.use-mission-control.com
       Type: A
       AliasTarget:
-        DNSName: !GetAtt PublicLoadBalancer.DNSName
-        HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
+        DNSName: !GetAtt ApolloLoadBalancer.DNSName
+        HostedZoneId: !GetAtt ApolloLoadBalancer.CanonicalHostedZoneID
+  
+  ARecordPrismaManagementAPI:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-HostedZone
+      Name: !Sub ${EnvironmentName}.prisma.use-mission-control.com
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt PrismaLoadBalancer.DNSName
+        HostedZoneId: !GetAtt PrismaLoadBalancer.CanonicalHostedZoneID
+
+  ECSCluster:
+    Type: "AWS::ECS::Cluster"
+    Properties:      
+      ClusterName: !Sub ${ApplicationName}-${EnvironmentName}
+      Tags: 
+        - Key: Name
+          Value: !Sub ${ApplicationName}-${EnvironmentName}-apollo
 
 Outputs:
   PrismaTargetGroup:
     Description: The target group for the Prisma service
     Value: !Ref PrismaTargetGroup
     Export:
-      Name: PrismaTargetGroup
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaTargetGroup
+  ApolloTargetGroup:
+    Description: The target group for the Apollo service
+    Value: !Ref ApolloTargetGroup
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-ApolloTargetGroup
+  ECSCluster:
+    Description: The ECS cluster
+    Value: !Ref ECSCluster
+    Export:
+      Name: !Sub ${ApplicationName}-ECSCluster
+  PrivateNamespace:
+    Description: The private namespace for the application environment
+    Value: !Ref PrivateNamespace
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace

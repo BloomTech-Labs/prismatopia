@@ -27,16 +27,22 @@ Resources:
       DBSubnetGroupName: !Sub ${ApplicationName}-${EnvironmentName}
       DBSubnetGroupDescription: "Subnet group for the API database"
       SubnetIds: 
-        - Fn::ImportValue: "PrivateSubnet01"
-        - Fn::ImportValue: "PrivateSubnet02"
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PrivateSubnet01
+        - Fn::ImportValue:
+            !Sub ${ApplicationName}-PrivateSubnet02
 
   DBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group the database
-      VpcId: !ImportValue VPC
+      VpcId:
+        Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
       SecurityGroupIngress:
-        - CidrIp: !ImportValue VPCCIDR
+        - CidrIp:
+            Fn::ImportValue:
+              !Sub ${ApplicationName}-VPCCIDR
           IpProtocol: "tcp"
           FromPort: 5432
           ToPort: 5432
@@ -57,25 +63,21 @@ Resources:
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
-        - Key: Application
-          Value: !Sub ${ApplicationName}
-        - Key: Environment
-          Value: !Sub ${EnvironmentName}
 
 Outputs:
   DBAddress:
     Description: The address of the database listener
     Value: !GetAtt DBInstance.Endpoint.Address
     Export:
-      Name: DBAddress
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-DBAddress
   DBPort:
     Description: The port of the database listener
     Value: !GetAtt DBInstance.Endpoint.Port
     Export:
-      Name: DBPort
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-DBPort
   DBInstanceCredentials:
     Description: The secret containing the DB instance credentials
     Value: !Ref DBInstanceCredentials
     Export:
-      Name: DBInstanceCredentials
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-DBInstanceCredentials
 

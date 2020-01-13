@@ -11,21 +11,27 @@ Parameters:
     Description: The name of the application environment 
 
 Resources:
-  ECSCluster:
-    Type: "AWS::ECS::Cluster"
-    Properties:      
-      ClusterName: !Sub ${ApplicationName}-${EnvironmentName}
-      Tags: 
-          - Key: Name
-            Value: !Sub ${ApplicationName}-${EnvironmentName}
+  PrismaManagementAPISecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub prisma-management-api-secret-${ApplicationName}-${EnvironmentName}
+      GenerateSecretString:
+        PasswordLength: 16
 
-  PrismaLogGroup:
+  PrismaDomainAPISecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub prisma-domain-api-secret-${ApplicationName}-${EnvironmentName}
+      GenerateSecretString:
+        PasswordLength: 16
+
+  LogGroup:
     Type: "AWS::Logs::LogGroup"
     Properties:
       LogGroupName: !Sub ${ApplicationName}-${EnvironmentName}-prisma
       RetentionInDays: 14
 
-  PrismaTaskDefinition:
+  TaskDefinition:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
       NetworkMode: awsvpc
@@ -34,8 +40,10 @@ Resources:
       Family: prisma
       Cpu: "1024"
       Memory: "2048"
-      ExecutionRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
-      TaskRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      ExecutionRoleArn:
+        Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
+      TaskRoleArn:
+        Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
@@ -52,7 +60,7 @@ Resources:
           LogConfiguration:
             LogDriver: awslogs
             Options:
-              awslogs-group: !Ref PrismaLogGroup
+              awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
           Environment:
@@ -61,7 +69,7 @@ Resources:
                 Fn::Sub:
                   - |
                     port: 60000
-                    managementApiSecret: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:password}}'
+                    managementApiSecret: '{{resolve:secretsmanager:${PrismaManagementAPISecret}:SecretString}}'
                     databases:
                       default:
                         connector: postgres
@@ -70,36 +78,68 @@ Resources:
                         user: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}'
                         password: '{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:password}}'
                         migrations: true
-                  - DBAddress: !ImportValue DBAddress
-                    DBPort: !ImportValue DBPort
-                    DBInstanceCredentials: !ImportValue DBInstanceCredentials
+                  - PrismaManagementAPISecret: !Ref PrismaManagementAPISecret
+                    DBAddress:
+                      Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-DBAddress
+                    DBPort:
+                      Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-DBPort
+                    DBInstanceCredentials:
+                      Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-DBInstanceCredentials
             - Name: JAVA_OPTS
               Value: -Xmx1350m
 
-  PrismaService:
+  Service:
     Type: "AWS::ECS::Service"
     Properties:
-      ServiceName: !Sub ${ApplicationName}-${EnvironmentName}-prisma
       LaunchType: FARGATE
-      TaskDefinition: !Ref 'PrismaTaskDefinition'
-      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref TaskDefinition
+      Cluster:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-ECSCluster
       DesiredCount: 1
       LoadBalancers: 
         - ContainerName: prisma-container
           ContainerPort: 60000
-          TargetGroupArn: !ImportValue PrismaTargetGroup
+          TargetGroupArn:
+            Fn::ImportValue:
+              !Sub ${ApplicationName}-${EnvironmentName}-PrismaTargetGroup
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
           Subnets:
-            - Fn::ImportValue: "PrivateSubnet01"
-            - Fn::ImportValue: "PrivateSubnet02"
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-PrivateSubnet01
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-PrivateSubnet02
           SecurityGroups:
-            - "sg-0c004047020a47eb5"
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-ServiceSG
+      ServiceRegistries:
+        - RegistryArn: !GetAtt DiscoveryServiceEntry.Arn
+          ContainerName: prisma-container
+          ContainerPort: 60000
+
+  DiscoveryServiceEntry:
+    Type: AWS::ServiceDiscovery::Service
+    Properties: 
+      Description: Discovery service entry for the service
+      DnsConfig:
+        RoutingPolicy: MULTIVALUE
+        DnsRecords:
+          - TTL: 60
+            Type: A
+          - TTL: 60
+            Type: SRV
+      HealthCheckCustomConfig: 
+        FailureThreshold: 1
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-prisma
+      NamespaceId:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
 
 Outputs:
-  ECSCluster:
-    Description: The ECS cluster
-    Value: !Ref ECSCluster
+  PrismaDomainAPISecret:
+    Description: The secret used to access the Prisma domain API
+    Value: !Ref PrismaDomainAPISecret
     Export:
-      Name: ECSCluster
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaDomainAPISecret

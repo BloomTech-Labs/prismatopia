@@ -9,6 +9,15 @@ Parameters:
   EnvironmentName:
     Type: String
     Description: The name of the application environment 
+  
+  OAuthTokenEndpoint:
+    Type: String
+    Description: Endpoint for validating OAuth tokens
+
+  OAuthClientID:
+    Type: String
+    Description: The ID of this OAuth client
+
 
 Resources:
   LogGroup:
@@ -26,8 +35,10 @@ Resources:
       Family: apollo
       Cpu: "1024"
       Memory: "2048"
-      ExecutionRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
-      TaskRoleArn: "arn:aws:iam::576275871595:role/pma-network-ECSTaskExecutionRole-889RJB8Y8X9P"
+      ExecutionRoleArn:
+        Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
+      TaskRoleArn:
+        Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
@@ -37,7 +48,7 @@ Resources:
           Value: !Sub ${EnvironmentName}
       ContainerDefinitions:
         - Name: "apollo-container"
-          Image: "lambdaschoollabs/prismatropolis:latest"
+          Image: "lambdaschoollabs/prismatopia:latest"
           Essential: true
           PortMappings:
             - ContainerPort: 60000
@@ -49,36 +60,64 @@ Resources:
               awslogs-stream-prefix: apollo
           Environment:
             - Name: PORT
-              Value: "8000"
+              Value: "60000"
             - Name: GRAPHQL_API_PATH
               Value: /api/graphql
             - Name: PRISMA_ENDPOINT
-              Value: http://prisma:7000
+              Value: http://prisma.mission-control-private.com:60000
             - Name: PRISMA_SECRET
-              Value: "8000"
+              Value:
+                Fn::ImportValue: !Sub {{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}
             - Name: OAUTH_TOKEN_ENDPOINT
-              Value: https://dev-173777.okta.com/oauth2/default
+              Value: !Ref OAuthTokenEndpoint
             - Name: OAUTH_CLIENT_ID
-              Value: 0oa23ze1sdfwtoKNQ357
+              Value: !Ref OAuthClientID
 
   Service:
     Type: "AWS::ECS::Service"
     Properties:
-      ServiceName: !Sub ${ApplicationName}-${EnvironmentName}-apollo
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
-      Cluster: !ImportValue ECSCluster
+      Cluster:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-ECSCluster
       DesiredCount: 1
       LoadBalancers: 
         - ContainerName: apollo-container
           ContainerPort: 60000
-          TargetGroupArn: !ImportValue PrismaTargetGroup
+          TargetGroupArn:
+            Fn::ImportValue:
+              !Sub ${ApplicationName}-${EnvironmentName}-ApolloTargetGroup
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
           Subnets:
-            - Fn::ImportValue: "PrivateSubnet01"
-            - Fn::ImportValue: "PrivateSubnet02"
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-PrivateSubnet01
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-PrivateSubnet02
           SecurityGroups:
-            - "sg-0c004047020a47eb5"
+            - Fn::ImportValue:
+                !Sub ${ApplicationName}-ServiceSG
+      ServiceRegistries:
+        - RegistryArn: !GetAtt DiscoveryServiceEntry.Arn
+          ContainerName: apollo-container
+          ContainerPort: 60000
   
+  DiscoveryServiceEntry:
+    Type: AWS::ServiceDiscovery::Service
+    Properties: 
+      Description: Discovery service entry for the service
+      DnsConfig:
+        RoutingPolicy: MULTIVALUE
+        DnsRecords:
+          - TTL: 60
+            Type: A
+          - TTL: 60
+            Type: SRV
+      HealthCheckCustomConfig: 
+        FailureThreshold: 1
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-apollo
+      NamespaceId:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace

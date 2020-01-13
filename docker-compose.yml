@@ -2,7 +2,7 @@ version: '3'
 services:
   # The Apollo service 
   apollo:
-    image: lambdaschoollabs/prismatropolis:latest
+    image: lambdaschoollabs/prismatopia:latest
     ports:
       - "${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}"
     environment:

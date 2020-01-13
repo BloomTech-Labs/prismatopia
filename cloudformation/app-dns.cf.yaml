@@ -1,5 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: DNS and certs for Mission Control
+Description: Application level DNS resources
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application 
 
 Resources:
   DNS: 
@@ -10,9 +15,9 @@ Resources:
       Name: "use-mission-control.com"
 
 Outputs:
-  ROOTHOSTEDZONE:
+  ApplicationHostedZone:
     Description: The the root hosted zone for the application
     Value: !Ref DNS
     Export:
-      Name: RootHostedZone
+      Name: !Sub ${ApplicationName}-HostedZone
   

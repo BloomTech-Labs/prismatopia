@@ -1,7 +1,7 @@
 {
-  "name": "apollo",
+  "name": "prismatopia-apollo",
   "version": "1.0.0",
-  "description": "Apollo layer for Mission Control",
+  "description": "Apollo layer for Prismatopia",
   "scripts": {
     "prebuild": "rm -rf dist/",
     "build": "tsc",

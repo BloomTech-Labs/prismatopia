@@ -35,86 +35,103 @@ apollo-build: apollo-gen
 	@echo Building Apollo image
 	cd apollo && \
 	npm run build && \
-	docker build -t $(APOLLO_DOCKER_REGISTRY)/lambda-school-labs/prismatropolis/default:1.0 .
+	docker build -t lambdaschoollabs/prismatopia:latest .
 
 .PHONY: apollo-push
 apollo-push: apollo-build
 	@echo
-	@echo Pushing Apollo image to registry: $(APOLLO_DOCKER_REGISTRY)
-	cd apollo && docker push $(APOLLO_DOCKER_REGISTRY)/lambda-school-labs/prismatropolis/default:1.0
-
-
-.PHONY: ecs-up
-ecs-up:
-	@echo
-	@echo Firing up the ECS cluster
-	ecs-cli up
-
-.PHONY: ecs-compose-up
-ecs-compose-up:
-	@echo
-	@echo Firing up the ECS services
-	cd ecs && ecs-cli compose up
+	@echo Pushing Apollo image to registry
+	cd apollo && docker push lambda-school-labs/prismatopia:latest
 
 
 .PHONY: cf-deploy-app-network
 cf-deploy-app-network:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the application network components
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file app-network.cf.yaml \
-  --stack-name pma-network \
+  --stack-name $(APPLICATION_NAME)-network \
 	--capabilities CAPABILITY_IAM \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 .PHONY: cf-deploy-app-dns
 cf-deploy-app-dns:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the main application DNS
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file app-dns.cf.yaml \
-  --stack-name mission-control-dns \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+  --stack-name $(APPLICATION_NAME)-dns \
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 
 .PHONY: cf-deploy-env-network
 cf-deploy-env-network:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the environment specific network components
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file env-network.cf.yaml \
   --stack-name $(APPLICATION_NAME)-$(ENVIRONMENT_NAME)-network \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 .PHONY: cf-deploy-env-db
 cf-deploy-env-db:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the DB for the environment
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file env-db.cf.yaml \
   --stack-name $(APPLICATION_NAME)-$(ENVIRONMENT_NAME)-db \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 .PHONY: cf-deploy-env-prisma
 cf-deploy-env-prisma:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the Prisma service for the environment
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file env-prisma.cf.yaml \
   --stack-name $(APPLICATION_NAME)-$(ENVIRONMENT_NAME)-prisma \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 .PHONY: cf-deploy-env-apollo
 cf-deploy-env-apollo:
 	@echo
+	@echo ===================================================================
 	@echo Deploying the Apollo service for the environment
+	@echo ===================================================================
 	cd cloudformation && \
 	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
   --template-file env-apollo.cf.yaml \
   --stack-name $(APPLICATION_NAME)-$(ENVIRONMENT_NAME)-apollo \
-	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json)
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
+
+
+.PHONY: cf-deploy-all
+cf-deploy-all: cf-deploy-app-network cf-deploy-app-dns cf-deploy-env-network cf-deploy-env-db cf-deploy-env-prisma cf-deploy-env-apollo
+	@echo
+	@echo Deploying all AWS resources

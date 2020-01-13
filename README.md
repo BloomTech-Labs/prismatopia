@@ -1,4 +1,4 @@
-# Prismatropolis
+# Prismatopia
 
 A backend API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript and more!
 

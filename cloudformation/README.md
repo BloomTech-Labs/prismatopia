@@ -1,4 +1,4 @@
-# The AWS Layer of Prismapokalypse
+# The AWS Layer of Prismatopia
 
 "Always do everything as code" - Me
 
