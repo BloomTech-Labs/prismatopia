@@ -2,6 +2,10 @@
 
 The `prisma.yml` configuration file is used to manage the service, it requires some environment variable to be set:
 
+* `prisma.yml` The main Prisma configuration file.
+* `prisma-datamodel.graphql` The Prisma data model for building the database
+* `prisma-seed-*.graphql` Seed files for filling the database with data
+* 
 ```shell
 # Set the URL of the Prisma endpoint
 export PM_API_DEV_ENDPOINT=<The URL to the endpoint>

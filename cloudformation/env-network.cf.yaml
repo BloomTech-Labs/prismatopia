@@ -101,7 +101,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 6
-      HealthCheckPath: /status
+      HealthCheckPath: /.well-known/apollo/server-health
       HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
@@ -178,7 +178,7 @@ Resources:
       HostedZoneId:
         Fn::ImportValue:
             !Sub ${ApplicationName}-HostedZone
-      Name: !Sub ${EnvironmentName}.api.use-mission-control.com
+      Name: !Sub apollo-${EnvironmentName}.use-mission-control.com
       Type: A
       AliasTarget:
         DNSName: !GetAtt ApolloLoadBalancer.DNSName
@@ -190,7 +190,7 @@ Resources:
       HostedZoneId:
         Fn::ImportValue:
             !Sub ${ApplicationName}-HostedZone
-      Name: !Sub ${EnvironmentName}.prisma.use-mission-control.com
+      Name: !Sub prisma-${EnvironmentName}.use-mission-control.com
       Type: A
       AliasTarget:
         DNSName: !GetAtt PrismaLoadBalancer.DNSName

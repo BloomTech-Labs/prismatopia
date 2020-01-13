@@ -65,9 +65,9 @@ Resources:
               Value: /api/graphql
             - Name: PRISMA_ENDPOINT
               Value: http://prisma.mission-control-private.com:60000
-            - Name: PRISMA_SECRET
-              Value:
-                Fn::ImportValue: !Sub {{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}
+            # - Name: PRISMA_SECRET
+            #   Value:
+            #     Fn::ImportValue: !Sub "{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}"
             - Name: OAUTH_TOKEN_ENDPOINT
               Value: !Ref OAuthTokenEndpoint
             - Name: OAUTH_CLIENT_ID
