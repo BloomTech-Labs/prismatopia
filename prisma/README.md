@@ -1,34 +1,29 @@
 # The Prisma Layer
 
-The `prisma.yml` configuration file is used to manage the service, it requires some environment variable to be set:
+## Configuration
 
-* `prisma.yml` The main Prisma configuration file.
-* `prisma-datamodel.graphql` The Prisma data model for building the database
-* `prisma-seed-*.graphql` Seed files for filling the database with data
-* 
-```shell
-# Set the URL of the Prisma endpoint
-export PM_API_DEV_ENDPOINT=<The URL to the endpoint>
+`prisma.yml`
+The `prisma.yml` configuration file is used to manage the service, it requires some environment variables to be set:
 
-# Set the secret used to access the endpoint
-export PM_API_DEV_SECRET=<The Secret>
-```
+- PRISMA_ENDPOINT
+- PRISMA_SECRET
 
-In order to talk to the GraphQL server management endpoint a secret is required:
+## The Model
 
-```shell
-# Set the secret for accessing the management API
-PRISMA_MANAGEMENT_API_SECRET=<The Secret>
-```
+`prisma-datamodel.graphql`
+The Prisma data model for building the database
 
-If the endpoint is using a self-signed certificate, you need to set a variable when deploying
+# The Data
 
-```shell
-# Tell Prisma client to ignore the certificate
-NODE_TLS_REJECT_UNAUTHORIZED=0 prisma deploy
+`prisma-seed-*.graphql`
+Seed files for filling the database with data
 
-NODE_TLS_REJECT_UNAUTHORIZED=0 prisma playground
+## Management API
 
-# Clear and re-seed the database
-NODE_TLS_REJECT_UNAUTHORIZED=0 prisma seed -r
-```
+PRISMA_MANAGEMENT_API_SECRET
+This environment variable needs to be set for the Prisma CLI to talk to the Prisma management api
+
+## Insecurity
+
+If the Prisma endpoint is using a self-signed certificate, you need to set a variable when deploying: `export NODE_TLS_REJECT_UNAUTHORIZED=0`
+
