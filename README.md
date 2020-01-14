@@ -68,12 +68,41 @@ Oh how do we love the Makefile! So handy! Anything you need to do with Prismatop
 
 ## Running locally
 
-1. Create the `.env` file
-2. Source the `.env` file: `source ./sourceme.sh`
-3. Run Prismatopia: `docker-compose up`
-4. Deploy the Prisma schema: `make prisma-deploy`
-5. Generate a token: `make prisma-token`
-6. Play: `http://localhost:7000`
+1. Create an `.env` file in the root directory as described above
+2. Run Prismatopia: `docker-compose up`
+
+Prisma should be running now, you should see some output:
+
+```shell
+...
+apollo_1    | Running at address :: on port 8000
+...
+prisma_1    | Server running on :7000
+...
+```
+
+You should also be able to hit Prisma in the browser:
+
+* GraphQL Playground: <http://localhost:7000/>
+* Prisma Admin: <http://localhost:7000/_admin>
+
+Though when you hit Apollo, you should get an authorization error:
+
+* Apollo API: <http://localhost:8000/api/graphql>
+  * `Authorization header _must_ contain bearer token in the format 'Bearer <\<Access Token (JWT)\>'`
+
+Sweet! Now, you need to deploy something to Prisma, which starts out empty.
+
+1. Load the environment variables into your shell: `source ./sourceme.sh`
+2. Deploy the Prisma schema: `make prisma-deploy`
+3. Generate a token: `make prisma-token`
+
+You've now deployed and seeded the Prisma/Postgres layer. You can refresh your browser and use the generated token in GraphQL Playground and Prisma Admin. You should see data and you should be able to run some queried and mutations.
+
+Getting into Apollo will be a bit trickier, since you need a valid JWT from an OAuth identity provider. In this case, we're using Okta, so you'll need to get a JWT from Okta.
+
+1. Use Postman to get an access token from Okta
+2. Use that access token to authorize with Apollo
 
 ## Running in AWS
 

@@ -4,6 +4,9 @@ $(info Loading environment variables from .env file)
 include .env
 export
 
+# =================================================================
+# General controls
+# =================================================================
 .PHONY: clean
 clean:
 	@echo
@@ -16,6 +19,10 @@ init: clean
 	@echo Initializing
 	cd apollo && npm install -production && npm prune
 
+
+# =================================================================
+# Prisma controls
+# =================================================================
 .PHONY: prisma-gen
 prisma-gen:
 	@echo
@@ -23,6 +30,24 @@ prisma-gen:
 	cd prisma
 	prisma generate
 
+.PHONY: prisma-deploy
+prisma-deploy:
+	@echo
+	@echo Deploying Prisma schema
+	cd prisma
+	prisma deploy
+
+.PHONY: prisma-token
+prisma-token:
+	@echo
+	@echo Generating Prisma token
+	cd prisma
+	prisma token
+
+
+# =================================================================
+# Apollo controls
+# =================================================================
 .PHONY: apollo-gen
 apollo-gen: prisma-gen
 	@echo
@@ -44,6 +69,9 @@ apollo-push: apollo-build
 	cd apollo && docker push lambda-school-labs/prismatopia:latest
 
 
+# =================================================================
+# Cloudformation controls
+# =================================================================
 .PHONY: cf-deploy-app-network
 cf-deploy-app-network:
 	@echo
