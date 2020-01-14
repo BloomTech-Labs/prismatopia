@@ -2,11 +2,11 @@
 
 NOTE: THIS IS A WORK IN PROGRESS, CHANGING RAPIDLY, NOT STABLE, USE AT YOUR OWN RISK UNTIL THIS SENTENCE IS REMOVED FROM THE README!
 
-A backend API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript and more!
+An API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript, AWS and more!
 
 ## How to use this repository
 
-You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to clone.
+Prismatopia is a reference implementation, meaning you can clone it, configure, run it and play with it. But if you want to use it for your own purposes, you need to heavily modify it. You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to fork or otherwise copy as the starting point for your API stack.
 
 ## The Stack
 
@@ -27,72 +27,59 @@ Here are the technologies in this stack...
 
 ## Directories
 
-The various layers are organized in their own folders to help keep everything neat and tidy.
+The various components of this stack are organized into folders to help keep everything neat and tidy.
 
 ### Root
 
-Most of the time you'll be working in the `prisma` or `apollo` directories, messing with those layers. The root has a couple globally relevant files
+`.env`
+You don't see this because you'll need to create it and load it up with your specific configurations. To get Prismatopia running for reference, you should create a `.env` file in the root directory that looks like this:
 
-* `docker-compose.yml` This file declares the system and how the various components interact
-* `sourceme.sh` a script that loads up environment variables for ez development (Note: As implied, you need to source this file `source ./sourceme.sh`)
+```
+APPLICATION_NAME=donuts
+ENVIRONMENT_NAME=stage
+
+OAUTH_TOKEN_ENDPOINT=https://<your okta domain>.okta.com/oauth2/default
+OAUTH_CLIENT_ID=<your okta client id>
+
+PRISMA_MANAGEMENT_API_SECRET=<a big long gnarly secret string used to access the prisma management api>
+
+PRISMA_ENDPOINT=http://localhost:7000/
+
+PRISMA_SECRET=<another big long gnarly secret string used to access your application's prisma api>
+```
+
+`sourceme.sh`
+A simple little script that will load the environment variables in `.env` into your shell environment. You need to source this for it to work: `source ./sourceme.sh`
+
+`docker-compose.yml`
+A Docker Compose file that brings Prismatopia up locally for you to play with and develop against. Use it by running `docker-compose up`
+
+`.gitignore`
+Very important to ensuing that you don't accidentally commit `.env` into your repository!
+
+`Makefile`
+Oh how do we love the Makefile! So handy! Anything you need to do with Prismatopia can be done from the make file...
+
+### The Layers
 
 * [The Apollo Layer](apollo/README.md)
 * [The Prisma Layer](prisma/README.md)
 * [The AWS Layer](cloudformation/README.md)
 
-## The Makefile
+## Running locally
 
-Oh how do we love the Makefile!
+1. Create the `.env` file
+2. Source the `.env` file: `source ./sourceme.sh`
+3. Run Prismatopia: `docker-compose up`
+4. Deploy the Prisma schema: `make prisma-deploy`
+5. Generate a token: `make prisma-token`
+6. Play: `http://localhost:7000`
 
-### Step 1) Export environment variables
+## Running in AWS
 
-There are a bunch of variables that are _not_ hardcoded into the source code. These are pulled from the environment when this is run locally or in production. The easiest way to do this is to create a `.env` file in the root directory of the project. Being absolutely sure the `.env` is listed in your `.gitignore` file so that these variables _never_ get committed into the repository.
-
-Assuming you're using Okta as your Oauth provider, the `.env` file should look something like this:
-
-```text
-OAUTH_TOKEN_ENDPOINT=<https://_your okta domain_/oauth2/default>
-OAUTH_CLIENT_ID=<_your okta client id_>
-
-PRISMA_MANAGEMENT_API_SECRET=<_a random secret to secure the prisma management api_>
-
-PRISMA_ENDPOINT=<_when running locally, something like: http://localhost:7000/mc/local_>
-PRISMA_SECRET=<_a random secret to secure the prisma service api_>
-```
-
-Once you get your `.env` file setup, you can run `source ./sourceme.sh` to export them. This file is also picked up by Docker Compose automatically.
-
-### Step 2) Launch locally using Docker Compose
-
-`docker-compose up --build`
-
-Note: You'll need to get Docker installed on your machine (<https://www.docker.com/>)
-
-If everything works, you'll see that all of the services are now up and running localling on your machine:
-
-* Apollo is listening on <http://localhost:8000>
-* Prisma is listening on <http://localhost:7000>
-* Postgres is listening on <localhost:5432>
-
-### Step 3) Deploy the Prisma Service
-
-```sh
-cd prisma
-prisma deploy
-prisma seed
-```
-
-This step will tell Prisma to deploy the datamodel `prisma-datamodel.graphql' to Postgres and seed in the initial data. At this point, Prisma will create all of the tables and relations required to store the data that's been defined in the data model. You can check this out by going to either <http://localhost:7000/> or <http://localhost:7000/_admin> in your browser.
-
-If you do talk to Prisma using your browser, you'll need to pass it a token. You create a token using the `prisma token` command, which uses the `PRISMA_SECRET` environment variable to create a token that you can copy into either GraphQL Playground or the Prisma Admin.
-
-See [the Prisma Layer Readme](prisma/README.md)
-
-
-Notice that the Prisma API allows you to do just about anything you want to the data if you have a token. You can create, read, update and delete everything. Convenient, but not very secure... which is why we need another layer to handle all the detailed business logic to protect our data. Apollo!
-
-### Step 4) Build Apollo
-
-Prisma is the data layer, it doesn't have any business logic for restricting what happens to the data, it just facilitates data passing in and our of our database. Apollo is where the 'backend' logic lives, mainly in the form of resolver functions.
-
-
+1. Create the `.env` file
+2. Source the `.env` file: `source ./sourceme.sh`
+3. Edit the `cloudformation/params.json` file to your liking
+4. Deploy to AWS: `make cf-aws-deploy-all`
+5. Generate a token: `make prisma-token`
+6. Play: `https://prisma.<your domain>`
