@@ -101,8 +101,17 @@ You've now deployed and seeded the Prisma/Postgres layer. You can refresh your b
 
 Getting into Apollo will be a bit trickier, since you need a valid JWT from an OAuth identity provider. In this case, we're using Okta, so you'll need to get a JWT from Okta.
 
-1. Use Postman to get an access token from Okta
-2. Use that access token to authorize with Apollo
+1. Setup an application in Okta that uses the Client Credentials flow
+2. Add the credentials to your `.env` file:
+
+```shell
+TEST_OAUTH_CLIENT_ID=<the client id>
+TEST_OAUTH_CLIENT_SECRET=<the client secret>
+```
+
+3. Run `make apollo-token-gen` which will generate a token that can be sent to Apollo
+4. Download and run GraphQL Playground as an Electron app, since Apollo doesn't expose it in Prismatopia
+5. Use the access token from Okta to authorize with Apollo through the GraphQL Playground
 
 ## Running in AWS
 
