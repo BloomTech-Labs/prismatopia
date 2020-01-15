@@ -79,6 +79,7 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
+      ServiceName: !Sub apollo-${EnvironmentName}
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
       Cluster:

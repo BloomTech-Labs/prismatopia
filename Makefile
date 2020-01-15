@@ -65,7 +65,7 @@ apollo-push: apollo-build
 apollo-token:
 	@echo
 	@echo Generating token that can be used for Apollo
-	curl --request POST \
+	@curl --request POST \
 		--url ${OAUTH_TOKEN_ENDPOINT}/v1/token \
 		--header 'content-type: application/x-www-form-urlencoded' \
 		--data 'grant_type=client_credentials&scope=groups' -u ${TEST_OAUTH_CLIENT_ID}:${TEST_OAUTH_CLIENT_SECRET}
@@ -100,7 +100,6 @@ aws-deploy-app-dns:
   --stack-name $(APPLICATION_NAME)-dns \
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
-
 
 aws-deploy-env-network:
 	@echo
@@ -194,5 +193,9 @@ aws-prisma-deploy:
 	export PRISMA_ENDPOINT='https://prisma-stage.use-mission-control.com/' && \
 	prisma deploy
 
-aws-prisma-service-update:
-	aws ecs 
+aws-prisma-update-service:
+	aws ecs update-service --cluster mission-control-stage --service prisma-stage --force-new-deployment
+
+aws-apollo-update-service:
+	aws ecs update-service --cluster mission-control-stage --service apollo-stage --force-new-deployment
+

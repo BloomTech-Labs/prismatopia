@@ -94,6 +94,7 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
+      ServiceName: !Sub prisma-${EnvironmentName}
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
       Cluster:
