@@ -93,6 +93,9 @@ Resources:
         Fn::ImportValue:
             !Sub ${ApplicationName}-VPCID
       TargetType: 'ip'
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '10'
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}-prisma
@@ -112,6 +115,9 @@ Resources:
         Fn::ImportValue:
             !Sub ${ApplicationName}-VPCID
       TargetType: 'ip'
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '10'
       Tags: 
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}-apollo

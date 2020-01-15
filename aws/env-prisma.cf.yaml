@@ -16,14 +16,16 @@ Resources:
     Properties:
       Name: !Sub prisma-management-api-secret-${ApplicationName}-${EnvironmentName}
       GenerateSecretString:
-        PasswordLength: 16
+        PasswordLength: 32
+        ExcludePunctuation: true
 
-  PrismaDomainAPISecret:
+  PrismaServiceAPISecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Name: !Sub prisma-domain-api-secret-${ApplicationName}-${EnvironmentName}
+      Name: !Sub prisma-service-api-secret-${ApplicationName}-${EnvironmentName}
       GenerateSecretString:
-        PasswordLength: 16
+        PasswordLength: 32
+        ExcludePunctuation: true
 
   LogGroup:
     Type: "AWS::Logs::LogGroup"
@@ -48,9 +50,8 @@ Resources:
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
       ContainerDefinitions:
-        - Name: "prisma-container"
+        - Name: "prisma"
           Image: "prismagraphql/prisma:1.34"
-          Essential: true
           PortMappings:
             - ContainerPort: 60000
           Ulimits:
@@ -64,6 +65,8 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
           Environment:
+            - Name: BUMP
+              Value: HACK TO BUMP THE TASK DEFINITION TO PICK UP A NEW SECRET. BLECH!
             - Name: PRISMA_CONFIG
               Value:
                 Fn::Sub:
@@ -89,7 +92,7 @@ Resources:
               Value: -Xmx1350m
 
   Service:
-    Type: "AWS::ECS::Service"
+    Type: AWS::ECS::Service
     Properties:
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
@@ -98,7 +101,7 @@ Resources:
           !Sub ${ApplicationName}-ECSCluster
       DesiredCount: 1
       LoadBalancers: 
-        - ContainerName: prisma-container
+        - ContainerName: prisma
           ContainerPort: 60000
           TargetGroupArn:
             Fn::ImportValue:
@@ -116,7 +119,7 @@ Resources:
                 !Sub ${ApplicationName}-ServiceSG
       ServiceRegistries:
         - RegistryArn: !GetAtt DiscoveryServiceEntry.Arn
-          ContainerName: prisma-container
+          ContainerName: prisma
           ContainerPort: 60000
 
   DiscoveryServiceEntry:
@@ -132,14 +135,20 @@ Resources:
             Type: SRV
       HealthCheckCustomConfig: 
         FailureThreshold: 1
-      Name: !Sub ${ApplicationName}-${EnvironmentName}-prisma
+      Name: !Sub prisma-${EnvironmentName}
       NamespaceId:
         Fn::ImportValue:
           !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
 
 Outputs:
-  PrismaDomainAPISecret:
-    Description: The secret used to access the Prisma domain API
-    Value: !Ref PrismaDomainAPISecret
+  PrismaManagementAPISecret:
+    Description: The secret used to access the Prisma management API
+    Value: !Ref PrismaManagementAPISecret
     Export:
-      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaDomainAPISecret
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaManagementAPISecret
+
+  PrismaServiceAPISecret:
+    Description: The secret used to access the Prisma service API
+    Value: !Ref PrismaServiceAPISecret
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecret

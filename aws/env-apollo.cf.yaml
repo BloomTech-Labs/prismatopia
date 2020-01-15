@@ -47,7 +47,7 @@ Resources:
         - Key: Environment
           Value: !Sub ${EnvironmentName}
       ContainerDefinitions:
-        - Name: "apollo-container"
+        - Name: apollo
           Image: "lambdaschoollabs/prismatopia:latest"
           Essential: true
           PortMappings:
@@ -64,17 +64,20 @@ Resources:
             - Name: GRAPHQL_API_PATH
               Value: /api/graphql
             - Name: PRISMA_ENDPOINT
-              Value: http://prisma.mission-control-private.com:60000
-            # - Name: PRISMA_SECRET
-            #   Value:
-            #     Fn::ImportValue: !Sub "{{resolve:secretsmanager:${DBInstanceCredentials}:SecretString:username}}"
+              Value: http://prisma-stage.mission-control-private.com:60000
+            - Name: PRISMA_SECRET
+              Value:
+                Fn::Sub:
+                  - "{{resolve:secretsmanager:${PrismaServiceAPISecret}:SecretString}}"
+                  - PrismaServiceAPISecret:
+                      Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecret
             - Name: OAUTH_TOKEN_ENDPOINT
               Value: !Ref OAuthTokenEndpoint
             - Name: OAUTH_CLIENT_ID
               Value: !Ref OAuthClientID
 
   Service:
-    Type: "AWS::ECS::Service"
+    Type: AWS::ECS::Service
     Properties:
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
@@ -83,7 +86,7 @@ Resources:
           !Sub ${ApplicationName}-ECSCluster
       DesiredCount: 1
       LoadBalancers: 
-        - ContainerName: apollo-container
+        - ContainerName: apollo
           ContainerPort: 60000
           TargetGroupArn:
             Fn::ImportValue:
@@ -99,25 +102,3 @@ Resources:
           SecurityGroups:
             - Fn::ImportValue:
                 !Sub ${ApplicationName}-ServiceSG
-      ServiceRegistries:
-        - RegistryArn: !GetAtt DiscoveryServiceEntry.Arn
-          ContainerName: apollo-container
-          ContainerPort: 60000
-  
-  DiscoveryServiceEntry:
-    Type: AWS::ServiceDiscovery::Service
-    Properties: 
-      Description: Discovery service entry for the service
-      DnsConfig:
-        RoutingPolicy: MULTIVALUE
-        DnsRecords:
-          - TTL: 60
-            Type: A
-          - TTL: 60
-            Type: SRV
-      HealthCheckCustomConfig: 
-        FailureThreshold: 1
-      Name: !Sub ${ApplicationName}-${EnvironmentName}-apollo
-      NamespaceId:
-        Fn::ImportValue:
-          !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace

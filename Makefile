@@ -1,60 +1,55 @@
-SHELL = /bin/sh
+SHELL := bash
 
-$(info Loading environment variables from .env file)
+.SHELLFLAGS := -eu -o pipefail -c  
+.ONESHELL:
+
 include .env
 export
 
 # =================================================================
 # General controls
 # =================================================================
-.PHONY: clean
 clean:
 	@echo
 	@echo Cleaning up
-	rm -rf apollo/dist apollo/node_modules apollo/src/generated apollo/schema/generated
+	@rm -rf apollo/dist apollo/node_modules apollo/src/generated apollo/schema/generated
 
-.PHONY: init
 init: clean
 	@echo
 	@echo Initializing
-	cd apollo && npm install -production && npm prune
+	@cd apollo && npm install -production && npm prune
 
 
 # =================================================================
-# Prisma controls
+# Local Prisma controls
 # =================================================================
-.PHONY: prisma-gen
-prisma-gen:
+local-prisma-generate:
 	@echo
 	@echo Generating Prisma schema
-	cd prisma
+	@cd prisma && \
 	prisma generate
 
-.PHONY: prisma-deploy
-prisma-deploy:
+local-prisma-deploy:
 	@echo
 	@echo Deploying Prisma schema
-	cd prisma
+	@cd prisma && \
 	prisma deploy
 
-.PHONY: prisma-token
-prisma-token:
+local-prisma-token:
 	@echo
 	@echo Generating Prisma token
-	cd prisma
+	@cd prisma && \
 	prisma token
 
 
 # =================================================================
 # Apollo controls
 # =================================================================
-.PHONY: apollo-gen
 apollo-gen: prisma-gen
 	@echo
 	@echo Generating Apollo code
 	cd apollo && npx graphql-codegen
 
-.PHONY: apollo-build
 apollo-build: apollo-gen
 	@echo
 	@echo Building Apollo image
@@ -62,14 +57,12 @@ apollo-build: apollo-gen
 	npm run build && \
 	docker build -t lambdaschoollabs/prismatopia:latest .
 
-.PHONY: apollo-push
 apollo-push: apollo-build
 	@echo
 	@echo Pushing Apollo image to registry
 	cd apollo && docker push lambda-school-labs/prismatopia:latest
 
-.PHONY: apollo-token-gen
-apollo-token-gen:
+apollo-token:
 	@echo
 	@echo Generating token that can be used for Apollo
 	curl --request POST \
@@ -79,15 +72,14 @@ apollo-token-gen:
 
 
 # =================================================================
-# Cloudformation controls
+# AWS Cloudformation controls
 # =================================================================
-.PHONY: cf-deploy-app-network
-cf-deploy-app-network:
+aws-deploy-app-network:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the application network components
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file app-network.cf.yaml \
@@ -96,13 +88,12 @@ cf-deploy-app-network:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
-.PHONY: cf-deploy-app-dns
-cf-deploy-app-dns:
+aws-deploy-app-dns:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the main application DNS
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file app-dns.cf.yaml \
@@ -111,13 +102,12 @@ cf-deploy-app-dns:
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
 
-.PHONY: cf-deploy-env-network
-cf-deploy-env-network:
+aws-deploy-env-network:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the environment specific network components
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file env-network.cf.yaml \
@@ -125,13 +115,12 @@ cf-deploy-env-network:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
-.PHONY: cf-deploy-env-db
-cf-deploy-env-db:
+aws-deploy-env-db:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the DB for the environment
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file env-db.cf.yaml \
@@ -139,13 +128,12 @@ cf-deploy-env-db:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
-.PHONY: cf-deploy-env-prisma
-cf-deploy-env-prisma:
+aws-deploy-env-prisma:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the Prisma service for the environment
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file env-prisma.cf.yaml \
@@ -153,13 +141,12 @@ cf-deploy-env-prisma:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
-.PHONY: cf-deploy-env-apollo
-cf-deploy-env-apollo:
+aws-deploy-env-apollo:
 	@echo
 	@echo ===================================================================
 	@echo Deploying the Apollo service for the environment
 	@echo ===================================================================
-	cd cloudformation && \
+	cd aws && \
 	aws cloudformation deploy \
 	--no-fail-on-empty-changeset \
   --template-file env-apollo.cf.yaml \
@@ -167,8 +154,45 @@ cf-deploy-env-apollo:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
+aws-deploy-all: aws-deploy-app-network aws-deploy-app-dns aws-deploy-env-network aws-deploy-env-db aws-deploy-env-prisma aws-deploy-env-apollo
+	$(info Finished deploying all AWS resources)
 
-.PHONY: cf-deploy-all
-cf-deploy-all: cf-deploy-app-network cf-deploy-app-dns cf-deploy-env-network cf-deploy-env-db cf-deploy-env-prisma cf-deploy-env-apollo
-	@echo
-	@echo Deploying all AWS resources
+
+# =================================================================
+# AWS Secrets
+# =================================================================
+PRISMA_MANAGEMENT_API_ARN_EXPORT := mission-control-stage-PrismaManagementAPISecret
+PRISMA_MANAGEMENT_API_ARN = $(shell aws cloudformation list-exports --query 'Exports[?Name==`$(PRISMA_MANAGEMENT_API_ARN_EXPORT)`].Value' --output text)
+PRISMA_MANAGEMENT_API_SECRET = $(shell aws secretsmanager get-secret-value --secret-id $(PRISMA_MANAGEMENT_API_ARN) --query 'SecretString' --output text)
+
+aws-prisma-management-secret:
+	$(info PRISMA_MANAGEMENT_API_ARN:    $(PRISMA_MANAGEMENT_API_ARN))
+	$(info PRISMA_MANAGEMENT_API_SECRET: $(PRISMA_MANAGEMENT_API_SECRET))
+
+
+PRISMA_SERVICE_API_ARN_EXPORT := mission-control-stage-PrismaServiceAPISecret
+PRISMA_SERVICE_API_ARN = $(shell aws cloudformation list-exports --query 'Exports[?Name==`$(PRISMA_SERVICE_API_ARN_EXPORT)`].Value' --output text)
+PRISMA_SERVICE_API_SECRET = $(shell aws secretsmanager get-secret-value --secret-id $(PRISMA_SERVICE_API_ARN) --query 'SecretString' --output text)
+
+aws-prisma-service-secret:
+	$(info PRISMA_SERVICE_API_ARN:    $(PRISMA_SERVICE_API_ARN))
+	$(info PRISMA_SERVICE_API_SECRET: $(PRISMA_SERVICE_API_SECRET))
+
+
+aws-prisma-token:
+	@cd prisma && \
+	export PRISMA_MANAGEMENT_API_SECRET='$(PRISMA_MANAGEMENT_API_SECRET)' && \
+	export PRISMA_SECRET='$(PRISMA_SERVICE_API_SECRET)' && \
+	export PRISMA_ENDPOINT="https://prisma-stage.use-mission-control.com/" && \
+	prisma token
+
+
+aws-prisma-deploy:
+	@cd prisma && \
+	export PRISMA_MANAGEMENT_API_SECRET='$(PRISMA_MANAGEMENT_API_SECRET)' && \
+	export PRISMA_SECRET='$(PRISMA_SERVICE_API_SECRET)' && \
+	export PRISMA_ENDPOINT='https://prisma-stage.use-mission-control.com/' && \
+	prisma deploy
+
+aws-prisma-service-update:
+	aws ecs 

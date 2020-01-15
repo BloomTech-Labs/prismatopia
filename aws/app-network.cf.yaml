@@ -16,6 +16,8 @@ Resources:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VPCCidrBlock
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
   
   LoggingRole:
     Type: 'AWS::IAM::Role'
