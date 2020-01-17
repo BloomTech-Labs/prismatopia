@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: A very simple VPC for hosting an application
+Description: Network components shared across the whole application
 
 Parameters:
   ApplicationName:
@@ -18,30 +18,6 @@ Resources:
       CidrBlock: !Ref VPCCidrBlock
       EnableDnsHostnames: true
       EnableDnsSupport: true
-  
-  LoggingRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: 'vpc-flow-logs.amazonaws.com'
-          Action: 'sts:AssumeRole'
-        - Effect: Allow
-          Principal:
-            Service: 'cloudtrail.amazonaws.com'
-          Action: 'sts:AssumeRole'
-      Policies:
-        - PolicyName: 'flowlogs-policy'
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                  - 'logs:*'
-                Resource: '*'
 
   FlowLogsLogGroup:
     Type: AWS::Logs::LogGroup
@@ -51,7 +27,9 @@ Resources:
   FlowLog:
     Type: AWS::EC2::FlowLog
     Properties:
-      DeliverLogsPermissionArn: !GetAtt LoggingRole.Arn
+      DeliverLogsPermissionArn:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-LoggingRoleArn
       LogGroupName: !Ref FlowLogsLogGroup
       ResourceId: !Ref VPC
       ResourceType: VPC
@@ -105,7 +83,9 @@ Resources:
     Properties: 
       S3BucketName: !Ref CloudTrailBucket
       CloudWatchLogsLogGroupArn: !GetAtt CloudTrailLogGroup.Arn
-      CloudWatchLogsRoleArn: !GetAtt LoggingRole.Arn
+      CloudWatchLogsRoleArn:
+        Fn::ImportValue:
+          !Sub ${ApplicationName}-LoggingRoleArn
       IsLogging: true
 
   InternetGateway:
@@ -357,28 +337,6 @@ Resources:
       SubnetId: !Ref PrivateSubnet02
       NetworkAclId: !Ref PrivateSubnetNACL
 
-  ECSTaskExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: ecs-tasks.amazonaws.com
-          Action:
-            - 'sts:AssumeRole'
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
-      Policies:
-        - PolicyName: AmazonECSTaskExecutionRolePolicy
-          PolicyDocument:
-            Statement:
-            - Effect: Allow
-              Action:
-                - 'logs:*'
-                - 'ecr:*'
-              Resource: '*'
-
   ServiceSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -426,8 +384,3 @@ Outputs:
     Value: !Ref ServiceSG
     Export:
       Name: !Sub ${ApplicationName}-ServiceSG
-  ECSTaskExecutionRole:
-    Description: ECS task execution role for the application
-    Value: !Ref ECSTaskExecutionRole
-    Export:
-      Name: !Sub ${ApplicationName}-ECSTaskExecutionRole

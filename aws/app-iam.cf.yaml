@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM roles that apply to the application and all environments
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application 
+
+Resources:
+  LoggingRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: 'vpc-flow-logs.amazonaws.com'
+          Action: 'sts:AssumeRole'
+        - Effect: Allow
+          Principal:
+            Service: 'cloudtrail.amazonaws.com'
+          Action: 'sts:AssumeRole'
+      Policies:
+        - PolicyName: 'flowlogs-policy'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:*'
+                Resource: '*'
+
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action:
+            - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: AmazonECSTaskExecutionRolePolicy
+          PolicyDocument:
+            Statement:
+            - Effect: Allow
+              Action:
+                - 'logs:*'
+                - 'ecr:*'
+              Resource: '*'
+
+Outputs:
+  ECSTaskExecutionRole:
+    Description: ECS task execution role for the application
+    Value: !Ref ECSTaskExecutionRole
+    Export:
+      Name: !Sub ${ApplicationName}-ECSTaskExecutionRole
+  LoggingRoleArn:
+    Description: Logging role for the application
+    Value: !GetAtt LoggingRole.Arn
+    Export:
+      Name: !Sub ${ApplicationName}-LoggingRoleArn
