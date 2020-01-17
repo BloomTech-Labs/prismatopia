@@ -13,7 +13,7 @@ The `prisma.yml` configuration file is used to manage the service, it requires s
 `prisma-datamodel.graphql`
 The Prisma data model for building the database
 
-# The Data
+## The Data
 
 `prisma-seed-*.graphql`
 Seed files for filling the database with data
@@ -26,4 +26,3 @@ This environment variable needs to be set for the Prisma CLI to talk to the Pris
 ## Insecurity
 
 If the Prisma endpoint is using a self-signed certificate, you need to set a variable when deploying: `export NODE_TLS_REJECT_UNAUTHORIZED=0`
-
