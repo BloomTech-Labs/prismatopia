@@ -12,7 +12,7 @@ services:
       PORT: "${APOLLO_LISTEN_PORT:-8000}"
 
       GRAPHQL_API_PATH: ${APOLLO_API_PATH:-/api/graphql}
-
+# Default to Postgres default
       PRISMA_ENDPOINT: http://prisma:${PRISMA_LISTEN_PORT:-7000}
       PRISMA_SECRET: ${PRISMA_SECRET:?You must specify PRISMA_SECRET}
 

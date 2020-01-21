@@ -74,6 +74,20 @@ apollo-token:
 # =================================================================
 # AWS Cloudformation controls
 # =================================================================
+aws-deploy-iam:
+	@echo
+	@echo ===================================================================
+	@echo Deploying the application-wide IAM resources
+	@echo ===================================================================
+	cd aws && \
+	aws cloudformation deploy \
+	--no-fail-on-empty-changeset \
+  --template-file app-iam.cf.yaml \
+  --stack-name $(APPLICATION_NAME)-iam \
+	--capabilities CAPABILITY_IAM \
+	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
+	--tags application=$(APPLICATION_NAME)
+
 aws-deploy-app-network:
 	@echo
 	@echo ===================================================================
@@ -86,7 +100,7 @@ aws-deploy-app-network:
   --stack-name $(APPLICATION_NAME)-network \
 	--capabilities CAPABILITY_IAM \
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
-	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
+	--tags application=$(APPLICATION_NAME)
 
 aws-deploy-app-dns:
 	@echo
@@ -99,7 +113,7 @@ aws-deploy-app-dns:
   --template-file app-dns.cf.yaml \
   --stack-name $(APPLICATION_NAME)-dns \
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
-	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
+	--tags application=$(APPLICATION_NAME)
 
 aws-deploy-env-network:
 	@echo
@@ -153,7 +167,7 @@ aws-deploy-env-apollo:
 	--parameter-overrides $$(jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")' params.json) \
 	--tags application=$(APPLICATION_NAME) environment=$(ENVIRONMENT_NAME)
 
-aws-deploy-all: aws-deploy-app-network aws-deploy-app-dns aws-deploy-env-network aws-deploy-env-db aws-deploy-env-prisma aws-deploy-env-apollo
+aws-deploy-all: aws-deploy-iam aws-deploy-app-network aws-deploy-app-dns aws-deploy-env-network aws-deploy-env-db aws-deploy-env-prisma aws-deploy-env-apollo
 	$(info Finished deploying all AWS resources)
 
 

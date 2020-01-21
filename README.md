@@ -1,40 +1,49 @@
 # Prismatopia
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/015ff2fee461e3bc2b2b/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/prismatopia/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/015ff2fee461e3bc2b2b/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/prismatopia/test_coverage)
+
 NOTE: THIS IS A WORK IN PROGRESS, CHANGING RAPIDLY, NOT STABLE, USE AT YOUR OWN RISK UNTIL THIS SENTENCE IS REMOVED FROM THE README!
 
-An API stack combining a bunch of trendy components (circa 2020): Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript, AWS and more!
+An API stack combining a bunch of super-awesome technologies: Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, Typescript, AWS and more!
 
 ## How to use this repository
 
-Prismatopia is a reference implementation, meaning you can clone it, configure, run it and play with it. But if you want to use it for your own purposes, you need to heavily modify it. You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to fork or otherwise copy as the starting point for your API stack.
+Step one is always to fork this repo!
+
+Prismatopia is a reference implementation, meaning you can clone it, configure, run it and play with it. You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to fork or otherwise copy as the starting point for your API stack.
 
 ## The Stack
 
-This API is built as a very specific stack of technologies. This is about as opinionated a stack as it gets. There no options, other than configuring the existing stack components or swapping them out in your own copy. Enjoy!
+This API is built as a very specific stack of technologies.bThere no options, other than configuring the existing stack components or swapping them out in your own copy. Enjoy!
 
 Here are the technologies in this stack...
 
 * AWS
   * Handles networking (ALB, VPC, etc.) and container management (ECS)
 * Apollo Server 2
-  * Provides a GraphQL server for resolvers, which is where business logic lives
+  * Provides a GraphQL server for resolvers, which is where your business logic lives
 * Prisma
   * Provides an ORM to translate from Graphql to Postgres, Apollo resolvers mainly call a Prisma Client to access data
 * Postgres
   * Provides persistent storage for data, this is managed by AWS RDS in production but is run in a container during local development
 * Github
-  * Provides a place to hold the source code and Docker images
+  * Provides a place to hold the source code
+* OAuth
+  * Apollo is setup for validating JWTs
+* Docker
+  * There's a local Docker Compose setup and AWS components (except Postgres) run in containers
+* Typescript
+  * The Apollo layer is Typescript
 
-## Directories
+## The Codebase
 
 The various components of this stack are organized into folders to help keep everything neat and tidy.
-
-### Root
 
 `.env`
 You don't see this because you'll need to create it and load it up with your specific configurations. To get Prismatopia running for reference, you should create a `.env` file in the root directory that looks like this:
 
-```
+```bash
 APPLICATION_NAME=donuts
 ENVIRONMENT_NAME=stage
 
@@ -60,16 +69,24 @@ Very important to ensuing that you don't accidentally commit `.env` into your re
 `Makefile`
 Oh how do we love the Makefile! So handy! Anything you need to do with Prismatopia can be done from the make file...
 
-### The Layers
+Directories:
 
 * [The Apollo Layer](apollo/README.md)
 * [The Prisma Layer](prisma/README.md)
 * [The AWS Layer](cloudformation/README.md)
-
+  
 ## Running locally
 
-1. Create an `.env` file in the root directory as described above
-2. Run Prismatopia: `docker-compose up`
+TODO: Fix lazy loading of AWS variables
+
+1. TODO: `make init`
+   1. Install awscli
+   2. Install docker
+   3. Install prisma-cli (npm install -g prisma)
+   4. Install prisma-cli (npm install -g apollo)
+   5. Install local graphql-playground electron
+2. Create an `.env` file in the root directory as described above
+3. Run Prismatopia: `docker-compose up`
 
 Prisma should be running now, you should see some output:
 
@@ -94,8 +111,8 @@ Though when you hit Apollo, you should get an authorization error:
 Sweet! Now, you need to deploy something to Prisma, which starts out empty.
 
 1. Load the environment variables into your shell: `source ./sourceme.sh`
-2. Deploy the Prisma schema: `make prisma-deploy`
-3. Generate a token: `make prisma-token`
+2. Deploy the Prisma schema: `make local-prisma-deploy`
+3. Generate a token: `make local-prisma-deploy`
 
 You've now deployed and seeded the Prisma/Postgres layer. You can refresh your browser and use the generated token in GraphQL Playground and Prisma Admin. You should see data and you should be able to run some queried and mutations.
 
@@ -116,8 +133,7 @@ TEST_OAUTH_CLIENT_SECRET=<the client secret>
 ## Running in AWS
 
 1. Create the `.env` file
-2. Source the `.env` file: `source ./sourceme.sh`
-3. Edit the `cloudformation/params.json` file to your liking
-4. Deploy to AWS: `make cf-aws-deploy-all`
-5. Generate a token: `make prisma-token`
-6. Play: `https://prisma.<your domain>`
+2. Edit the `cloudformation/params.json` file to your liking
+3. Deploy to AWS: `make cf-aws-deploy-all`
+4. Generate a token: `make prisma-token`
+5. Play: `https://prisma.<your domain>`
