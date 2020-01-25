@@ -20,3 +20,14 @@ install_packages() {
 
 	echo -e "DONE.\n"
 }
+
+setup_macos() {
+	echo -e "\nSetting up MacOS config...\n"
+
+	setup_homebrew
+	install_packages
+
+	echo -e "DONE.\n"
+}
+
+setup_macos
