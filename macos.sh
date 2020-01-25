@@ -7,3 +7,16 @@ setup_homebrew() {
 		/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 	fi
 }
+
+install_packages() {
+	echo -e "\nInstalling Docker for MacOS..."
+
+	declare -a packages=(
+		"docker"
+		"docker-compose"
+	)
+
+	brew install ${packages[@]}
+
+	echo -e "DONE.\n"
+}
