@@ -13,6 +13,13 @@ Step one is always to fork this repo!
 
 Prismatopia is a reference implementation, meaning you can clone it, configure, run it and play with it. You make a copy of this repository and that copy becomes the backend for your application. You'll end up customizing your copy of this repository with your resolvers, schemas and other stuff. This repository is simply an empty vessel for you to fork or otherwise copy as the starting point for your API stack.
 
+#### MacOS:
+
+Install docker & docker-compose:
+```
+cd ~/prismatopia && ./macos.sh
+```
+
 ## The Stack
 
 This API is built as a very specific stack of technologies.bThere no options, other than configuring the existing stack components or swapping them out in your own copy. Enjoy!
@@ -74,7 +81,7 @@ Directories:
 * [The Apollo Layer](apollo/README.md)
 * [The Prisma Layer](prisma/README.md)
 * [The AWS Layer](cloudformation/README.md)
-  
+
 ## Running locally
 
 TODO: Fix lazy loading of AWS variables
