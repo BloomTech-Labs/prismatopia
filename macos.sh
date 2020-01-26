@@ -17,6 +17,7 @@ install_packages() {
 	)
 
 	brew install ${packages[@]}
+	brew cask install docker
 
 	echo -e "DONE.\n"
 }
