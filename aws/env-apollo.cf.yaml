@@ -1,15 +1,34 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Description: The Apollo task and service definitions for ECS
 
 Parameters:
   ApplicationName:
     Type: String
     Description: The name of the application 
+    AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
-    Description: The name of the application environment 
+    Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
   
+  ApplicationDomainNamespace:
+    Type: String
+    Description: The DNS domain namespace for the application (e.g. mycoolapplication.com)
+    AllowedPattern: ^[a-z0-9\-\.]*$
+
+  ApolloDockerImage:
+    Type: String
+    Description: The name of the Docker image to use for Apollo
+
+  ApolloServicePort:
+    Type: Number
+    Description: The port that the Apollo service will be listening on
+  
+  PrismaServicePort:
+    Type: Number
+    Description: The port that the Prisma service will be listening on
+
   OAuthTokenEndpoint:
     Type: String
     Description: Endpoint for validating OAuth tokens
@@ -18,28 +37,30 @@ Parameters:
     Type: String
     Description: The ID of this OAuth client
 
+Conditions:
+  IsProductionEnvironment: !Equals [ !Ref EnvironmentName, production ]
 
 Resources:
   LogGroup:
-    Type: "AWS::Logs::LogGroup"
+    Type: 'AWS::Logs::LogGroup'
     Properties:
       LogGroupName: !Sub ${ApplicationName}-${EnvironmentName}-apollo
       RetentionInDays: 14
 
   TaskDefinition:
-    Type: "AWS::ECS::TaskDefinition"
+    Type: 'AWS::ECS::TaskDefinition'
     Properties:
       NetworkMode: awsvpc
-      RequiresCompatibilities: 
+      RequiresCompatibilities:
         - FARGATE
       Family: apollo
-      Cpu: "1024"
-      Memory: "2048"
+      Cpu: '1024'
+      Memory: '2048'
       ExecutionRoleArn:
         Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
       TaskRoleArn:
         Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
-      Tags: 
+      Tags:
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
         - Key: Application
@@ -48,10 +69,10 @@ Resources:
           Value: !Sub ${EnvironmentName}
       ContainerDefinitions:
         - Name: apollo
-          Image: "lambdaschoollabs/prismatopia:latest"
+          Image: !Ref ApolloDockerImage
           Essential: true
           PortMappings:
-            - ContainerPort: 60000
+            - ContainerPort: !Ref ApolloServicePort
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -60,15 +81,19 @@ Resources:
               awslogs-stream-prefix: apollo
           Environment:
             - Name: PORT
-              Value: "60000"
+              Value: !Ref ApolloServicePort
             - Name: GRAPHQL_API_PATH
-              Value: /api/graphql
+              Value: /
             - Name: PRISMA_ENDPOINT
-              Value: http://prisma-stage.mission-control-private.com:60000
+              Value:
+                Fn::If:
+                  - IsProductionEnvironment
+                  - !Sub "http://prisma.private.${ApplicationDomainNamespace}:${PrismaServicePort}"
+                  - !Sub "http://prisma.private.${EnvironmentName}.${ApplicationDomainNamespace}:${PrismaServicePort}"
             - Name: PRISMA_SECRET
               Value:
                 Fn::Sub:
-                  - "{{resolve:secretsmanager:${PrismaServiceAPISecret}:SecretString}}"
+                  - '{{resolve:secretsmanager:${PrismaServiceAPISecret}:SecretString}}'
                   - PrismaServiceAPISecret:
                       Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecret
             - Name: OAUTH_TOKEN_ENDPOINT
@@ -79,27 +104,28 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
-      ServiceName: !Sub apollo-${EnvironmentName}
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
       Cluster:
-        Fn::ImportValue:
-          !Sub ${ApplicationName}-ECSCluster
+        Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-ECSCluster
       DesiredCount: 1
-      LoadBalancers: 
+      LoadBalancers:
         - ContainerName: apollo
-          ContainerPort: 60000
+          ContainerPort: !Ref ApolloServicePort
           TargetGroupArn:
-            Fn::ImportValue:
-              !Sub ${ApplicationName}-${EnvironmentName}-ApolloTargetGroup
+            Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-ApolloTargetGroup
       NetworkConfiguration:
         AwsvpcConfiguration:
           AssignPublicIp: DISABLED
           Subnets:
-            - Fn::ImportValue:
-                !Sub ${ApplicationName}-PrivateSubnet01
-            - Fn::ImportValue:
-                !Sub ${ApplicationName}-PrivateSubnet02
+            - Fn::ImportValue: !Sub ${ApplicationName}-PrivateSubnet01
+            - Fn::ImportValue: !Sub ${ApplicationName}-PrivateSubnet02
           SecurityGroups:
-            - Fn::ImportValue:
-                !Sub ${ApplicationName}-ServiceSG
+            - Fn::ImportValue: !Sub ${ApplicationName}-ServiceSG
+
+Outputs:
+  ApolloServiceArn:
+    Description: The ARN of the Apollo service
+    Value: !Ref Service
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-ApolloServiceArn

@@ -1,6 +1,3 @@
-# import Product from "./generated/prisma.graphql"
+# import Query.user from "generated/prisma.graphql"
+# import Query.users from "generated/prisma.graphql"
 
-type Query {
-  products: [Product]!
-  product(id: ID!): Product!
-}

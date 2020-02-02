@@ -5,24 +5,22 @@ Parameters:
   ApplicationName:
     Type: String
     Description: The name of the application 
+    AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
     Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
 
-  ApplicationCertificateArn:
+  ApplicationDomainNamespace:
     Type: String
-    Description: The ARN of the HTTPS certificate for the application
+    Description: The DNS domain namespace for the application (e.g. mycoolapplication.com)
+    AllowedPattern: ^[a-z0-9\-]*\.[a-z0-9\-]*$
+
+Conditions:
+  IsProductionEnvironment: !Equals [ !Ref EnvironmentName, production ]
 
 Resources:
-  PrivateNamespace:
-    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
-    Properties:
-        Name: mission-control-private.com
-        Vpc:
-          Fn::ImportValue:
-            !Sub ${ApplicationName}-VPCID
-
   PublicLoadBalancerSG:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -158,7 +156,9 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       Certificates:
-        - CertificateArn: !Ref ApplicationCertificateArn
+        - CertificateArn:
+            Fn::ImportValue:
+              !Sub ${ApplicationName}-${EnvironmentName}-Certificate
       DefaultActions:
         - TargetGroupArn: !Ref 'PrismaTargetGroup'
           Type: 'forward'
@@ -170,33 +170,39 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       Certificates:
-        - CertificateArn: !Ref ApplicationCertificateArn
+        - CertificateArn:
+            Fn::ImportValue:
+              !Sub ${ApplicationName}-${EnvironmentName}-Certificate
       DefaultActions:
         - TargetGroupArn: !Ref 'ApolloTargetGroup'
           Type: 'forward'
       LoadBalancerArn: !Ref 'ApolloLoadBalancer'
       Protocol: HTTPS
       Port: 443
-  
-  ARecordApolloAPI:
+
+  ARecordApolloPublicAPI:
     Type: AWS::Route53::RecordSet
     Properties:
+      Comment: !Sub Apollo API A record for the ${EnvironmentName} environment of ${ApplicationName}
       HostedZoneId:
         Fn::ImportValue:
-            !Sub ${ApplicationName}-HostedZone
-      Name: !Sub apollo-${EnvironmentName}.use-mission-control.com
+            !Sub ${ApplicationName}-${EnvironmentName}-HostedZone
+      # Environment A records are added to a subdomain, production records are on the application domain
+      Name: !If [IsProductionEnvironment, !Sub "apollo.${ApplicationDomainNamespace}", !Sub "apollo.${EnvironmentName}.${ApplicationDomainNamespace}"]
       Type: A
       AliasTarget:
         DNSName: !GetAtt ApolloLoadBalancer.DNSName
         HostedZoneId: !GetAtt ApolloLoadBalancer.CanonicalHostedZoneID
   
-  ARecordPrismaManagementAPI:
+  ARecordPrismaPublicAPI:
     Type: AWS::Route53::RecordSet
     Properties:
+      Comment: !Sub Prisma API A record for the ${EnvironmentName} environment of ${ApplicationName}
       HostedZoneId:
         Fn::ImportValue:
-            !Sub ${ApplicationName}-HostedZone
-      Name: !Sub prisma-${EnvironmentName}.use-mission-control.com
+            !Sub ${ApplicationName}-${EnvironmentName}-HostedZone
+      # Environment A records are added to a subdomain, production records are on the application domain
+      Name: !If [IsProductionEnvironment, !Sub "prisma.${ApplicationDomainNamespace}", !Sub "prisma.${EnvironmentName}.${ApplicationDomainNamespace}"]
       Type: A
       AliasTarget:
         DNSName: !GetAtt PrismaLoadBalancer.DNSName
@@ -206,9 +212,6 @@ Resources:
     Type: "AWS::ECS::Cluster"
     Properties:      
       ClusterName: !Sub ${ApplicationName}-${EnvironmentName}
-      Tags: 
-        - Key: Name
-          Value: !Sub ${ApplicationName}-${EnvironmentName}-apollo
 
 Outputs:
   PrismaTargetGroup:
@@ -216,18 +219,15 @@ Outputs:
     Value: !Ref PrismaTargetGroup
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaTargetGroup
+
   ApolloTargetGroup:
     Description: The target group for the Apollo service
     Value: !Ref ApolloTargetGroup
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-ApolloTargetGroup
+
   ECSCluster:
     Description: The ECS cluster
     Value: !Ref ECSCluster
     Export:
-      Name: !Sub ${ApplicationName}-ECSCluster
-  PrivateNamespace:
-    Description: The private namespace for the application environment
-    Value: !Ref PrivateNamespace
-    Export:
-      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-ECSCluster

@@ -59,6 +59,7 @@ Outputs:
     Value: !Ref ECSTaskExecutionRole
     Export:
       Name: !Sub ${ApplicationName}-ECSTaskExecutionRole
+      
   LoggingRoleArn:
     Description: Logging role for the application
     Value: !GetAtt LoggingRole.Arn

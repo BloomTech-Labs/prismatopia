@@ -1,0 +1,6 @@
+EnvironmentName=production
+
+ApolloDockerImage=lambdaschoollabs/prismatopia-apollo:latest
+
+OAuthTokenEndpoint=https://dev-173777.okta.com/oauth2/default
+OAuthClientID=0oa23ze1sdfwtoKNQ357

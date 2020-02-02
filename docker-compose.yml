@@ -1,29 +1,33 @@
 version: '3'
 services:
-  # The Apollo service 
+  # The Apollo service
   apollo:
     build:
       context: ./apollo
       dockerfile: Dockerfile
+    command: sh -c "yarn global add nodemon && nodemon -L src/index.js"
+    volumes:
+      - ./apollo/src:/app/src
+      - ./apollo/schema:/app/schema
     ports:
-      - "${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}"
+      - '${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}'
     environment:
       # The port for Apollo to listen to
-      PORT: "${APOLLO_LISTEN_PORT:-8000}"
+      PORT: '${APOLLO_LISTEN_PORT:-8000}'
 
       GRAPHQL_API_PATH: ${APOLLO_API_PATH:-/api/graphql}
-# Default to Postgres default
+
       PRISMA_ENDPOINT: http://prisma:${PRISMA_LISTEN_PORT:-7000}
       PRISMA_SECRET: ${PRISMA_SECRET:?You must specify PRISMA_SECRET}
 
       OAUTH_TOKEN_ENDPOINT: ${OAUTH_TOKEN_ENDPOINT:?You must specify OAUTH_TOKEN_ENDPOINT}
-
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:?You must specify OAUTH_CLIENT_ID}
 
   # The Prisma service
   prisma:
     image: prismagraphql/prisma:1.34
     ports:
-      - "${PRISMA_LISTEN_PORT:-7000}:${PRISMA_LISTEN_PORT:-7000}"
+      - '${PRISMA_LISTEN_PORT:-7000}:${PRISMA_LISTEN_PORT:-7000}'
     environment:
       PRISMA_CONFIG: |
         port: ${PRISMA_LISTEN_PORT:-7000}
@@ -36,16 +40,14 @@ services:
             user: ${POSTGRES_USER:-prisma}
             password: ${POSTGRES_PASSWORD:-prisma}
 
-
   # The Postgres service
   postgres:
     image: postgres:10.3
     environment:
-      POSTGRES_USER:     ${POSTGRES_USER:-prisma}
+      POSTGRES_USER: ${POSTGRES_USER:-prisma}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prisma}
     volumes:
       - postgres:/var/lib/postgresql-prisma/data
-
 
 volumes:
   postgres: ~

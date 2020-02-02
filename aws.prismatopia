@@ -1,0 +1,6 @@
+ApplicationName=prismatopia
+ApplicationDomainNamespace=prismatopia.net
+
+ApolloServicePort=8000
+PrismaServicePort=8000
+
