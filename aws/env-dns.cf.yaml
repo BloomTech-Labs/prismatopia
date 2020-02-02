@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Hosted zone for a non-production environment
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application
+    AllowedPattern: ^[a-z0-9\-]*$
+  
+  EnvironmentName:
+    Type: String
+    Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
+
+  ApplicationDomainNamespace:
+    Type: String
+    Description: The DNS domain namespace for the application (e.g. mycoolapplication.com)
+    AllowedPattern: ^[a-z0-9\-\.]*$
+
+Conditions:
+  IsNotProductionEnvironment: !Not [!Equals [ !Ref EnvironmentName, production ]]
+
+Resources:
+  # Only create if this is a non-production environment, the production resource was already created
+  EnvironmentHostedZone:
+    Type: "AWS::Route53::HostedZone"
+    Condition: IsNotProductionEnvironment
+    Properties:
+      HostedZoneConfig: 
+        Comment: !Sub Hosted zone for the ${EnvironmentName} environment of ${ApplicationName}
+      Name: !Sub "${EnvironmentName}.${ApplicationDomainNamespace}"
+
+  # Add NS records so the production hosted zone delegates to the environment subdomain
+  ProductionHostedZoneRecordSet:
+    Type: 'AWS::Route53::RecordSet'
+    Condition: IsNotProductionEnvironment
+    Properties:
+        HostedZoneId:
+          Fn::ImportValue:
+            !Sub ${ApplicationName}-production-HostedZone
+        Name: !Sub "${EnvironmentName}.${ApplicationDomainNamespace}."
+        Type: NS
+        TTL: '30'
+        ResourceRecords: !GetAtt EnvironmentHostedZone.NameServers
+  
+  # Only create if this is a non-production environment, the production resource was already created
+  PrivateNamespace:
+    Type: AWS::ServiceDiscovery::PrivateDnsNamespace
+    Condition: IsNotProductionEnvironment
+    Properties:
+        Name: !Sub private.${EnvironmentName}.${ApplicationDomainNamespace}
+        Vpc:
+          Fn::ImportValue:
+            !Sub ${ApplicationName}-VPCID
+
+Outputs:
+  HostedZone:
+    Description: HostedZone ID for the non-production application environment
+    Condition: IsNotProductionEnvironment
+    Value: !Ref EnvironmentHostedZone
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-HostedZone
+  
+  PrivateNamespace:
+    Description: Private namespace for the application environment
+    Condition: IsNotProductionEnvironment
+    Value: !Ref PrivateNamespace
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
+  

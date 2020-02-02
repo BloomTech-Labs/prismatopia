@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Wildcard SSL certificate for an application environment
+
+Parameters:
+  ApplicationName:
+    Type: String
+    Description: The name of the application
+    AllowedPattern: ^[a-z0-9\-]*$
+  
+  EnvironmentName:
+    Type: String
+    Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
+
+  ApplicationDomainNamespace:
+    Type: String
+    Description: The DNS domain namespace for the application (e.g. mycoolapplication.com)
+    AllowedPattern: ^[a-z0-9\-\.]*$
+
+Conditions:
+  IsProductionEnvironment: !Equals [ !Ref EnvironmentName, production ]
+
+Resources:
+  # Note: This is not automatic! You need to go to the console and validate the certificate manually.
+  #       TODO: https://github.com/binxio/cfn-certificate-provider
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties: 
+      DomainName: !If [IsProductionEnvironment, !Sub "*.${ApplicationDomainNamespace}", !Sub "*.${EnvironmentName}.${ApplicationDomainNamespace}"]
+      ValidationMethod: DNS
+
+Outputs:
+  EnvironmentCertificate:
+    Description: The the SSL certificate for the application environment
+    Value: !Ref Certificate
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-Certificate
+  

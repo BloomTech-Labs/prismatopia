@@ -1,0 +1,6 @@
+ApplicationName=adaptivapps
+ApplicationDomainNamespace=adaptivdev.net
+
+ApolloServicePort=8000
+PrismaServicePort=8000
+
