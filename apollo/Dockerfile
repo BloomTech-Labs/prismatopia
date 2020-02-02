@@ -1,29 +1,22 @@
-# ======================================================
-# Builds the application
-# ======================================================
-FROM node:12-alpine AS build
-WORKDIR /app
-COPY package.json npm-shrinkwrap.json tsconfig.json ./
-COPY src/ ./src/
-COPY schema/ ./schema/
-RUN npm install --silent && npm run build
-
-
-# ======================================================
-# Creates an image with just the production deps
-# ======================================================
+# ============================================================================================================
+# Create an image containing only the production dependencies
+# ============================================================================================================
 FROM node:12-alpine AS deps
 WORKDIR /app
-COPY package.json npm-shrinkwrap.json ./
-RUN npm install --production --silent
+
+COPY package.json yarn.lock ./
+RUN yarn install --production --silent
 
 
-# ======================================================
-# Builds the final image from the previous two
-# ======================================================
+# ============================================================================================================
+# Build final image using the node_modules from the 'dep' image
+# ============================================================================================================
 FROM node:12-alpine
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules/
-COPY --from=build /app/dist ./
-CMD [ "node", "index.js" ]
+COPY ./src/ ./src
+COPY ./schema/ ./schema
+
+CMD [ "node", "src/index.js" ]
 EXPOSE 8000

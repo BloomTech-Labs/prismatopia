@@ -5,9 +5,10 @@ services:
     build:
       context: ./apollo
       dockerfile: Dockerfile
-    command: sh -c "yarn install -g nodemon && nodemon src/index.js"
+    command: sh -c "yarn global add nodemon && nodemon -L src/index.js"
     volumes:
       - ./apollo/src:/app/src
+      - ./apollo/schema:/app/schema
     ports:
       - '${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}'
     environment:
