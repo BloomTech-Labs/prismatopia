@@ -5,10 +5,16 @@ Parameters:
   ApplicationName:
     Type: String
     Description: The name of the application 
+    AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
-    Description: The name of the application environment 
+    Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
+
+  PrismaServicePort:
+    Type: Number
+    Description: The port that the Prisma service will be listening on
 
 Resources:
   PrismaManagementAPISecret:
@@ -53,7 +59,7 @@ Resources:
         - Name: "prisma"
           Image: "prismagraphql/prisma:1.34"
           PortMappings:
-            - ContainerPort: 60000
+            - ContainerPort: !Ref PrismaServicePort
           Ulimits:
             - Name: nofile
               HardLimit: 1000000
@@ -65,13 +71,11 @@ Resources:
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: prisma
           Environment:
-            - Name: BUMP
-              Value: HACK TO BUMP THE TASK DEFINITION TO PICK UP A NEW SECRET. BLECH!
             - Name: PRISMA_CONFIG
               Value:
                 Fn::Sub:
                   - |
-                    port: 60000
+                    port: ${PrismaServicePort}
                     managementApiSecret: '{{resolve:secretsmanager:${PrismaManagementAPISecret}:SecretString}}'
                     databases:
                       default:
@@ -94,16 +98,15 @@ Resources:
   Service:
     Type: AWS::ECS::Service
     Properties:
-      ServiceName: !Sub prisma-${EnvironmentName}
       LaunchType: FARGATE
       TaskDefinition: !Ref TaskDefinition
       Cluster:
         Fn::ImportValue:
-          !Sub ${ApplicationName}-ECSCluster
+          !Sub ${ApplicationName}-${EnvironmentName}-ECSCluster
       DesiredCount: 1
       LoadBalancers: 
         - ContainerName: prisma
-          ContainerPort: 60000
+          ContainerPort: !Ref PrismaServicePort
           TargetGroupArn:
             Fn::ImportValue:
               !Sub ${ApplicationName}-${EnvironmentName}-PrismaTargetGroup
@@ -121,7 +124,7 @@ Resources:
       ServiceRegistries:
         - RegistryArn: !GetAtt DiscoveryServiceEntry.Arn
           ContainerName: prisma
-          ContainerPort: 60000
+          ContainerPort: !Ref PrismaServicePort
 
   DiscoveryServiceEntry:
     Type: AWS::ServiceDiscovery::Service
@@ -136,12 +139,18 @@ Resources:
             Type: SRV
       HealthCheckCustomConfig: 
         FailureThreshold: 1
-      Name: !Sub prisma-${EnvironmentName}
+      Name: prisma
       NamespaceId:
         Fn::ImportValue:
           !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
 
 Outputs:
+  PrismaServiceArn:
+    Description: The ARN of the Prisma service
+    Value: !Ref Service
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceArn
+
   PrismaManagementAPISecret:
     Description: The secret used to access the Prisma management API
     Value: !Ref PrismaManagementAPISecret

@@ -5,21 +5,31 @@ Parameters:
   ApplicationName:
     Type: String
     Description: The name of the application 
+    AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
-    Description: The name of the application environment 
+    Description: The name of the application environment
+    AllowedPattern: ^[a-z0-9\-]*$
 
 Resources:
   DBInstanceCredentials:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: !Sub rds-password-${ApplicationName}-${EnvironmentName}
+      Description: !Sub Prismatopia database secret for the ${EnvironmentName} of ${ApplicationName}
       GenerateSecretString:
         SecretStringTemplate: '{"username": "master"}'
         GenerateStringKey: 'password'
-        PasswordLength: 16
-        ExcludeCharacters: '"@/\'
+        PasswordLength: 32
+        ExcludePunctuation: true
+  
+  DBPasswordSecretInstanceAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref DBInstanceCredentials
+      TargetId: !Ref DBInstance
+      TargetType: AWS::RDS::DBInstance
 
   DBSubnetGroup: 
     Type: "AWS::RDS::DBSubnetGroup"
@@ -70,11 +80,13 @@ Outputs:
     Value: !GetAtt DBInstance.Endpoint.Address
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-DBAddress
+
   DBPort:
     Description: The port of the database listener
     Value: !GetAtt DBInstance.Endpoint.Port
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-DBPort
+
   DBInstanceCredentials:
     Description: The secret containing the DB instance credentials
     Value: !Ref DBInstanceCredentials
