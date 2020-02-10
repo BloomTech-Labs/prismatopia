@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "server": "nodemon src/server.js",
-    "lint": "eslint src && hadolint Dockerfile"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",
