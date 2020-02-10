@@ -4,14 +4,14 @@ Description: An RDS instance for a particular environment
 Parameters:
   ApplicationName:
     Type: String
-    Description: The name of the application 
+    Description: The name of the application
     AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
     Description: The name of the application environment
     AllowedPattern: ^[a-z0-9\-]*$
-
+Something
 Resources:
   DBInstanceCredentials:
     Type: AWS::SecretsManager::Secret
@@ -23,7 +23,7 @@ Resources:
         GenerateStringKey: 'password'
         PasswordLength: 32
         ExcludePunctuation: true
-  
+
   DBPasswordSecretInstanceAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
@@ -31,12 +31,12 @@ Resources:
       TargetId: !Ref DBInstance
       TargetType: AWS::RDS::DBInstance
 
-  DBSubnetGroup: 
+  DBSubnetGroup:
     Type: "AWS::RDS::DBSubnetGroup"
     Properties:
       DBSubnetGroupName: !Sub ${ApplicationName}-${EnvironmentName}
       DBSubnetGroupDescription: "Subnet group for the API database"
-      SubnetIds: 
+      SubnetIds:
         - Fn::ImportValue:
             !Sub ${ApplicationName}-PrivateSubnet01
         - Fn::ImportValue:
@@ -70,7 +70,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref DBInstanceCredentials, ':SecretString:username}}' ]]
       MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref DBInstanceCredentials, ':SecretString:password}}' ]]
-      Tags: 
+      Tags:
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
 
