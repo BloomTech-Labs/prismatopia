@@ -11,7 +11,7 @@ Parameters:
     Type: String
     Description: The name of the application environment
     AllowedPattern: ^[a-z0-9\-]*$
-Something
+
 Resources:
   DBInstanceCredentials:
     Type: AWS::SecretsManager::Secret
