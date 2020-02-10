@@ -8,7 +8,7 @@
 const createUser = (_, args, context) => {
   console.log("createUser.args: %j", args)
 
-  const user = context.prisma.createUser(args.data);  
+  const user = context.prisma.createUser(args.data);
 
   return user;
 };

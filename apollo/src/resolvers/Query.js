@@ -11,7 +11,7 @@ const user = async (_, args, context) => {
   const user = await context.prisma.user(args.where);
 
   console.log("Query.user: %j", user)
-  
+
   return user;
 };
 
@@ -26,7 +26,7 @@ const users = async (_, args, context) => {
   const user = await context.prisma.users(args);
 
   console.log("Query.user: %j", user)
-  
+
   return user;
 };
 
