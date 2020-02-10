@@ -4,7 +4,7 @@ Description: IAM roles that apply to the application and all environments
 Parameters:
   ApplicationName:
     Type: String
-    Description: The name of the application 
+    Description: The name of the application
 
 Resources:
   LoggingRole:
@@ -59,7 +59,7 @@ Outputs:
     Value: !Ref ECSTaskExecutionRole
     Export:
       Name: !Sub ${ApplicationName}-ECSTaskExecutionRole
-      
+
   LoggingRoleArn:
     Description: Logging role for the application
     Value: !GetAtt LoggingRole.Arn

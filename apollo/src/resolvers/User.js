@@ -11,7 +11,7 @@ const profile = async (parent, _, context) => {
   const profile = await context.prisma.user({id: parent.id}).profile();
 
   console.log("User.profile: %j", profile)
-  
+
   return profile;
 };
 

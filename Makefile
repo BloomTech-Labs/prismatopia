@@ -1,5 +1,5 @@
 SHELL := bash
-.SHELLFLAGS := -eu -o pipefail -c  
+.SHELLFLAGS := -eu -o pipefail -c
 
 # =================================================================
 # = Utility targets ===============================================
@@ -356,7 +356,7 @@ aws-prisma-service-secret: env-ENVIRONMENT_NAME aws-env-banner
 	@echo PRISMA_SERVICE_API_SECRET_ARN_EXPORT: $(PRISMA_SERVICE_API_SECRET_ARN_EXPORT) && \
 	 echo PRISMA_SERVICE_API_SECRET_ARN: $(PRISMA_SERVICE_API_SECRET_ARN)								&& \
 	 echo PRISMA_SERVICE_API_SECRET: $(PRISMA_SERVICE_API_SECRET)
-	 
+
 
 
 # ===========================================================================
