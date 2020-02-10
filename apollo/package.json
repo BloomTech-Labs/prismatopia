@@ -5,7 +5,8 @@
   "author": "Lambda Labs",
   "license": "MIT",
   "scripts": {
-    "server": "nodemon src/server.js"
+    "server": "nodemon src/server.js",
+    "lint": "eslint src && hadolint Dockerfile"
   },
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",
