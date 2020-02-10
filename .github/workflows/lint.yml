@@ -11,8 +11,9 @@ jobs:
         uses: actions/checkout@master
       - name: eslint
         uses: stefanoeb/eslint-action@1.0.2
+        working-directory: apollo
       - name: hadolint
         uses: burdzwastaken/hadolint-action@master
+        working-directory: apollo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HADOLINT_ACTION_DOCKERFILE_FOLDER: ./apollo
