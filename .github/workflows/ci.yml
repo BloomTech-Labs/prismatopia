@@ -51,5 +51,5 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
         with:
           coverageCommand: make coverage
-					coverageLocations: ["./apollo/coverage/clover.xml:clover"]
+          coverageLocations: ["./apollo/coverage/clover.xml:clover"]
           debug: true
