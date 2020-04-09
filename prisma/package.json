@@ -1,6 +1,23 @@
 {
+  "name": "prismatopia-prisma",
+  "description": "Prisma layer for Prismatopia",
+  "version": "1.0.0",
+  "author": "Lambda Labs",
+  "license": "MIT",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "deploy": "prisma deploy",
+    "token": "prisma token",
+    "reset": "prisma reset --force",
+    "seed": "prisma seed"
+  },
   "dependencies": {
     "faker": "^4.1.0",
+    "graphql": "^14.6.0",
+    "prisma": "^1.34.10",
     "prisma-client-lib": "^1.34.10"
   }
 }
