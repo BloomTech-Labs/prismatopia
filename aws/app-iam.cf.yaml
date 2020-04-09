@@ -4,7 +4,7 @@ Description: IAM roles that apply to the application and all environments
 Parameters:
   ApplicationName:
     Type: String
-    Description: The name of the application 
+    Description: The name of the application
 
 Resources:
   LoggingRole:
@@ -44,13 +44,15 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
       Policies:
-        - PolicyName: AmazonECSTaskExecutionRolePolicy
+        - PolicyName: PrismatopiaExtendedPolicy
           PolicyDocument:
             Statement:
             - Effect: Allow
               Action:
                 - 'logs:*'
                 - 'ecr:*'
+                - 'ssm:*'
+                - 'secretsmanager:*'
               Resource: '*'
 
 Outputs:
@@ -59,7 +61,7 @@ Outputs:
     Value: !Ref ECSTaskExecutionRole
     Export:
       Name: !Sub ${ApplicationName}-ECSTaskExecutionRole
-      
+
   LoggingRoleArn:
     Description: Logging role for the application
     Value: !GetAtt LoggingRole.Arn

@@ -6,16 +6,15 @@
  * @returns { Promise }
  */
 const profile = async (parent, _, context) => {
-  console.log("User.profile.parent: %j", parent)
+  console.log('User.profile.parent: %j', parent)
 
-  const profile = await context.prisma.user({id: parent.id}).profile();
+  const profile = await context.prisma.user({ id: parent.id }).profile()
 
-  console.log("User.profile: %j", profile)
-  
-  return profile;
-};
+  console.log('User.profile: %j', profile)
 
+  return profile
+}
 
 module.exports = {
-  profile,
-};
+  profile
+}

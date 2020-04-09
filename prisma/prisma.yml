@@ -9,6 +9,6 @@ generate:
     output: ../apollo/src/generated/prisma-client
   - generator: graphql-schema
     output: ../apollo/schema/generated/prisma.graphql
-    
+
 seed:
   run: node ./seed.js

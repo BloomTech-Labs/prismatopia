@@ -4,7 +4,7 @@ Description: The Prisma task and service definitions for ECS
 Parameters:
   ApplicationName:
     Type: String
-    Description: The name of the application 
+    Description: The name of the application
     AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
@@ -43,16 +43,16 @@ Resources:
     Type: "AWS::ECS::TaskDefinition"
     Properties:
       NetworkMode: awsvpc
-      RequiresCompatibilities: 
+      RequiresCompatibilities:
         - FARGATE
-      Family: prisma
+      Family: !Sub ${ApplicationName}-${EnvironmentName}-prisma
       Cpu: "1024"
       Memory: "2048"
       ExecutionRoleArn:
         Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
       TaskRoleArn:
         Fn::ImportValue: !Sub ${ApplicationName}-ECSTaskExecutionRole
-      Tags: 
+      Tags:
         - Key: Name
           Value: !Sub ${ApplicationName}-${EnvironmentName}
       ContainerDefinitions:
@@ -104,7 +104,7 @@ Resources:
         Fn::ImportValue:
           !Sub ${ApplicationName}-${EnvironmentName}-ECSCluster
       DesiredCount: 1
-      LoadBalancers: 
+      LoadBalancers:
         - ContainerName: prisma
           ContainerPort: !Ref PrismaServicePort
           TargetGroupArn:
@@ -128,7 +128,7 @@ Resources:
 
   DiscoveryServiceEntry:
     Type: AWS::ServiceDiscovery::Service
-    Properties: 
+    Properties:
       Description: Discovery service entry for the service
       DnsConfig:
         RoutingPolicy: MULTIVALUE
@@ -137,7 +137,7 @@ Resources:
             Type: A
           - TTL: 60
             Type: SRV
-      HealthCheckCustomConfig: 
+      HealthCheckCustomConfig:
         FailureThreshold: 1
       Name: prisma
       NamespaceId:
@@ -151,14 +151,26 @@ Outputs:
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceArn
 
-  PrismaManagementAPISecret:
-    Description: The secret used to access the Prisma management API
+  PrismaManagementAPISecretDELETE:
+    Description: The ARN of the secret used to access the Prisma management API
     Value: !Ref PrismaManagementAPISecret
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaManagementAPISecret
 
-  PrismaServiceAPISecret:
-    Description: The secret used to access the Prisma service API
+  PrismaManagementAPISecretArn:
+    Description: The ARN of the secret used to access the Prisma management API
+    Value: !Ref PrismaManagementAPISecret
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaManagementAPISecretArn
+
+  PrismaServiceAPISecretDELETE:
+    Description: The ARN of the secret used to access the Prisma service API
     Value: !Ref PrismaServiceAPISecret
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecret
+
+  PrismaServiceAPISecretArn:
+    Description: The ARN of the secret used to access the Prisma service API
+    Value: !Ref PrismaServiceAPISecret
+    Export:
+      Name: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecretArn

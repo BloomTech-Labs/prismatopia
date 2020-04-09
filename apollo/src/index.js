@@ -1,34 +1,53 @@
 // @ts-check
 
-const { importSchema } = require("graphql-import");
+// Apollo dependencies
+const { importSchema } = require('graphql-import');
+const { ApolloServer, gql } = require('apollo-server');
 
 const PORT = process.env.PORT || 8000;
-const { ApolloServer, gql } = require("apollo-server");
 
-const resolvers = require("./resolvers");
-const context = require("./context");
+const checkEnvironment = () => {
+  const requiredEnvironmentVariables = ['JWT_ISSUER', 'JWKS_URI', 'PRISMA_ENDPOINT', 'PRISMA_SECRET']
 
+  let environmentReady = true;
+  for(const variableName of requiredEnvironmentVariables) {
+    if(!(variableName in process.env)) {
+      console.error("Server cannot be started without environment variable %s", variableName);
+      environmentReady = false;
+    }
+  }
 
-async function main() {
-  console.log("Importing schema")
+  if(!environmentReady) {
+    throw new Error("Missing one or more required environment variables")
+  }
+}
 
-  const typeDefs = await importSchema("schema/schema.graphql")
+const resolvers = require('./resolvers');
+const context = require('./context');
 
-  console.log(typeDefs)
+const typeDefs = gql(importSchema('schema/apollo.graphql'));
 
-  console.log("Imported schema")
+(async () => {
+  // Check the environment
+  checkEnvironment()
 
   const server = new ApolloServer({
     resolvers,
-    typeDefs: gql(typeDefs),
+    typeDefs,
     context,
     cors: true,
-    dataSources: () => ({})
-  });
-  
-  server.listen({port: PORT}).then(({ url }) => {
-    console.log(`🚀  Server ready at ${url}`);
-  });
-}
+    formatError: err => {
+      // Don't give the specific errors to the client.
+      console.log('%O', err);
+      console.log('%O', err.extensions);
 
-main();
+      // Otherwise return the original error.  The error can also
+      // be manipulated in other ways, so long as it's returned.
+      return err;
+    },
+  });
+
+  const { url } = await server.listen(PORT);
+  // eslint-disable-next-line no-console
+  console.log(`=========Running on ${url}=========`);
+})();

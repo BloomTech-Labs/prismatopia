@@ -6,7 +6,7 @@ Parameters:
     Type: String
     Description: The name of the application
     AllowedPattern: ^[a-z0-9\-]*$
-  
+
   EnvironmentName:
     Type: String
     Description: The name of the application environment
@@ -26,7 +26,7 @@ Resources:
     Type: "AWS::Route53::HostedZone"
     Condition: IsNotProductionEnvironment
     Properties:
-      HostedZoneConfig: 
+      HostedZoneConfig:
         Comment: !Sub Hosted zone for the ${EnvironmentName} environment of ${ApplicationName}
       Name: !Sub "${EnvironmentName}.${ApplicationDomainNamespace}"
 
@@ -42,7 +42,7 @@ Resources:
         Type: NS
         TTL: '30'
         ResourceRecords: !GetAtt EnvironmentHostedZone.NameServers
-  
+
   # Only create if this is a non-production environment, the production resource was already created
   PrivateNamespace:
     Type: AWS::ServiceDiscovery::PrivateDnsNamespace
@@ -60,11 +60,10 @@ Outputs:
     Value: !Ref EnvironmentHostedZone
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-HostedZone
-  
+
   PrivateNamespace:
     Description: Private namespace for the application environment
     Condition: IsNotProductionEnvironment
     Value: !Ref PrivateNamespace
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-PrivateNamespace
-  

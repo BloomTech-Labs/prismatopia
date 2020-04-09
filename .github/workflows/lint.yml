@@ -9,10 +9,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@master
-      - name: eslint
-        uses: stefanoeb/eslint-action@1.0.2
-      - name: hadolint
-        uses: burdzwastaken/hadolint-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HADOLINT_ACTION_DOCKERFILE_FOLDER: ./apollo
+      - name: lint
+        run: "yarn install"
+        working-directory: apollo
+      - name: lint
+        run: "yarn run lint"
+        working-directory: apollo

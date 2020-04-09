@@ -1,31 +1,40 @@
-version: '3'
+version: '2.4'
+
 services:
   # The Apollo service
   apollo:
+    image: lambdaschoollabs/beerthoven-apollo:latest
     build:
       context: ./apollo
       dockerfile: Dockerfile
-    command: sh -c "yarn global add nodemon && nodemon -L src/index.js"
+    command: sh -c "yarn global add nodemon && nodemon -v && NODE_ENV=development nodemon -V -L src/index.js"
+    cpus: '0.25'
+    mem_limit: 250M
     volumes:
-      - ./apollo/src:/app/src
-      - ./apollo/schema:/app/schema
+      - ./apollo/src:/app/src:delegated
+      - ./apollo/schema:/app/schema:delegated
     ports:
       - '${APOLLO_LISTEN_PORT:-8000}:${APOLLO_LISTEN_PORT:-8000}'
     environment:
       # The port for Apollo to listen to
       PORT: '${APOLLO_LISTEN_PORT:-8000}'
 
+      # The path for the Apollo GraphQL API
       GRAPHQL_API_PATH: ${APOLLO_API_PATH:-/api/graphql}
+
+      JWKS_URI: ${APOLLO_JWKS_URI:?You must specify APOLLO_JWKS_URI}
+      JWT_ISSUER: ${APOLLO_JWT_ISSUER:?You must specify APOLLO_JWT_ISSUER}
 
       PRISMA_ENDPOINT: http://prisma:${PRISMA_LISTEN_PORT:-7000}
       PRISMA_SECRET: ${PRISMA_SECRET:?You must specify PRISMA_SECRET}
 
-      OAUTH_TOKEN_ENDPOINT: ${OAUTH_TOKEN_ENDPOINT:?You must specify OAUTH_TOKEN_ENDPOINT}
-      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:?You must specify OAUTH_CLIENT_ID}
+      LOG_LEVEL: ${LOG_LEVEL:-debug}
 
   # The Prisma service
   prisma:
     image: prismagraphql/prisma:1.34
+    cpus: '0.25'
+    mem_limit: 250M
     ports:
       - '${PRISMA_LISTEN_PORT:-7000}:${PRISMA_LISTEN_PORT:-7000}'
     environment:
@@ -43,11 +52,13 @@ services:
   # The Postgres service
   postgres:
     image: postgres:10.3
+    cpus: '0.25'
+    mem_limit: 250M
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-prisma}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-prisma}
     volumes:
-      - postgres:/var/lib/postgresql-prisma/data
+      - postgres:/var/lib/postgresql-prisma/data:delegated
 
 volumes:
   postgres: ~

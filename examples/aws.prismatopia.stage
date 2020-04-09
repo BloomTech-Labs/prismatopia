@@ -1,0 +1,8 @@
+EnvironmentName=stage
+
+ApolloDockerImage=lambdaschoollabs/prismatopia-apollo:latest
+
+JwksUri=https://dev-173777.okta.com/oauth2/default/v1/keys
+JwtIssuer=https://dev-173777.okta.com/oauth2/default
+
+LogLevel=debug
