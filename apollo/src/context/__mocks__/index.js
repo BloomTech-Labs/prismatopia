@@ -1,5 +1,3 @@
-const jest = require('jest')
-
 // Generate Jest mock for the context module
 const mockContext = jest.genMockFromModule('../../context')
 
