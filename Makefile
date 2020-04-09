@@ -70,6 +70,13 @@ lint: apollo-lint
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"
 
+coverage: apollo-coverage
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Coverage Run Complete"																																	&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+
 # =================================================================
 # = Prisma targets ================================================
 # =================================================================
@@ -133,6 +140,14 @@ apollo-lint: apollo-yarn-install
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"																																												&& \
 	 cd apollo && yarn lint
+
+apollo-coverage: apollo-yarn-install
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Creating test coverage report for Apollo																						"		&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"																																												&& \
+	 cd apollo && yarn coverage
 
 apollo-push: env-APOLLO_CONTAINER_IMAGE apollo-build
 	@printf "$(OK_COLOR)"																																												&& \
