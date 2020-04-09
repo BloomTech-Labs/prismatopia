@@ -1,8 +1,10 @@
 SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 
-include .env
-export
+ifneq ("$(wildcard .env)","")
+	include .env
+	export
+endif
 
 # =================================================================
 # = Utility targets ===============================================
@@ -65,18 +67,18 @@ local-up: apollo-build
 # = Prisma targets ================================================
 # =================================================================
 
-prisma-generate: env-PRISMA_ENDPOINT env-PRISMA_SECRET
+prisma-generate:
 	@echo															&& \
 	 echo Generating Prisma schema		&& \
 	 cd prisma && yarn install && yarn generate
 
-local-prisma-deploy: env-PRISMA_MANAGEMENT_API_SECRET
+local-prisma-deploy: env-PRISMA_ENDPOINT env-PRISMA_SECRET env-PRISMA_MANAGEMENT_API_SECRET
 	 echo															&& \
 	 echo Deploying Prisma schema			&& \
 	 cd prisma && yarn install 				&& \
 	 yarn deploy
 
-local-prisma-reseed:
+local-prisma-reseed: env-PRISMA_ENDPOINT env-PRISMA_SECRET
 	@echo															&& \
 	 echo Deploying Prisma schema			&& \
 	 cd prisma 												&& \
@@ -84,7 +86,7 @@ local-prisma-reseed:
 	 yarn reset											  && \
 	 yarn seed
 
-local-prisma-token:
+local-prisma-token: env-PRISMA_ENDPOINT env-PRISMA_SECRET
 	@echo																&& \
 	 echo Generating Prisma token				&& \
 	 cd prisma && yarn install --silent && \
@@ -95,7 +97,7 @@ local-prisma-token:
 # = Apollo targets ================================================
 # =================================================================
 
-apollo-yarn-install: env-APOLLO_CONTAINER_IMAGE prisma-generate
+apollo-yarn-install: prisma-generate
 	@printf "$(OK_COLOR)"																																												&& \
 	 printf "\n%s\n" "======================================================================================"		&& \
 	 printf "%s\n"   "= Checking Apollo Yarn packages																												"		&& \
