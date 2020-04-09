@@ -95,13 +95,29 @@ local-prisma-token:
 # = Apollo targets ================================================
 # =================================================================
 
-apollo-build: env-APOLLO_CONTAINER_IMAGE prisma-generate
+apollo-yarn-install: env-APOLLO_CONTAINER_IMAGE prisma-generate
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Checking Apollo Yarn packages																												"		&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"																																												&& \
+	 cd apollo && yarn install
+
+apollo-build: env-APOLLO_CONTAINER_IMAGE apollo-yarn-install prisma-generate apollo-lint
 	@printf "$(OK_COLOR)"																																												&& \
 	 printf "\n%s\n" "======================================================================================"		&& \
 	 printf "%s\n"   "= Building Apollo container image: $${APOLLO_CONTAINER_IMAGE}"														&& \
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"																																												&& \
 	 cd apollo && yarn install && docker build -t $${APOLLO_CONTAINER_IMAGE} .
+
+apollo-lint: apollo-yarn-install
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Linting Apollo																																			"		&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"																																												&& \
+	 cd apollo && yarn lint
 
 apollo-push: env-APOLLO_CONTAINER_IMAGE apollo-build
 	@printf "$(OK_COLOR)"																																												&& \
