@@ -92,4 +92,3 @@ Outputs:
     Value: !Ref DBInstanceCredentials
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-DBInstanceCredentials
-

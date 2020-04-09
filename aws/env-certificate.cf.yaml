@@ -6,7 +6,7 @@ Parameters:
     Type: String
     Description: The name of the application
     AllowedPattern: ^[a-z0-9\-]*$
-  
+
   EnvironmentName:
     Type: String
     Description: The name of the application environment
@@ -25,7 +25,7 @@ Resources:
   #       TODO: https://github.com/binxio/cfn-certificate-provider
   Certificate:
     Type: AWS::CertificateManager::Certificate
-    Properties: 
+    Properties:
       DomainName: !If [IsProductionEnvironment, !Sub "*.${ApplicationDomainNamespace}", !Sub "*.${EnvironmentName}.${ApplicationDomainNamespace}"]
       ValidationMethod: DNS
 
@@ -35,4 +35,3 @@ Outputs:
     Value: !Ref Certificate
     Export:
       Name: !Sub ${ApplicationName}-${EnvironmentName}-Certificate
-  

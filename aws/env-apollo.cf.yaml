@@ -4,14 +4,14 @@ Description: The Apollo task and service definitions for ECS
 Parameters:
   ApplicationName:
     Type: String
-    Description: The name of the application 
+    Description: The name of the application
     AllowedPattern: ^[a-z0-9\-]*$
 
   EnvironmentName:
     Type: String
     Description: The name of the application environment
     AllowedPattern: ^[a-z0-9\-]*$
-  
+
   ApplicationDomainNamespace:
     Type: String
     Description: The DNS domain namespace for the application (e.g. mycoolapplication.com)
@@ -24,18 +24,20 @@ Parameters:
   ApolloServicePort:
     Type: Number
     Description: The port that the Apollo service will be listening on
-  
+
   PrismaServicePort:
     Type: Number
     Description: The port that the Prisma service will be listening on
 
-  OAuthTokenEndpoint:
+  JwksUri:
     Type: String
-    Description: Endpoint for validating OAuth tokens
 
-  OAuthClientID:
+  JwtIssuer:
     Type: String
-    Description: The ID of this OAuth client
+
+  LogLevel:
+    Type: String
+    Default: info
 
 Conditions:
   IsProductionEnvironment: !Equals [ !Ref EnvironmentName, production ]
@@ -53,7 +55,7 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
-      Family: apollo
+      Family: !Sub ${ApplicationName}-${EnvironmentName}-apollo
       Cpu: '1024'
       Memory: '2048'
       ExecutionRoleArn:
@@ -79,27 +81,32 @@ Resources:
               awslogs-group: !Ref LogGroup
               awslogs-region: !Ref AWS::Region
               awslogs-stream-prefix: apollo
+          Secrets:
+            - Name: PRISMA_SECRET
+              ValueFrom:
+                Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecretArn
           Environment:
             - Name: PORT
               Value: !Ref ApolloServicePort
+
             - Name: GRAPHQL_API_PATH
               Value: /
+
             - Name: PRISMA_ENDPOINT
               Value:
                 Fn::If:
                   - IsProductionEnvironment
                   - !Sub "http://prisma.private.${ApplicationDomainNamespace}:${PrismaServicePort}"
                   - !Sub "http://prisma.private.${EnvironmentName}.${ApplicationDomainNamespace}:${PrismaServicePort}"
-            - Name: PRISMA_SECRET
-              Value:
-                Fn::Sub:
-                  - '{{resolve:secretsmanager:${PrismaServiceAPISecret}:SecretString}}'
-                  - PrismaServiceAPISecret:
-                      Fn::ImportValue: !Sub ${ApplicationName}-${EnvironmentName}-PrismaServiceAPISecret
-            - Name: OAUTH_TOKEN_ENDPOINT
-              Value: !Ref OAuthTokenEndpoint
-            - Name: OAUTH_CLIENT_ID
-              Value: !Ref OAuthClientID
+
+            - Name: JWKS_URI
+              Value: !Ref JwksUri
+
+            - Name: JWT_ISSUER
+              Value: !Ref JwtIssuer
+
+            - Name: LOG_LEVEL
+              Value: !Ref LogLevel
 
   Service:
     Type: AWS::ECS::Service
