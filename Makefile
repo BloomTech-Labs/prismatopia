@@ -63,35 +63,48 @@ local-up: apollo-build
 	 printf "$(NO_COLOR)"
 	 docker-compose up --abort-on-container-exit
 
+lint: apollo-lint
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Linting Complete"																																				&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+
 # =================================================================
 # = Prisma targets ================================================
 # =================================================================
 
 prisma-generate:
-	@echo															&& \
-	 echo Generating Prisma schema		&& \
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Generating Prisma schema"																																&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
 	 cd prisma && yarn install && yarn generate
 
 local-prisma-deploy: env-PRISMA_ENDPOINT env-PRISMA_SECRET env-PRISMA_MANAGEMENT_API_SECRET
-	 echo															&& \
-	 echo Deploying Prisma schema			&& \
-	 cd prisma && yarn install 				&& \
-	 yarn deploy
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Deploying Prisma schema"																																&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+	 cd prisma && yarn install && yarn deploy
 
 local-prisma-reseed: env-PRISMA_ENDPOINT env-PRISMA_SECRET
-	@echo															&& \
-	 echo Deploying Prisma schema			&& \
-	 cd prisma 												&& \
-	 yarn install											&& \
-	 yarn reset											  && \
-	 yarn seed
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Reeseeding Prisma deployment"																														&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+	 cd prisma && yarn install && yarn reseed
 
 local-prisma-token: env-PRISMA_ENDPOINT env-PRISMA_SECRET
-	@echo																&& \
-	 echo Generating Prisma token				&& \
-	 cd prisma && yarn install --silent && \
-	 yarn token
-
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Generating Prisma token"																																&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+	 cd prisma && yarn install && yarn token
 
 # =================================================================
 # = Apollo targets ================================================
