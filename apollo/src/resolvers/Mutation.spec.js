@@ -1,5 +1,8 @@
+// @ts-check
+'use strict'
+
 // We're going to use this as input, as it would be used in runtime
-const generatedPrismaInput = require('../generated/prisma-client')
+const mockPrismaClient = require('../generated/prisma-client')
 
 // This is the unit under test
 const { createProfile, createActivity, createEvent, updateProfile, updateEvent, updateActivity } = require('./Mutation.js')
