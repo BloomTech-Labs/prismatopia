@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es6"
+    "module": "CommonJS",
+    "target": "ES6",
+    "moduleResolution": "Node",
+    "noEmit": false
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }
