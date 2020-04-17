@@ -6,10 +6,17 @@ Prismatopia is an API stack combining a bunch of super-awesome technologies: Apo
 
 ## Local Development Workflow
 
+### Prepare
+
+1. Install Yeoman
+     - `npm install -g yo`
+2. Install the Yeoman generator for Prismatopia
+     - `npm install -g yo`
+
 ### Develop your Prisma datamodel
 
 1. Create a `.env` file to feed environment variables to Prismatopia
-   - Details below
+   - Details [here](#environment-variables)
 2. Open a terminal and run "`make local-up`" to start all services locally using Docker Compose
    - Keep this terminal handy so you can see the output from the running services
 3. Open a second terminal and run "`make prisma-deploy`" to deploy the initial Prisma data model

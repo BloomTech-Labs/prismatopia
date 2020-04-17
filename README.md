@@ -4,11 +4,14 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/015ff2fee461e3bc2b2b/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/prismatopia/test_coverage)
 ![CI](https://github.com/Lambda-School-Labs/prismatopia/workflows/CI/badge.svg)
 
-NOTE: THIS IS A WORK IN PROGRESS, CHANGING RAPIDLY, NOT STABLE, USE AT YOUR OWN RISK UNTIL THIS SENTENCE IS REMOVED FROM THE README!
-
 An API stack combining a bunch of super-awesome technologies: Apollo Server, Prisma, OAuth, OpenID Connect, JWT, Postgres, Docker, AWS and more!
 
 ## How to use Prismatopia
+
+[General Usage](prismatopia.md)
+[Apollo](apollo/README.md)
+[Prisma](apollo/README.md)
+[AWS](aws/README.md)
 
 Prismatopia is a reference implementation of a robust GraphQL API stack. Meaning that you can clone it, configure, run it and play with it.
 
