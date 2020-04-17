@@ -11,7 +11,7 @@
     "server": "nodemon index.js",
     "test": "jest --watchAll --runInBand",
     "coverage": "jest --coverage --detectOpenHandles --forceExit || true",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src || true"
   },
   "jest": {
     "collectCoverageFrom": [
