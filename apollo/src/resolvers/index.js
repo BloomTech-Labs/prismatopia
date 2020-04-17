@@ -1,4 +1,5 @@
 // @ts-check
+'use strict'
 
 // All resolvers must be imported here and declared in the resolvers
 // object in order to be received by the client. If you are logging

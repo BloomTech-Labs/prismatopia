@@ -1,4 +1,5 @@
 // @ts-check
+'use strict'
 
 // Apollo dependencies
 const { importSchema } = require('graphql-import')

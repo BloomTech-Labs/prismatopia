@@ -1,11 +1,12 @@
 // @ts-check
+'use strict'
 
 /**
  * @param {{ where: import('../generated/prisma-client').UserWhereUniqueInput }} args
  * @param {{ prisma: import('../generated/prisma-client').Prisma }} context
  * @returns { Promise }
  */
-const user = async (_, args, context) => {
+module.exports.user = async (_, args, context) => {
   console.log('Query.user.args: %j', args)
 
   const user = await context.prisma.user(args.where)
@@ -20,7 +21,7 @@ const user = async (_, args, context) => {
  * @param {{ prisma: import('../generated/prisma-client').Prisma }} context
  * @returns { Promise }
  */
-const users = async (_, args, context) => {
+module.exports.users = async (_, args, context) => {
   console.log('Query.user.args: %j', args)
 
   const user = await context.prisma.users(args)
@@ -28,9 +29,4 @@ const users = async (_, args, context) => {
   console.log('Query.user: %j', user)
 
   return user
-}
-
-module.exports = {
-  user,
-  users
 }
