@@ -36,14 +36,12 @@ clean:
 	 printf "$(NO_COLOR)"
 	 rm -rf apollo/dist apollo/node_modules apollo/src/generated apollo/schema/generated prisma/node_modules
 
-init: clean
+init: clean apollo-build
 	@printf "$(OK_COLOR)"																																												&& \
 	 printf "\n%s\n" "======================================================================================"		&& \
-	 printf "%s\n"   "= Initializing Prismatopia"																																&& \
+	 printf "%s\n"   "= Done initializing Prisma"																																&& \
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"
-	 cd apollo && yarn install
-	 cd prisma && yarn install
 
 docker-clean: clean
 	@printf "$(OK_COLOR)"																																												&& \
@@ -179,10 +177,24 @@ apollo-token: env-APOLLO_TOKEN_ENDPOINT env-APOLLO_CLIENT_ID env-APOLLO_CLIENT_S
 # =================================================================
 
 # =================================================================
+# Check that the AWS CLI is installed and configured
+# =================================================================
+aws-cli-check:
+	@printf "$(WARN_COLOR)"
+	@printf "%s\n" "======================================================================================"
+	@printf "%s\n" "= Attention!!"
+	@printf "%s\n" "= The following actions will be performed against this application:"
+	@printf "%s\n" "=   Application: $(APPLICATION_NAME)"
+	@printf "%s\n" "=   Parameters:  aws.$(APPLICATION_NAME)"
+	@printf "%s\n" "======================================================================================"
+	@printf "$(NO_COLOR)"
+	@( read -p "Are you sure you want to continue? [y/N]: " sure && case "$$sure" in [yY]) true;; *) false;; esac )
+
+# =================================================================
 # Show a banner before running targets for the whole application
 # TODO: aws iam get-user && aws iam list-account-aliases
 # =================================================================
-aws-app-banner: env-APPLICATION_NAME
+aws-app-banner: aws-cli-check env-APPLICATION_NAME
 	@printf "$(WARN_COLOR)"
 	@printf "%s\n" "======================================================================================"
 	@printf "%s\n" "= Attention!!"
@@ -377,7 +389,7 @@ aws-deploy-app: aws-deploy-app-iam aws-deploy-app-network
 # ===========================================================================
 # Deploys all of the environment level AWS resources in the proper order
 # ===========================================================================
-aws-deploy-env: aws-deploy-env-dns aws-deploy-env-certificate aws-deploy-env-network aws-deploy-env-db aws-deploy-env-prisma aws-deploy-env-apollo
+aws-deploy-env: aws-deploy-env-dns aws-deploy-env-certificate aws-deploy-env-network aws-deploy-env-db aws-deploy-env-prisma aws-prisma-deploy apollo-push aws-deploy-env-apollo aws-apollo-update-service
 	@echo
 	@echo ======================================================================================
 	@echo Finished deploying all environment level AWS resources
