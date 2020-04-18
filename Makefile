@@ -43,13 +43,20 @@ init: clean apollo-build
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"
 
-docker-clean: clean
+docker-stop-all:
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Stopping all Docker containers"																													&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+	-docker stop $(docker ps -q)
+
+docker-clean: docker-stop-all
 	@printf "$(OK_COLOR)"																																												&& \
 	 printf "\n%s\n" "======================================================================================"		&& \
 	 printf "%s\n"   "= Deep cleaning your Docker environment"																									&& \
 	 printf "%s\n"   "======================================================================================"		&& \
 	 printf "$(NO_COLOR)"
-	-docker container stop $$(docker container ls -aq)
 	-docker container rm $$(docker container ls -aq)
 	-docker system prune -f
 
