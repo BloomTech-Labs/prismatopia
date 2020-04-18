@@ -8,44 +8,46 @@ Prismatopia is an API stack combining a bunch of super-awesome technologies: Apo
 
 1. Install Docker
     - <https://www.docker.com/>
-2. Install Yeoman
-     - `npm install -g yo`
-3. Install the Yeoman generator for Prismatopia
-     - `npm install -g yo`
-4. Create your new project
+1. Install Yeoman
+
+    ```bash
+    yarn global add yo
+    ```
+
+1. Install the Yeoman generator for Prismatopia
+
+    ```bash
+    yarn global add @lambdaschool/generator-prismatopia
+    ```
+
+1. Create your new project
 
     ```bash
     yo prismatopia
     ```
 
-5. Create your `.env`
-
-    ```bash
-    yo prismatopia:local-env
-    ```
-
-6. Start Prismatopia locally
+1. Start Prismatopia locally
 
     ```bash
     make local-up
     ```
 
-7. Deploy the data model
+1. Deploy the data model
 
     ```bash
     make local-prisma-deploy
     ```
 
-8. Get a token for your local Prisma
+1. Get a token for your local Prisma
 
     ```bash
     make local-prisma-token
     ```
 
-9.  Open the Prisma playground
+1. Open the Prisma playground
     - <http://localhost:7000>
 
-10. Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
+1. Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
 
    ```json
       {
@@ -53,20 +55,20 @@ Prismatopia is an API stack combining a bunch of super-awesome technologies: Apo
       }
    ```
 
-11. Run some queries!
+1.  Run some queries!
 
 ## Prisma Development
 
 1. Edit your Prisma data model and seeds:
     - `prisma/prisma-datamodel.graphql`
     - `prisma/seeds.js`
-2. Deploy your data model changes
+1. Deploy your data model changes
     - `make local-prisma-deploy`
-3. Get a Prisma token
+1. Get a Prisma token
     - `make local-prisma-token`
-4. Open the Prisma playground
+1. Open the Prisma playground
     - <http://localhost:7000>
-5. Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
+1. Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
 
    ```json
       {
@@ -120,25 +122,25 @@ Now that you have your Prisma datamodel setup, you'll need to start working on A
 Apollo has built-in support for authentication using an OIDC compliant identity provider. This example will focus on using Okta, but Auth0 has also been proven to work.
 
 1. Create a new Okta developer account at <https://developer.okta.com>
-2. Note your Okta domain, it will be something like: `https://dev-123456-admin.okta.com/`
-3. Set the values for the following environment variables in your `.env` file:
+1. Note your Okta domain, it will be something like: `https://dev-123456-admin.okta.com/`
+1. Set the values for the following environment variables in your `.env` file:
     - APOLLO_TOKEN_ENDPOINT
       - `https://<your okta domain>/oauth2/default/v1/token`
     - APOLLO_JWKS_URI
       - `https://<your okta domain>/oauth2/default/v1/keys`
     - APOLLO_JWT_ISSUER
       - `https://<your okta domain>/oauth2/default`
-4. Add a new Native application
+1. Add a new Native application
     - Enable Authorization Code and Resource Owner Password grant types
     - Set the following environment variabels in your `.env` file:
       - APOLLO_CLIENT_ID
         - The Client ID for your application
       - APOLLO_CLIENT_SECRET
         - The Client Secret for your application
-5. Create a test user and save the username and password in your `.env` file:
+1. Create a test user and save the username and password in your `.env` file:
     - APOLLO_TEST_USERNAME
     - APOLLO_TEST_PASSWORD
-6. At this point your should be able to successfully run `make apollo-token`
+1. At this point your should be able to successfully run `make apollo-token`
     - You can use this token in the Apollo playground: <http://localhost:8000>
 
 ### Cherry picking from the Prisma API
@@ -146,15 +148,15 @@ Apollo has built-in support for authentication using an OIDC compliant identity 
 Your Apollo API (the one your clients _will_ talk to) will end up being be a small subset of your Prisma API. You'll only expose the parts of the Prisma API that your clients need and will leave the rest hidden to the world. This will keep your Apollo API development (and testing) to a minimum.
 
 1. Get Prismatopia running: `make local-up`
-2. Run `make prisma-generate` and review the generated GraphQL schema: `apollo/schema/generated/prisma.graphql`. Identify a Prisma API call you want to expose to the world. We'll choose `Query.users` for this example.
-3. Edit `apollo/schema/apollo.graphql` and import only that query:
+1. Run `make prisma-generate` and review the generated GraphQL schema: `apollo/schema/generated/prisma.graphql`. Identify a Prisma API call you want to expose to the world. We'll choose `Query.users` for this example.
+1. Edit `apollo/schema/apollo.graphql` and import only that query:
 
     ```graphql
       # import Query.users from "generated/prisma.graphql"
     ```
 
-4. As soon as you save the Apollo schema, `nodemon` will detect the change and will restart Apollo. Nice, right?
-5. Now, you need to create a resolver for this type, which you'll do by creating a resolver function in `apollo/src/resolvers/Query.js`
+1. As soon as you save the Apollo schema, `nodemon` will detect the change and will restart Apollo. Nice, right?
+1. Now, you need to create a resolver for this type, which you'll do by creating a resolver function in `apollo/src/resolvers/Query.js`
 
     ```javascript
       const users = (_parent, args, context) => {
@@ -194,9 +196,9 @@ Prismatopia uses AWS Cloudformation to build a network and all supporting infras
 The scripts are in the `aws` folder and are divided up in order to minimize bundling too much infrastructure in a single stack.
 
 1. Run `make aws-deploy-app` to deploy all of the application level infrastructure that's shared between different environments.
-2. Run `make aws-deploy-env` to deploy all of the environment level infrastructure, including the Postgres database, Prisma service and Apollo service.
-3. Now, deploy your Prisma datamodel using `make aws-prisma-deploy`
-4. You can now access your services using `apollo.<yourdomain>` and `prisma.<yourdomain>`
+1. Run `make aws-deploy-env` to deploy all of the environment level infrastructure, including the Postgres database, Prisma service and Apollo service.
+1. Now, deploy your Prisma datamodel using `make aws-prisma-deploy`
+1. You can now access your services using `apollo.<yourdomain>` and `prisma.<yourdomain>`
 
 ## AWS Makefile Targets
 
