@@ -95,6 +95,14 @@ local-prisma-deploy: env-PRISMA_ENDPOINT env-PRISMA_SECRET env-PRISMA_MANAGEMENT
 	 printf "$(NO_COLOR)"
 	 cd prisma && yarn install && yarn deploy
 
+local-prisma-deploy-force: env-PRISMA_ENDPOINT env-PRISMA_SECRET env-PRISMA_MANAGEMENT_API_SECRET
+	@printf "$(OK_COLOR)"																																												&& \
+	 printf "\n%s\n" "======================================================================================"		&& \
+	 printf "%s\n"   "= Forcing deployment of Prisma schema"																										&& \
+	 printf "%s\n"   "======================================================================================"		&& \
+	 printf "$(NO_COLOR)"
+	 cd prisma && yarn install && yarn deploy --force
+
 local-prisma-reseed: env-PRISMA_ENDPOINT env-PRISMA_SECRET
 	@printf "$(OK_COLOR)"																																												&& \
 	 printf "\n%s\n" "======================================================================================"		&& \
