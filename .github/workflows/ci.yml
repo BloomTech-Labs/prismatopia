@@ -28,28 +28,28 @@ jobs:
       - name: Lint
         run: "make lint"
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Branch
-        uses: actions/checkout@master
+  # coverage:
+  #   name: Coverage
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Branch
+  #       uses: actions/checkout@master
 
-      - name: Install Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12'
+  #     - name: Install Node
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: '12'
 
-      - name: Install Yarn
-        uses: Borales/actions-yarn@v2.1.0
-        with:
-          cmd: install
+  #     - name: Install Yarn
+  #       uses: Borales/actions-yarn@v2.1.0
+  #       with:
+  #         cmd: install
 
-      - name: Test and publish code coverage
-        uses: paambaati/codeclimate-action@v2.4.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
-        with:
-          coverageCommand: make coverage
-          coverageLocations: "./apollo/coverage/clover.xml:clover"
-          debug: true
+  #     - name: Test and publish code coverage
+  #       uses: paambaati/codeclimate-action@v2.4.0
+  #       env:
+  #         CC_TEST_REPORTER_ID: ${{ secrets.CodeClimateReporterId }}
+  #       with:
+  #         coverageCommand: make coverage
+  #         coverageLocations: "./apollo/coverage/clover.xml:clover"
+  #         debug: true
