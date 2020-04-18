@@ -12,7 +12,8 @@
     "deploy": "prisma deploy",
     "token": "prisma token",
     "reset": "prisma reset --force",
-    "seed": "prisma seed"
+    "seed": "prisma seed",
+    "reseed": "prisma reset --force && prisma seed"
   },
   "dependencies": {
     "faker": "^4.1.0",
