@@ -1,10 +1,10 @@
 type User {
   id: ID! @id
-  profile: Profile
+  profile: Profile @relation(link: INLINE)
 }
 
 type Profile {
   id: ID! @id
+  user: User!
   favorite_color: String
-  favorite_shape: String
 }
