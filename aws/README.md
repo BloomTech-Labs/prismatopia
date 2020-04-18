@@ -1,17 +1,3 @@
-# The AWS Layer of Prismatopia
+# The AWS Layer
 
-"Always do everything as code" - Me
-
-## The Stacks
-
-### Network
-
-### Prisma
-
-### Apollo
-
-### Postgres
-
-### Load Balancer
-
-### DNS
+"Code all the things!" 👈

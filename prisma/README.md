@@ -7,6 +7,7 @@ The `prisma.yml` configuration file is used to manage the service, it requires s
 
 - PRISMA_ENDPOINT
 - PRISMA_SECRET
+- PRISMA_MANAGEMENT_API_SECRET
 
 ## The Model
 
@@ -15,13 +16,8 @@ The Prisma data model for building the database
 
 ## The Data
 
-`prisma-seed-*.graphql`
-Seed files for filling the database with data
-
-## Management API
-
-PRISMA_MANAGEMENT_API_SECRET
-This environment variable needs to be set for the Prisma CLI to talk to the Prisma management api
+`seed.js`
+A JS-based seed file for filling the database with test data
 
 ## Insecurity
 
