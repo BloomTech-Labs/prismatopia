@@ -22,8 +22,8 @@ services:
       # The path for the Apollo GraphQL API
       GRAPHQL_API_PATH: ${APOLLO_API_PATH:-/api/graphql}
 
-      JWKS_URI: ${APOLLO_JWKS_URI:?You must specify APOLLO_JWKS_URI}
-      JWT_ISSUER: ${APOLLO_JWT_ISSUER:?You must specify APOLLO_JWT_ISSUER}
+      JWKS_URI: ${APOLLO_JWKS_URI}
+      JWT_ISSUER: ${APOLLO_JWT_ISSUER}
 
       PRISMA_ENDPOINT: http://prisma:${PRISMA_LISTEN_PORT:-7000}
       PRISMA_SECRET: ${PRISMA_SECRET:?You must specify PRISMA_SECRET}
