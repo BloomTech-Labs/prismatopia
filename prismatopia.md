@@ -44,7 +44,7 @@ Prismatopia is an API stack combining a bunch of super-awesome technologies: Apo
 7. Open the Prisma playground
     - <http://localhost:7000>
 
-8.  Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
+8. Open the 'HTTP Headers' setting in the GraphQL Platground and set your token, like this:
 
    ```json
       {
@@ -52,7 +52,7 @@ Prismatopia is an API stack combining a bunch of super-awesome technologies: Apo
       }
    ```
 
-11. Run some queries!
+9. Run some queries!
 
 ## Prisma Development
 
