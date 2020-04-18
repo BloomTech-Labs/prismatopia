@@ -6,7 +6,7 @@
  * @param {{ prisma: import('../generated/prisma-client').Prisma }} context
  * @returns { Promise }
  */
-module.exports.profile = async (parent, _, context) => {
+module.exports.profile = async (parent, _args, context) => {
   console.log('User.profile.parent: %j', parent)
 
   const profile = await context.prisma.user({ id: parent.id }).profile()

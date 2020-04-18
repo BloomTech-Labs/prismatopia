@@ -6,7 +6,7 @@
  * @param {{ prisma: import('../generated/prisma-client').Prisma }} context
  * @returns { Promise }
  */
-module.exports.user = async (_, args, context) => {
+module.exports.user = async (_parent, args, context) => {
   console.log('Query.user.args: %j', args)
 
   const user = await context.prisma.user(args.where)
@@ -21,7 +21,7 @@ module.exports.user = async (_, args, context) => {
  * @param {{ prisma: import('../generated/prisma-client').Prisma }} context
  * @returns { Promise }
  */
-module.exports.users = async (_, args, context) => {
+module.exports.users = async (_parent, args, context) => {
   console.log('Query.user.args: %j', args)
 
   const user = await context.prisma.users(args)
