@@ -1,5 +1,5 @@
 type User {
-  id: ID! @id
+  id: String! @id # ID from IdP
   profile: Profile @relation(link: INLINE)
 }
 
