@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@okta/jwt-verifier": "^1.0.0",
-    "apollo-server": "^2.12.0",
+    "apollo-server": "^2.25.3",
     "graphql": "^14.6.0",
     "graphql-import": "^1.0.1",
     "graphql-import-node": "0.0.4",
